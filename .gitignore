@@ -1,0 +1,14 @@
+# Entorno virtual
+venv/
+ENV/
+env/
+
+# Archivos de caché
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Archivos de configuración de editor
+.idea/
+.vscode/
+*.swp
