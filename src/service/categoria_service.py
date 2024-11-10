@@ -1,7 +1,5 @@
 from typing import List, Dict, Any
 from fastapi import HTTPException, Depends
-from unicodedata import category
-
 from src.model.entity.categoria import Categoria
 from src.dto.categoria_request import CategoriaRequest
 from src.dto.categoria_response import CategoriaResponse

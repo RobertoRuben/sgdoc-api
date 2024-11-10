@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
-from typing import List, Dict, Any
+from typing import List
 from src.service.remitente_service import RemitenteService
 from src.dto.remitente_request import RemitenteRequest
 from src.dto.remitente_response import RemitenteResponse

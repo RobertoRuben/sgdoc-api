@@ -97,11 +97,5 @@ class RemitenteService:
         ) for remitente in remitentes]
 
 
-
-    def get_total_remitentes_count(self) -> int:
-        total_count = self.remitente_repository.get_total_count()
-        return total_count
-
-
     def get_remitentes_with_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
         return RemitenteRepository.get_all_pagination(page, page_size)

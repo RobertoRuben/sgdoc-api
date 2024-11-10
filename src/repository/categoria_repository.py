@@ -1,5 +1,5 @@
 from typing import List, Optional, Dict, Any
-from sqlmodel import Session, select, func, or_, Text
+from sqlmodel import Session, select, func, or_
 from src.db.database import engine
 from src.model.entity.categoria import Categoria
 
