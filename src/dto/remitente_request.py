@@ -10,21 +10,47 @@ class RemitenteRequest(BaseModel):
 
     @field_validator("nombres")
     @classmethod
-    def nombres_not_blank(cls, v):
+    def not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El nombre no debe quedar en blanco")
         return v
 
+
+    @field_validator("nombres")
+    @classmethod
+    def not_numeric(cls, v):
+        if v.isnumeric():
+            raise ValueError("El nombre no debe ser un número")
+        return v
+
+
     @field_validator("apellido_paterno")
     @classmethod
-    def apellido_paterno_not_blank(cls, v):
+    def not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El apellido paterno no debe quedar en blanco")
         return v
 
+
+    @field_validator("apellido_paterno")
+    @classmethod
+    def not_numeric(cls, v):
+        if v.isnumeric():
+            raise ValueError("El apellido paterno no debe ser un número")
+        return v
+
+
     @field_validator("apellido_materno")
     @classmethod
-    def apellido_materno_not_blank(cls, v):
+    def not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El apellido materno no debe quedar en blanco")
+        return v
+
+
+    @field_validator("apellido_materno")
+    @classmethod
+    def not_numeric(cls, v):
+        if v.isnumeric():
+            raise ValueError("El apellido materno no debe ser un número")
         return v

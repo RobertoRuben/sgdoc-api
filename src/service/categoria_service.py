@@ -78,5 +78,4 @@ class CategoriaService:
 
 
     def get_categorias_by_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
-        categorias = self.categoria_repository.get_all_pagination(page, page_size)
-        return categorias
+        return self.categoria_repository.get_all_pagination(page, page_size)
