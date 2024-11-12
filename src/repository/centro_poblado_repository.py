@@ -73,6 +73,7 @@ class CentroPobladoRepository:
                 .offset(offset)
                 .limit(page_size)
             ).all()
+
             total_items = session.exec(select(func.count()).select_from(CentroPoblado)).first()
             total_pages = (total_items + page_size - 1) // page_size
 

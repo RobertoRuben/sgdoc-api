@@ -5,6 +5,7 @@ from src.controller.remitente_controller import router as remitente_router, remi
 from src.controller.categoria_controller import router as categoria_router, categorias_tag_metadata
 from src.controller.ambito_controller import router as ambito_router, ambitos_tag_metadata
 from src.controller.centro_poblado_controller import router as centro_poblado_router, centros_poblados_tag_metadata
+from src.controller.caserio_controller import router as caserio_router, caserios_tag_metadata
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -31,3 +32,4 @@ app.include_router(remitente_router, prefix="/api/v1")
 app.include_router(categoria_router, prefix="/api/v1")
 app.include_router(ambito_router, prefix="/api/v1")
 app.include_router(centro_poblado_router, prefix="/api/v1")
+app.include_router(caserio_router, prefix="/api/v1")
