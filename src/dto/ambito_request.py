@@ -5,14 +5,14 @@ class AmbitoRequest(BaseModel):
 
     @field_validator("nombre_ambito")
     @classmethod
-    def not_blank(cls, v):
+    def nombre_ambito_is_not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El nombre del ambito del documento no debe quedar en blanco")
         return v
 
     @field_validator("nombre_ambito")
     @classmethod
-    def not_numeric(cls, v):
+    def nombre_ambito_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El nombre del ambito del documento no debe ser un número")
         return v

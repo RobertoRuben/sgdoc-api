@@ -5,7 +5,7 @@ class CategoriaRequest(BaseModel):
 
     @field_validator("nombre_categoria")
     @classmethod
-    def not_blank(cls, v):
+    def nombre_categoria_is_not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El nombre de la categoría del documento no debe quedar en blanco")
         return v
@@ -13,7 +13,7 @@ class CategoriaRequest(BaseModel):
 
     @field_validator("nombre_categoria")
     @classmethod
-    def not_numeric(cls, v):
+    def nombre_categoria_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El nombre de la categoría del documento no debe ser un número")
         return v

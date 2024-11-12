@@ -9,4 +9,4 @@ class CaserioResponse(BaseModel):
 class CaserioResponseWithCentroPobladoId(BaseModel):
     id: int
     nombre_caserio: str
-    centro_poblado_id: int
+    centro_poblado_id: int | None

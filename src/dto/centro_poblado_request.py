@@ -5,7 +5,7 @@ class CentroPobladoRequest(BaseModel):
 
     @field_validator("nombre_centro_poblado")
     @classmethod
-    def not_blank(cls, v):
+    def nombre_centro_poblado_is_not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El nombre del centro poblado no debe quedar en blanco")
         return v
@@ -13,7 +13,7 @@ class CentroPobladoRequest(BaseModel):
 
     @field_validator("nombre_centro_poblado")
     @classmethod
-    def not_numeric(cls, v):
+    def nombre_centro_poblado_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El nombre del centro poblado no debe ser un número")
         return v
