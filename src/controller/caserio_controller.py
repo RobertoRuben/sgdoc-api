@@ -22,11 +22,35 @@ async def add_caserio(caserio_request: CaserioRequest, service: CaserioService =
     except HTTPException as e:
         raise e
 
+@router.put("/caserios/{caserio_id}", response_model=CaserioResponseWithCentroPobladoId, description="Actualiza un caserio")
+async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, service: CaserioService = Depends()):
+    try:
+        return service.update_caserio(caserio_id, caserio_request)
+    except HTTPException as e:
+        raise e
+
+
+@router.delete("/caserios/{caserio_id}", description="Elimina un caserio")
+async def delete_caserio_by_id(caserio_id: int, service: CaserioService = Depends()):
+    try:
+        service.delete_caserio_by_id(caserio_id)
+        return JSONResponse(status_code=204)
+    except HTTPException as e:
+        raise
+
 
 @router.get("/caserios", response_model=List[CaserioResponseWithCentroPobladoId], description="Obtiene todos los caserios")
 async def get_caserios_by_centro_poblado_id(centro_poblado_id: int | None = Query(None), caserio_service: CaserioService = Depends()):
     try:
         return caserio_service.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/caserios/search", response_model=List[CaserioResponse], description="Busca caserios por nombre")
+async def search_caserios_by_name(name: str, caserio_service: CaserioService = Depends()):
+    try:
+        return caserio_service.find_by_string(name)
     except HTTPException as e:
         raise e
 
