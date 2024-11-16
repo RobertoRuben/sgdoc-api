@@ -61,7 +61,7 @@ class CaserioService:
             CaserioResponseWithCentroPobladoId(
                 id=caserio.id,
                 nombre_caserio=caserio.nombre_caserio,
-                centro_poblado_id=caserio.centro_poblado_id  # Espacio extra eliminado
+                centro_poblado_id=caserio.centro_poblado_id
             ) for caserio in caserios
         ]
 
@@ -73,9 +73,9 @@ class CaserioService:
 
         return [
             CaserioResponse(
-                id=caserio.id,
-                nombre_caserio=caserio.nombre_caserio,
-                centro_poblado_nombre=caserio.centro_poblado.nombre_centro_poblado
+                id=caserio['id'],
+                nombre_caserio=caserio['nombre_caserio'],
+                centro_poblado_nombre=caserio['nombre_centro_poblado']
             ) for caserio in caserios
         ]
 

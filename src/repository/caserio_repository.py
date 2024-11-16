@@ -15,7 +15,6 @@ class CaserioRepository:
         return caserio
 
 
-
     @staticmethod
     def update_caserio(caserio: Caserio) -> Caserio:
         with Session(engine) as session:
@@ -64,14 +63,12 @@ class CaserioRepository:
             search_filter = or_(
                 Caserio.nombre_caserio.contains(search_string)
             )
-            # Realizar la consulta con join para incluir el nombre del centro poblado
             result = session.exec(
                 select(Caserio.id, Caserio.nombre_caserio, CentroPoblado.nombre_centro_poblado)
-                .join(CentroPoblado, Caserio.centro_poblado_id == CentroPoblado.id)
+                .join(CentroPoblado, Caserio.centro_poblado_id == CentroPoblado.id, isouter=True)
                 .where(search_filter)
             ).all()
 
-            # Convertir el resultado en una lista de diccionarios
             caserios_data = [dict(row._mapping) for row in result]
 
         return caserios_data
@@ -83,7 +80,8 @@ class CaserioRepository:
         with Session(engine) as session:
             result = session.exec(
                 select(Caserio.id, Caserio.nombre_caserio, CentroPoblado.nombre_centro_poblado)
-                .join(CentroPoblado, Caserio.centro_poblado_id == CentroPoblado.id)
+                .join(CentroPoblado, Caserio.centro_poblado_id == CentroPoblado.id, isouter=True)
+                .order_by(Caserio.id)
                 .offset(offset)
                 .limit(page_size)
             ).all()

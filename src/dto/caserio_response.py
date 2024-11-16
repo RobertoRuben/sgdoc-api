@@ -3,7 +3,7 @@ from pydantic import BaseModel
 class CaserioResponse(BaseModel):
     id: int
     nombre_caserio: str
-    centro_poblado_nombre: str
+    centro_poblado_nombre: str | None
 
 
 class CaserioResponseWithCentroPobladoId(BaseModel):
