@@ -7,6 +7,7 @@ from src.controller.ambito_controller import router as ambito_router, ambitos_ta
 from src.controller.centro_poblado_controller import router as centro_poblado_router, centros_poblados_tag_metadata
 from src.controller.caserio_controller import router as caserio_router, caserios_tag_metadata
 from src.controller.rol_controller import router as rol_router, roles_tag_metadata
+from src.controller.area_controller import router as area_router, areas_tag_metadata
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -14,7 +15,8 @@ tags_metadata = [
     ambitos_tag_metadata,
     centros_poblados_tag_metadata,
     caserios_tag_metadata,
-    roles_tag_metadata
+    roles_tag_metadata,
+    areas_tag_metadata
 ]
 
 @asynccontextmanager
@@ -37,3 +39,4 @@ app.include_router(ambito_router, prefix="/api/v1")
 app.include_router(centro_poblado_router, prefix="/api/v1")
 app.include_router(caserio_router, prefix="/api/v1")
 app.include_router(rol_router, prefix="/api/v1")
+app.include_router(area_router, prefix="/api/v1")
