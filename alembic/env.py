@@ -7,6 +7,8 @@ from logging.config import fileConfig
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
+from urllib.parse import quote_plus
+
 from alembic import context
 
 # Agregar el directorio src al sys.path para importar módulos correctamente
@@ -29,9 +31,9 @@ target_metadata = SQLModel.metadata
 # Después de establecer target_metadata
 print("Tablas detectadas por Alembic:", SQLModel.metadata.tables.keys())
 
-# Configurar la URL de la base de datos desde las configuraciones de tu aplicación
 def get_database_url():
-    return f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
+    password = quote_plus(settings.POSTGRES_PASSWORD)  # Codifica caracteres especiales
+    return f"postgresql://{settings.POSTGRES_USER}:{password}@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}".replace('%', '%%')
 
 config.set_main_option('sqlalchemy.url', get_database_url())
 
