@@ -1,1 +1,21 @@
-Generic single-database configuration.
+# README: Gestión de Migraciones con Alembic
+
+Este proyecto utiliza Alembic para manejar el versionado y las migraciones de la base de datos. Es importante seguir estas instrucciones para garantizar que todas las modificaciones a la estructura de la base de datos estén documentadas y se puedan aplicar correctamente.
+
+---
+
+## Creación de Migraciones
+
+Cada vez que se crea o modifica una tabla en el modelo de datos, **debe generarse una nueva migración**. Para ello, utiliza el siguiente comando:
+
+```bash
+alembic revision --autogenerate -m "Descripción de la migración"
+
+## Versionado
+
+- Las migraciones se almacenan en la carpeta `alembic/versions`.
+- Cada archivo de migración contiene:
+  - Un identificador único llamado **`revision ID`**, que Alembic utiliza para rastrear los cambios aplicados.
+  - Una referencia al **`down_revision`**, que indica la migración anterior.
+- El **orden de las migraciones** es crucial para evitar conflictos. Si varias personas trabajan en el mismo proyecto, asegúrate de sincronizar antes de crear una nueva migración.
+- Mantén una descripción clara en el nombre del archivo y en el mensaje (`-m`) para facilitar su comprensión y rastreo.
