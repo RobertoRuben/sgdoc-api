@@ -11,11 +11,11 @@ class ComunicacionAreaService:
         return self.comunicacion_area_repository.get_all_paginated(page, page_size)
 
     def get_areas_destino_by_area_origen_id(self, area_origen_id: int) -> List[ComunicacionDestinoResponse]:
-        areas_destino = self.comunicacion_area_repository.get_areas_destino_by_area_origen_id(area_origen_id)
+        areas_destinos = self.comunicacion_area_repository.get_areas_destino_by_area_origen_id(area_origen_id)
 
         return [
             ComunicacionDestinoResponse(
                 area_destino_id=area_destino["area_destino_id"],
                 nombre_area_destino=area_destino["nombre_area"]
-            ) for area_destino in areas_destino
+            ) for area_destino in areas_destinos
         ]

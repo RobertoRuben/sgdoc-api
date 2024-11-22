@@ -9,6 +9,7 @@ from src.controller.caserio_controller import router as caserio_router, caserios
 from src.controller.rol_controller import router as rol_router, roles_tag_metadata
 from src.controller.area_controller import router as area_router, areas_tag_metadata
 from src.controller.comunicacion_area_controller import router as comunicacion_area_router, comunicaciones_area_tag_metadata
+from src.controller.trabajador_controller import router as trabajador_router, trabajadores_tag_metadata
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -18,7 +19,8 @@ tags_metadata = [
     caserios_tag_metadata,
     roles_tag_metadata,
     areas_tag_metadata,
-    comunicaciones_area_tag_metadata
+    comunicaciones_area_tag_metadata,
+    trabajadores_tag_metadata
 ]
 
 @asynccontextmanager
@@ -43,3 +45,4 @@ app.include_router(caserio_router, prefix="/api/v1")
 app.include_router(rol_router, prefix="/api/v1")
 app.include_router(area_router, prefix="/api/v1")
 app.include_router(comunicacion_area_router, prefix="/api/v1")
+app.include_router(trabajador_router, prefix="/api/v1")

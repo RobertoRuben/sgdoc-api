@@ -21,3 +21,5 @@ class Area(SQLModel, table=True):
             "overlaps": "comunicaciones_origen"
         }
     )
+
+    trabajadores: list["Trabajador"] = Relationship(back_populates="area")
