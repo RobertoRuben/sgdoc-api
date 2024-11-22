@@ -7,7 +7,7 @@ class ComunicacionArea(SQLModel, table=True):
     )
 
     id: int | None = Field(default=None, primary_key=True)
-    area_origen_id: int = Field(foreign_key="areas.id")
+    area_origen_id: int = Field(foreign_key="areas.id", index=True)
     area_destino_id: int = Field(foreign_key="areas.id")
 
     area_origen: "Area" = Relationship(

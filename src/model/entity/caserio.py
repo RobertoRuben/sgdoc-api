@@ -6,7 +6,7 @@ class Caserio(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     nombre_caserio: str = Field(sa_column=Column(Text, unique=True))
 
-    centro_poblado_id: int | None = Field(default= None, foreign_key="centros_poblados.id")
+    centro_poblado_id: int | None = Field(default= None, foreign_key="centros_poblados.id", index=True)
 
     centro_poblado: CentroPoblado | None = Relationship(back_populates="caserios")
 
