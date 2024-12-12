@@ -14,6 +14,7 @@ class TrabajadorRepository:
             session.refresh(trabajador)
         return trabajador
 
+
     @staticmethod
     def get_trabajadores_with_area_pagination(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         offset = (page - 1) * page_size
