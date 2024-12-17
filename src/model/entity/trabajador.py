@@ -12,7 +12,10 @@ class Trabajador(SQLModel, table=True):
     genero: GeneroEnum
 
     area_id: int = Field(foreign_key="areas.id", index=True)
+
     area: Area | None = Relationship(back_populates="trabajadores")
+
+    usuarios: list["Usuario"] = Relationship(back_populates="trabajador")
 
 
 
