@@ -1,4 +1,8 @@
+from typing import TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship, UniqueConstraint
+
+if TYPE_CHECKING:
+    from src.model.entity.area import Area
 
 class ComunicacionArea(SQLModel, table=True):
     __tablename__ = "comunicacion_areas"

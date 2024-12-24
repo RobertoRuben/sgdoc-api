@@ -1,5 +1,9 @@
-from sqlmodel import SQLModel, Field, Column, Text
+from typing import TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from src.model.enum.genero_enum import GeneroEnum
+
+if TYPE_CHECKING:
+    from src.model.entity.documento import Documento
 
 class Remitente(SQLModel, table=True):
     __tablename__ = "remitentes"
@@ -9,3 +13,5 @@ class Remitente(SQLModel, table=True):
     apellido_paterno: str = Field(sa_column=Column(Text, index=True))
     apellido_materno: str = Field(sa_column=Column(Text))
     genero: GeneroEnum
+
+    documentos: list["Documento"] = Relationship(back_populates="remitente")
