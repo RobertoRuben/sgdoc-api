@@ -1,5 +1,9 @@
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
-from typing import List
+from typing import List, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from src.model.entity.comunicacion_area import ComunicacionArea
+    from src.model.entity.trabajador import Trabajador
 
 class Area(SQLModel, table=True):
     __tablename__ = "areas"

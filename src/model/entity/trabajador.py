@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
+
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from src.model.enum.genero_enum import GeneroEnum
 from src.model.entity.area import Area
+
+if TYPE_CHECKING:
+    from src.model.entity.usuario import Usuario
 
 class Trabajador(SQLModel, table=True):
     __tablename__ = "trabajadores"

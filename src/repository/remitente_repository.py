@@ -86,6 +86,11 @@ class RemitenteRepository:
             }
         }
 
+    def get_by_dni(self, dni: int) -> Remitente | None:
+        with Session(engine) as session:
+            return session.exec(select(Remitente).where(Remitente.dni == dni)).first()
+
+
 
 
 

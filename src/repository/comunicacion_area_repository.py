@@ -1,7 +1,6 @@
 from typing import Dict, Any, List
-from sqlmodel import Session, select, text, func
+from sqlmodel import Session, text
 from src.db.database import engine
-from src.model.entity.comunicacion_area import ComunicacionArea
 
 class ComunicacionAreaRepository:
 

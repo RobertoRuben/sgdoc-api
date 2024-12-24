@@ -8,5 +8,6 @@ from .area import Area
 from .comunicacion_area import ComunicacionArea
 from .trabajador import Trabajador
 from .usuario import Usuario
+from .documento import Documento
 
-__all__ = ["Ambito", "Caserio", "Categoria", "CentroPoblado", "Remitente", "Rol", "Area", "ComunicacionArea", "Trabajador", "Usuario"]
+__all__ = ["Ambito", "Caserio", "Categoria", "CentroPoblado", "Remitente", "Rol", "Area", "ComunicacionArea", "Trabajador", "Usuario", "Documento"]
