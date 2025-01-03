@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+
 from sqlmodel import SQLModel, Field, Relationship, Column, TIMESTAMP, Text
 from src.model.entity.remitente import Remitente
 from src.model.entity.categoria import Categoria
@@ -5,6 +7,13 @@ from src.model.entity.ambito import Ambito
 from src.model.entity.caserio import Caserio
 from src.model.entity.centro_poblado import CentroPoblado
 from datetime import datetime
+
+if TYPE_CHECKING:
+    from src.model.entity.remitente import Remitente
+    from src.model.entity.categoria import Categoria
+    from src.model.entity.ambito import Ambito
+    from src.model.entity.caserio import Caserio
+    from src.model.entity.centro_poblado import CentroPoblado
 
 class Documento(SQLModel, table=True):
     __tablename__ = "documentos"
@@ -29,4 +38,6 @@ class Documento(SQLModel, table=True):
 
     centro_poblado_id: int | None = Field(default=None, foreign_key="centros_poblados.id")
     centro_poblado: CentroPoblado | None = Relationship(back_populates="documentos")
+
+    recepcion_documentos: list["RecepcionDocumento"] = Relationship(back_populates="documento")
 

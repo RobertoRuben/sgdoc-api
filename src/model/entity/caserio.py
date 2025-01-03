@@ -3,6 +3,7 @@ from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from src.model.entity.centro_poblado import CentroPoblado
 
 if TYPE_CHECKING:
+    from src.model.entity.centro_poblado import CentroPoblado
     from src.model.entity.documento import Documento
 
 class Caserio(SQLModel, table=True):

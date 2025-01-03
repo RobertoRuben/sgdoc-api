@@ -1,7 +1,13 @@
+from typing import TYPE_CHECKING
 from datetime import datetime
 from src.model.entity.rol import Rol
 from src.model.entity.trabajador import Trabajador
 from sqlmodel import SQLModel, Relationship, Field, Column, Text, TIMESTAMP
+
+if TYPE_CHECKING:
+    from src.model.entity.rol import Rol
+    from src.model.entity.trabajador import Trabajador
+    from src.model.entity.recepcion_documento import RecepcionDocumento
 
 class Usuario(SQLModel, table=True):
     __tablename__ = "usuarios"
@@ -16,3 +22,4 @@ class Usuario(SQLModel, table=True):
 
     roles: Rol | None = Relationship(back_populates="usuarios")
     trabajador: Trabajador | None = Relationship(back_populates="usuarios")
+    recepcion_documentos: list["RecepcionDocumento"] = Relationship(back_populates="usuario")
