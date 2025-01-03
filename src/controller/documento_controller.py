@@ -10,7 +10,6 @@ from src.dto.remitente_request import RemitenteRequest
 from src.dto.pagination_response import PaginatedResponse
 from src.service.documento_service import DocumentoService
 from src.model.enum.genero_enum import GeneroEnum
-import logging
 
 router = APIRouter(tags=["Documentos"])
 documentos_tag_metadata = {

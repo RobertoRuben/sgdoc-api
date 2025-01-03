@@ -114,6 +114,12 @@ class UsuarioRepository:
 
         return usuarios_data
 
+    @staticmethod
+    def exists_by_id(usuario_id: int) -> bool:
+        with Session(engine) as session:
+            exists = session.exec(select(Usuario).where(Usuario.id == usuario_id)).first() is not None
+        return exists
+
 
 
 

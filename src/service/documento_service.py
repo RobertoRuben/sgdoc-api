@@ -13,14 +13,11 @@ from src.repository.remitente_repository import RemitenteRepository
 
 class DocumentoService:
 
-    def __init__(self, documento_repository: DocumentoRepository = Depends(),
-                 remitente_repository: RemitenteRepository = Depends()):
+    def __init__(self, documento_repository: DocumentoRepository = Depends(), remitente_repository: RemitenteRepository = Depends()):
         self.documento_repository = documento_repository
         self.remitente_repository = remitente_repository
 
-
-    def add_documento(self, remitente_request: RemitenteRequest,
-                      documento_request: DocumentoRequest) -> DocumentoResponse:
+    def add_documento(self, remitente_request: RemitenteRequest, documento_request: DocumentoRequest) -> DocumentoResponse:
 
         if self.documento_repository.exists_by_name(documento_request.nombre):
             raise HTTPException(status_code=400, detail="Un documento con ese nombre ya existe en la base de datos")
@@ -66,7 +63,8 @@ class DocumentoService:
             fecha_ingreso=created_documento.fecha_ingreso
         )
 
-    def update_documento(self, documento_id: int, documento_update_request: DocumentoUpdateRequest) -> DocumentoResponse:
+    def update_documento(self, documento_id: int,
+                         documento_update_request: DocumentoUpdateRequest) -> DocumentoResponse:
         documento = self.documento_repository.get_document_by_id(documento_id)
 
         if not documento:
@@ -98,13 +96,11 @@ class DocumentoService:
             fecha_ingreso=updated_documento.fecha_ingreso
         )
 
-
     def delete_document(self, documento_id: int) -> None:
         if not self.documento_repository.exists_by_id(documento_id):
             raise HTTPException(status_code=404, detail="Documento no encontrado")
 
         self.documento_repository.delete_document_by_id(documento_id)
-
 
     def descargar_documento(self, documento_id: int) -> tuple[bytes, str]:
         if not self.documento_repository.exists_by_id(documento_id):
@@ -117,10 +113,8 @@ class DocumentoService:
 
         return documento_bytes, nombre
 
-
     def get_documentos_by_current_date(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         return self.documento_repository.get_documents_by_current_date(page, page_size)
-
 
     def search_entered_documents(self, p_page: int, p_page_size: int, p_dni: int, p_nombre_caserio: str,
                                  p_nombre_centro_poblado: str,
