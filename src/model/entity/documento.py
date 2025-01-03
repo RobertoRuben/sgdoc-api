@@ -41,3 +41,5 @@ class Documento(SQLModel, table=True):
 
     recepcion_documentos: list["RecepcionDocumento"] = Relationship(back_populates="documento")
 
+    derivaciones: list["Derivacion"] = Relationship(back_populates="documento")
+
