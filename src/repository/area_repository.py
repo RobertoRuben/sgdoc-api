@@ -52,6 +52,12 @@ class AreaRepository:
             exists = session.exec(select(Area).where(Area.nombre_area == nombre_area)).first() is not None
         return exists
 
+    @staticmethod
+    def exists_by_id(area_id: int) -> bool:
+        with Session(engine) as session:
+            exists = session.get(Area, area_id) is not None
+        return exists
+
 
     @staticmethod
     def find_by_string(search_string: str) -> List[Area]:
