@@ -13,6 +13,7 @@ from src.controller.trabajador_controller import router as trabajador_router, tr
 from src.controller.usuario_controller import router as usuario_router, usuarios_metadata
 from src.controller.documento_controller import router as documento_router, documentos_tag_metadata
 from src.controller.recepcion_documento_controller import router as recepcion_documento_router, recepcion_documento_tag_metadata
+from src.controller.derivacion_controller import router as derivacion_router, derivaciones_tag_metadata
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -26,7 +27,8 @@ tags_metadata = [
     trabajadores_tag_metadata,
     usuarios_metadata,
     documentos_tag_metadata,
-    recepcion_documento_tag_metadata
+    recepcion_documento_tag_metadata,
+    derivaciones_tag_metadata
 ]
 
 @asynccontextmanager
@@ -55,3 +57,4 @@ app.include_router(trabajador_router, prefix="/api/v1")
 app.include_router(usuario_router, prefix="/api/v1")
 app.include_router(documento_router, prefix="/api/v1")
 app.include_router(recepcion_documento_router, prefix="/api/v1")
+app.include_router(derivacion_router, prefix="/api/v1")

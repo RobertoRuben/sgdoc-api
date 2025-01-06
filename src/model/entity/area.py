@@ -4,6 +4,7 @@ from typing import List, TYPE_CHECKING
 if TYPE_CHECKING:
     from src.model.entity.comunicacion_area import ComunicacionArea
     from src.model.entity.trabajador import Trabajador
+    from src.model.entity.derivacion import Derivacion
 
 class Area(SQLModel, table=True):
     __tablename__ = "areas"
@@ -23,6 +24,21 @@ class Area(SQLModel, table=True):
         sa_relationship_kwargs={
             "primaryjoin": "and_(Area.id == ComunicacionArea.area_destino_id)",
             "overlaps": "comunicaciones_origen"
+        }
+    )
+
+    derivaciones_origen: List["Derivacion"] = Relationship(
+        back_populates="area_origen",
+        sa_relationship_kwargs={
+            "primaryjoin": "and_(Area.id == Derivacion.area_origen_id)",
+            "overlaps": "derivaciones_destino"
+        }
+    )
+    derivaciones_destino: List["Derivacion"] = Relationship(
+        back_populates="area_destino",
+        sa_relationship_kwargs={
+            "primaryjoin": "and_(Area.id == Derivacion.area_destino_id)",
+            "overlaps": "derivaciones_origen"
         }
     )
 

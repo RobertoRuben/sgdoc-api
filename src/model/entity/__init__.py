@@ -10,6 +10,7 @@ from .trabajador import Trabajador
 from .usuario import Usuario
 from .documento import Documento
 from .recepcion_documento import RecepcionDocumento
+from .derivacion import Derivacion
 
 __all__ = ["Ambito", "Caserio", "Categoria", "CentroPoblado", "Remitente", "Rol", "Area", "ComunicacionArea",
-           "Trabajador", "Usuario", "Documento", "RecepcionDocumento"]
+           "Trabajador", "Usuario", "Documento", "RecepcionDocumento", "Derivacion"]
