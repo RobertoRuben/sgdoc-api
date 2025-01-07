@@ -1,3 +1,4 @@
+from typing import Dict, Any
 from fastapi import HTTPException, Depends
 from src.model.entity.derivacion import Derivacion
 from src.dto.derivacion_request import DerivacionRequest
@@ -41,6 +42,16 @@ class DerivacionService:
             area_destino_id=created_derivacion.area_destino_id,
             documento_id=created_derivacion.documento_id
         )
+
+    def get_all_derivaciones(
+            self,
+            page: int = 1,
+            page_size: int = 10,
+            fecha_filtro: str = None,
+            estado_filtro: str = None,
+            documento_id_filtro: int = None
+    ) -> Dict[str, Any]:
+        return self.derivacion_repository.get_all(page, page_size, fecha_filtro, estado_filtro, documento_id_filtro)
 
     def update_derivacion(self, derivacion_id: int, derivacion_request: DerivacionRequest) -> DerivacionResponse:
         derivacion = self.derivacion_repository.get_by_id(derivacion_id)

@@ -11,6 +11,7 @@ from .usuario import Usuario
 from .documento import Documento
 from .recepcion_documento import RecepcionDocumento
 from .derivacion import Derivacion
+from .detalle_derivacion import DetalleDerivacion
 
 __all__ = ["Ambito", "Caserio", "Categoria", "CentroPoblado", "Remitente", "Rol", "Area", "ComunicacionArea",
-           "Trabajador", "Usuario", "Documento", "RecepcionDocumento", "Derivacion"]
+           "Trabajador", "Usuario", "Documento", "RecepcionDocumento", "Derivacion", "DetalleDerivacion"]

@@ -13,15 +13,22 @@ class DerivacionRepository:
             session.refresh(derivacion)
             return derivacion
 
-
     @staticmethod
-    def get_all_paginated(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+    def get_all(page: int = 1, page_size: int = 10, fecha_filtro: str = None, estado_filtro: str = None,
+                documento_id_filtro: int = None) -> Dict[str, Any]:
+
         with Session(engine) as session:
             query = text("""
-                SELECT fn_derivaciones_get_paginated_data(:page, :page_size)
+                SELECT fn_derivaciones_filtered_paginated(:page, :page_size, :fecha_filtro, :estado_filtro, :documento_id_filtro)
             """)
             connection = session.connection()
-            result = connection.execute(query, {"page": page, "page_size": page_size}).scalar()
+            result = connection.execute(query, {
+                "page": page,
+                "page_size": page_size,
+                "fecha_filtro": fecha_filtro,
+                "estado_filtro": estado_filtro,
+                "documento_id_filtro": documento_id_filtro
+            }).scalar()
 
             return result if result else {
                 "data": [],
@@ -57,5 +64,11 @@ class DerivacionRepository:
         with Session(engine) as session:
             derivacion = session.get(Derivacion, derivacion_id)
         return derivacion
+
+
+    @staticmethod
+    def exists_by_id(derivacion_id: int) -> bool:
+        with Session(engine) as session:
+            return session.get(Derivacion, derivacion_id) is not None
 
 
