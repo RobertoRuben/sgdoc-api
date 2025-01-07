@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from sqlmodel import Session, select, or_, func
 from src.db.database import engine
 from src.model.entity.ambito import Ambito
@@ -40,7 +40,7 @@ class AmbitoRepository:
 
 
     @staticmethod
-    def get_ambito_by_id(ambito_id: int) -> Ambito:
+    def get_ambito_by_id(ambito_id: int) -> Optional[Ambito]:
         with Session(engine) as session:
             ambito = session.get(Ambito, ambito_id)
         return ambito

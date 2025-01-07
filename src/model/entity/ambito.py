@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 
 if TYPE_CHECKING:
@@ -9,5 +9,5 @@ class Ambito(SQLModel, table = True):
     id: int | None = Field(default = None, primary_key = True)
     nombre_ambito: str = Field(sa_column=Column(Text, unique=True))
 
-    documentos: list["Documento"] = Relationship(back_populates="ambito")
+    documentos: List["Documento"] = Relationship(back_populates="ambito")
 

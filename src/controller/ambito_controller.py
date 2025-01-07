@@ -45,6 +45,13 @@ async def delete_ambito(ambito_id: int, ambito_service: AmbitoService = Depends(
     except HTTPException as e:
         raise e
 
+@router.get("/ambitos/{ambito_id}", response_model=AmbitoResponse, description="Obtiene un ambito documental por su ID")
+async def get_ambito_by_id(ambito_id: int, ambito_service: AmbitoService = Depends()):
+    try:
+        return ambito_service.get_ambitos_by_id(ambito_id)
+    except HTTPException as e:
+        raise e
+
 
 @router.get("/ambitos/search", response_model=List[AmbitoResponse], description="Busca ambitos documentales por cadena de búsqueda")
 async def search_ambitos(

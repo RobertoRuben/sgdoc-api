@@ -73,5 +73,18 @@ class AmbitoService:
         ) for ambito in ambitos]
 
 
+
     def get_ambitos_by_pagination(self, page: int, page_size: int) ->Dict[str, Any]:
         return self.ambito_repository.get_all_pagination(page, page_size)
+
+
+    def get_ambitos_by_id(self, ambito_id: int) -> AmbitoResponse:
+        ambito = self.ambito_repository.get_ambito_by_id(ambito_id)
+
+        if not ambito:
+            raise HTTPException(status_code=404, detail="Ambito no encontrado")
+
+        return AmbitoResponse(
+            id=ambito.id,
+            nombre_ambito=ambito.nombre_ambito
+        )
