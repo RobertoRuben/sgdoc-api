@@ -6,6 +6,7 @@ if TYPE_CHECKING:
     from src.model.entity.area import Area
     from src.model.entity.documento import Documento
     from src.model.entity.detalle_derivacion import DetalleDerivacion
+    from src.model.entity.estado_documento import EstadoDocumento
 
 class Derivacion(SQLModel, table=True):
     __tablename__ = "derivaciones"

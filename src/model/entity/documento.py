@@ -1,5 +1,4 @@
-from typing import TYPE_CHECKING
-
+from typing import TYPE_CHECKING, List
 from sqlmodel import SQLModel, Field, Relationship, Column, TIMESTAMP, Text
 from src.model.entity.remitente import Remitente
 from src.model.entity.categoria import Categoria
@@ -14,6 +13,7 @@ if TYPE_CHECKING:
     from src.model.entity.ambito import Ambito
     from src.model.entity.caserio import Caserio
     from src.model.entity.centro_poblado import CentroPoblado
+    from src.model.entity.estado_documento import EstadoDocumento
 
 class Documento(SQLModel, table=True):
     __tablename__ = "documentos"
@@ -42,4 +42,6 @@ class Documento(SQLModel, table=True):
     recepcion_documentos: list["RecepcionDocumento"] = Relationship(back_populates="documento")
 
     derivaciones: list["Derivacion"] = Relationship(back_populates="documento")
+
+    estados_documento: List["EstadoDocumento"] = Relationship(back_populates="documento")
 

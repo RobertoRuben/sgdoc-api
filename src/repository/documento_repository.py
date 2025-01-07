@@ -66,9 +66,6 @@ class DocumentoRepository:
         return None, None
 
 
-
-
-
     @staticmethod
     def get_documents_by_current_date(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         with Session(engine) as session:
