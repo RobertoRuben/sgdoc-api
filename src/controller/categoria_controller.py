@@ -28,21 +28,6 @@ async def get_categorias(categoria_service: CategoriaService = Depends()):
     except HTTPException as e:
         raise e
 
-@router.put("/categorias/{categoria_id}", response_model=CategoriaResponse, description="Actualiza una categoria")
-async def update_categoria(categoria_id: int, categoria_request: CategoriaRequest, categoria_service: CategoriaService = Depends()):
-    try:
-        return categoria_service.update_categoria(categoria_id, categoria_request)
-    except HTTPException as e:
-        raise e
-
-@router.delete("/categorias/{categoria_id}", description="Elimina una categoria")
-async def delete_categoria(categoria_id: int, categoria_service: CategoriaService = Depends()):
-    try:
-        categoria_service.delete_categoria(categoria_id)
-        return JSONResponse(content={"message": "Se eliminó la categoria correctamente"}, status_code=200)
-    except HTTPException as e:
-        raise e
-
 @router.get("/categorias/search", response_model=List[CategoriaResponse], description="Busca categorias por cadena de búsqueda")
 async def search_categorias(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar categorias"),
@@ -63,3 +48,28 @@ async def get_paginated_categorias(
         return categoria_service.get_categorias_by_pagination(page, per_page)
     except HTTPException as e:
         raise e
+
+@router.put("/categorias/{categoria_id}", response_model=CategoriaResponse, description="Actualiza una categoria")
+async def update_categoria(categoria_id: int, categoria_request: CategoriaRequest, categoria_service: CategoriaService = Depends()):
+    try:
+        return categoria_service.update_categoria(categoria_id, categoria_request)
+    except HTTPException as e:
+        raise e
+
+@router.delete("/categorias/{categoria_id}", description="Elimina una categoria")
+async def delete_categoria(categoria_id: int, categoria_service: CategoriaService = Depends()):
+    try:
+        categoria_service.delete_categoria(categoria_id)
+        return JSONResponse(content={"message": "Se eliminó la categoria correctamente"}, status_code=200)
+    except HTTPException as e:
+        raise e
+
+@router.get("/categorias/{categoria_id}", response_model=CategoriaResponse, description="Obtiene una categoria por su ID")
+async def get_categoria_by_id(categoria_id: int, categoria_service: CategoriaService = Depends()):
+    try:
+        return categoria_service.get_categoria_by_id(categoria_id)
+    except HTTPException as e:
+        raise e
+
+
+

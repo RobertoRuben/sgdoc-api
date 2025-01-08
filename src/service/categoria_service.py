@@ -79,3 +79,15 @@ class CategoriaService:
 
     def get_categorias_by_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
         return self.categoria_repository.get_all_pagination(page, page_size)
+
+
+    def get_categoria_by_id(self, categoria_id: int) -> CategoriaResponse:
+        categoria = self.categoria_repository.get_by_id(categoria_id)
+
+        if not categoria:
+            raise HTTPException(status_code=404, detail="Categoria no encontrada")
+
+        return CategoriaResponse(
+            id=categoria.id,
+            nombre_categoria=categoria.nombre_categoria
+        )
