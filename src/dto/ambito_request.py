@@ -17,12 +17,13 @@ class AmbitoRequest(BaseModel):
 
     @field_validator("nombre_ambito")
     def nombre_ambito_not_contains_special_characters(cls, v):
-        if not v.isalnum():
-            raise ValueError("El nombre del ambito del documento no debe contener caracteres especiales")
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError(
+                "El nombre del ambito del documento no debe contener caracteres especiales, excepto espacios")
         return v
 
     @field_validator("nombre_ambito")
     def nombre_ambito_not_contains_numbers(cls, v):
-        if not v.isalpha():
+        if any(char.isdigit() for char in v):
             raise ValueError("El nombre del ambito del documento no debe contener números")
         return v

@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from src.db.database import create_db_and_tables
 from src.controller.remitente_controller import router as remitente_router, remitentes_tag_metadata
@@ -47,6 +48,14 @@ app = FastAPI(
     openapi_tags=tags_metadata,
     debug=True,
     lifespan=lifespan
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Permitir cualquier dominio de origen
+    allow_credentials=True,
+    allow_methods=["*"],  # Permitir cualquier método (GET, POST, etc.)
+    allow_headers=["*"]   # Permitir cualquier cabecera
 )
 
 app.include_router(remitente_router, prefix="/api/v1")
