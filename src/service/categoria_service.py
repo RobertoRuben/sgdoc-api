@@ -68,7 +68,7 @@ class CategoriaService:
         categorias = self.categoria_repository.find_by_string(nombre_categoria)
 
         if not categorias:
-            raise HTTPException(status_code=404, detail="Categoria no encontrada")
+            raise HTTPException(status_code=404, detail="Categoria de documento no encontrada")
 
         return [CategoriaResponse(
             id=categoria.id,

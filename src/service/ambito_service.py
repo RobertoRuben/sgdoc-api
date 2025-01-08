@@ -67,6 +67,9 @@ class AmbitoService:
     def find_ambito_by_string(self, search_string: str) -> List[AmbitoResponse]:
         ambitos = self.ambito_repository.find_by_string(search_string)
 
+        if not ambitos:
+            raise HTTPException(status_code=404, detail="Ambito de documento no encontrado")
+
         return [AmbitoResponse(
             id=ambito.id,
             nombre_ambito=ambito.nombre_ambito
@@ -82,7 +85,7 @@ class AmbitoService:
         ambito = self.ambito_repository.get_ambito_by_id(ambito_id)
 
         if not ambito:
-            raise HTTPException(status_code=404, detail="Ambito no encontrado")
+            raise HTTPException(status_code=404, detail="Ambito de documento no encontrado")
 
         return AmbitoResponse(
             id=ambito.id,
