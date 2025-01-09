@@ -67,6 +67,9 @@ class CentroPobladoService:
     def find_centro_poblado_by_string(self, search_string: str) -> List[CentroPobladoResponse]:
         centros_poblados = self.centro_poblado_repository.find_by_string(search_string)
 
+        if not centros_poblados:
+            raise HTTPException(status_code=404, detail="Centro poblado no encontrado")
+
         return [CentroPobladoResponse(
             id=centro_poblado.id,
             nombre_centro_poblado=centro_poblado.nombre_centro_poblado
@@ -75,3 +78,15 @@ class CentroPobladoService:
 
     def get_all_centros_poblados_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
         return self.centro_poblado_repository.get_all_pagination(page, page_size)
+
+
+    def get_centro_poblado_by_id(self, centro_poblado_id: int) -> CentroPobladoResponse:
+        centro_poblado = self.centro_poblado_repository.get_by_id(centro_poblado_id)
+
+        if not centro_poblado:
+            raise HTTPException(status_code=404, detail="Centro poblado no encontrado")
+
+        return CentroPobladoResponse(
+            id=centro_poblado.id,
+            nombre_centro_poblado=centro_poblado.nombre_centro_poblado
+        )
