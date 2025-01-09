@@ -22,6 +22,40 @@ async def add_caserio(caserio_request: CaserioRequest, service: CaserioService =
     except HTTPException as e:
         raise e
 
+@router.get("/caserios", response_model=List[CaserioResponseWithCentroPobladoId], description="Obtiene todos los caserios")
+async def get_caserios_by_centro_poblado_id(centro_poblado_id: int | None = Query(None), caserio_service: CaserioService = Depends()):
+    try:
+        return caserio_service.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/caserios/search", response_model=List[CaserioResponse], description="Busca caserios por nombre")
+async def search_caserios_by_name(search_string: str, caserio_service: CaserioService = Depends()):
+    try:
+        return caserio_service.find_by_string(search_string)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/caserios/paginated", response_model=PaginatedResponse, description="Obtiene los caserios con paginados")
+async def get_paginated_caserios(
+    page: int = Query(1, description="Número de página a recuperar"),
+    page_size: int = Query(10, description="Número de registros por página"),
+    caserio_service: CaserioService = Depends()
+):
+    try:
+        return caserio_service.get_all_caserios_by_pagination(page, page_size)
+    except HTTPException as e:
+        raise e
+
+@router.get("/caserios/{caserio_id}", response_model=CaserioResponseWithCentroPobladoId, description="Obtiene un caserio por id")
+async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends()):
+    try:
+        return service.get_caserio_by_id(caserio_id)
+    except HTTPException as e:
+        raise e
+
 @router.put("/caserios/{caserio_id}", response_model=CaserioResponseWithCentroPobladoId, description="Actualiza un caserio")
 async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, service: CaserioService = Depends()):
     try:
@@ -34,34 +68,6 @@ async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, servi
 async def delete_caserio_by_id(caserio_id: int, service: CaserioService = Depends()):
     try:
         service.delete_caserio_by_id(caserio_id)
-        return JSONResponse(status_code=204)
-    except HTTPException as e:
-        raise
-
-
-@router.get("/caserios", response_model=List[CaserioResponseWithCentroPobladoId], description="Obtiene todos los caserios")
-async def get_caserios_by_centro_poblado_id(centro_poblado_id: int | None = Query(None), caserio_service: CaserioService = Depends()):
-    try:
-        return caserio_service.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
-    except HTTPException as e:
-        raise e
-
-
-@router.get("/caserios/search", response_model=List[CaserioResponse], description="Busca caserios por nombre")
-async def search_caserios_by_name(name: str, caserio_service: CaserioService = Depends()):
-    try:
-        return caserio_service.find_by_string(name)
-    except HTTPException as e:
-        raise e
-
-
-@router.get("/caserios/paginated", response_model=PaginatedResponse, description="Obtiene los caserios con paginados")
-async def get_paginated_caserios(
-    page: int = Query(1, description="Número de página a recuperar"),
-    per_page: int = Query(10, description="Número de registros por página"),
-    caserio_service: CaserioService = Depends()
-):
-    try:
-        return caserio_service.get_all_caserios_by_pagination(page, per_page)
+        return JSONResponse(content={"message": "Se eliminó la categoria correctamente"}, status_code=200)
     except HTTPException as e:
         raise e

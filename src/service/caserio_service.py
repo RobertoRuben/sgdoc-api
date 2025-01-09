@@ -30,6 +30,9 @@ class CaserioService:
 
 
     def update_caserio(self, caserio_id: int, caserio_request: CaserioRequest) -> CaserioResponseWithCentroPobladoId:
+        if self.caserio_repository.exists(caserio_request.nombre_caserio):
+            raise HTTPException(status_code=400, detail="Un caserio con ese nombre ya se encuentra registrado")
+
         caserio = self.caserio_repository.get_by_id(caserio_id)
         if not caserio:
             raise HTTPException(status_code=404, detail="Caserio no encontrado")
@@ -82,3 +85,14 @@ class CaserioService:
 
     def get_all_caserios_by_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
         return self.caserio_repository.get_all_pagination(page, page_size)
+
+
+    def get_caserio_by_id(self, caserio_id: int) -> Optional[CaserioResponseWithCentroPobladoId]:
+        caserio = self.caserio_repository.get_by_id(caserio_id)
+        if not caserio:
+            raise HTTPException(status_code=404, detail="Caserio no encontrado")
+
+        return CaserioResponseWithCentroPobladoId(
+            id=caserio.id,
+            nombre_caserio=caserio.nombre_caserio,
+            centro_poblado_id=caserio.centro_poblado_id)
