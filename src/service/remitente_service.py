@@ -97,5 +97,19 @@ class RemitenteService:
         ) for remitente in remitentes]
 
 
+    def get_remitente_by_id(self, remitente_id: int) -> RemitenteResponse:
+        remitente = self.remitente_repository.get_by_id(remitente_id)
+        if not remitente:
+            raise HTTPException(status_code=404, detail="Remitente no encontrado")
+        return RemitenteResponse(
+            id=remitente.id,
+            dni=remitente.dni,
+            nombres=remitente.nombres,
+            apellido_paterno=remitente.apellido_paterno,
+            apellido_materno=remitente.apellido_materno,
+            genero=remitente.genero
+        )
+
+
     def get_remitentes_with_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
         return RemitenteRepository.get_all_pagination(page, page_size)

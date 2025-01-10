@@ -30,6 +30,32 @@ async def get_remitentes(remitente_service: RemitenteService = Depends()):
     except HTTPException as e:
         raise e
 
+@router.get("/remitentes/search", response_model=List[RemitenteResponse], description="Busca remitentes por cadena de búsqueda")
+async def search_remitentes(
+    search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar remitentes"),
+    remitente_service: RemitenteService = Depends()
+):
+    try:
+        return remitente_service.find_remitentes_by_string(search_string)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/remitentes/paginated", response_model=PaginatedResponse, description="Obtiene la lista de remitentes paginada")
+async def get_remitentes(page: int = 1, page_size: int = 10, remitente_service: RemitenteService = Depends()):
+    try:
+        return remitente_service.get_remitentes_with_pagination(page, page_size)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/remitentes/{remitente_id}", response_model=RemitenteResponse, description="Obtiene un remitente por ID")
+async def get_remitente_by_id(remitente_id: int, remitente_service: RemitenteService = Depends()):
+    try:
+        return remitente_service.get_remitente_by_id(remitente_id)
+    except HTTPException as e:
+        raise e
+
 
 @router.put("/remitentes/{remitente_id}", response_model=RemitenteResponse, description="Actualiza un remitente")
 async def update_remitente(remitente_id: int, remitente_request: RemitenteRequest, remitente_service: RemitenteService = Depends()):
@@ -48,23 +74,7 @@ async def delete_remitente(remitente_id: int, remitente_service: RemitenteServic
         raise e
 
 
-@router.get("/remitentes/search", response_model=List[RemitenteResponse], description="Busca remitentes por cadena de búsqueda")
-async def search_remitentes(
-    search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar remitentes"),
-    remitente_service: RemitenteService = Depends()
-):
-    try:
-        return remitente_service.find_remitentes_by_string(search_string)
-    except HTTPException as e:
-        raise e
 
-
-@router.get("/remitentes/paginated", response_model=PaginatedResponse, description="Obtiene la lista de remitentes paginada")
-async def get_remitentes(page: int = 1, page_size: int = 10, remitente_service: RemitenteService = Depends()):
-    try:
-        return remitente_service.get_remitentes_with_pagination(page, page_size)
-    except HTTPException as e:
-        raise e
 
 
 

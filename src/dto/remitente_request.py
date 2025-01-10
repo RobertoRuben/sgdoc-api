@@ -9,7 +9,6 @@ class RemitenteRequest(BaseModel):
     genero: GeneroEnum = Field(..., description="El género es obligatorio y debe ser Masculino o Femenino")
 
     @field_validator("nombres")
-    @classmethod
     def nombres_is_not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El nombre no debe quedar en blanco")
@@ -17,15 +16,25 @@ class RemitenteRequest(BaseModel):
 
 
     @field_validator("nombres")
-    @classmethod
     def nombres_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El nombre no debe ser un número")
         return v
 
+    @field_validator("nombres")
+    def nombres_not_contains_special_characters(cls, v):
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError("El nombre no debe contener caracteres especiales, excepto espacios")
+        return v
+
+    @field_validator("nombres")
+    def nombres_not_contains_numbers(cls, v):
+        if any(char.isdigit() for char in v):
+            raise ValueError("El nombre no debe contener números")
+        return v
+
 
     @field_validator("apellido_paterno")
-    @classmethod
     def apellido_paterno_is_not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El apellido paterno no debe quedar en blanco")
@@ -33,15 +42,27 @@ class RemitenteRequest(BaseModel):
 
 
     @field_validator("apellido_paterno")
-    @classmethod
     def apellido_paterno_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El apellido paterno no debe ser un número")
         return v
 
 
+    @field_validator("apellido_paterno")
+    def apellido_paterno_not_contains_special_characters(cls, v):
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError("El apellido paterno no debe contener caracteres especiales")
+        return v
+
+
+    @field_validator("apellido_paterno")
+    def apellido_paterno_not_contains_numbers(cls, v):
+        if any(char.isdigit() for char in v):
+            raise ValueError("El apellido paterno no debe contener números")
+        return v
+
+
     @field_validator("apellido_materno")
-    @classmethod
     def apeliido_materno_is_not_blank(cls, v):
         if v.strip() == "":
             raise ValueError("El apellido materno no debe quedar en blanco")
@@ -49,8 +70,21 @@ class RemitenteRequest(BaseModel):
 
 
     @field_validator("apellido_materno")
-    @classmethod
     def apellido_materno_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El apellido materno no debe ser un número")
+        return v
+
+
+    @field_validator("apellido_materno")
+    def apellido_materno_not_contains_special_characters(cls, v):
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError("El apellido materno no debe contener caracteres especiales")
+        return v
+
+
+    @field_validator("apellido_materno")
+    def apellido_materno_not_contains_numbers(cls, v):
+        if any(char.isdigit() for char in v):
+            raise ValueError("El apellido materno no debe contener números")
         return v

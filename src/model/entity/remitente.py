@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from src.model.enum.genero_enum import GeneroEnum
 
@@ -14,4 +14,4 @@ class Remitente(SQLModel, table=True):
     apellido_materno: str = Field(sa_column=Column(Text))
     genero: GeneroEnum
 
-    documentos: list["Documento"] = Relationship(back_populates="remitente")
+    documentos: List["Documento"] = Relationship(back_populates="remitente")
