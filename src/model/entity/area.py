@@ -42,4 +42,4 @@ class Area(SQLModel, table=True):
         }
     )
 
-    trabajadores: list["Trabajador"] = Relationship(back_populates="area")
+    trabajadores: List["Trabajador"] = Relationship(back_populates="area")
