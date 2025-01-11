@@ -29,6 +29,36 @@ async def get_areas(service: AreaService = Depends()):
     except HTTPException as e:
         raise e
 
+@router.get("/areas/search", response_model=List[AreaResponse], description="Busca areas por cadena de búsqueda")
+async def search_areas(
+    search_string: str = Query(..., description="Cadena de búsqueda para encontrar areas"),
+    service: AreaService = Depends()
+):
+    try:
+        return service.find_areas_by_string(search_string)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/areas/paginated", response_model=PaginatedResponse, description="Obtiene los areas paginados")
+async def get_paginated_areas(
+    page: int = Query(1, description="Número de página a recuperar"),
+    page_size: int = Query(10, description="Número de registros por página"),
+    service: AreaService = Depends()
+):
+    try:
+        return service.get_all_areas_by_pagination(page, page_size)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/areas/{area_id}", response_model=AreaResponse, description="Obtiene un area por su ID")
+async def get_area_by_id(area_id: int, service: AreaService = Depends()):
+    try:
+        return service.get_area_by_id(area_id)
+    except HTTPException as e:
+        raise e
+
 
 @router.put("/areas/{area_id}", response_model=AreaResponse, description="Actualiza un area")
 async def update_area(area_id: int, area_request: AreaRequest, service: AreaService = Depends()):
@@ -47,24 +77,4 @@ async def delete_area_by_id(area_id: int, service: AreaService = Depends()):
         raise e
 
 
-@router.get("/areas/search", response_model=List[AreaResponse], description="Busca areas por cadena de búsqueda")
-async def search_areas(
-    search_string: str = Query(..., description="Cadena de búsqueda para encontrar areas"),
-    service: AreaService = Depends()
-):
-    try:
-        return service.find_areas_by_string(search_string)
-    except HTTPException as e:
-        raise e
 
-
-@router.get("/areas/paginated", response_model=PaginatedResponse, description="Obtiene los areas paginados")
-async def get_paginated_areas(
-    page: int = Query(1, description="Número de página a recuperar"),
-    per_page: int = Query(10, description="Número de registros por página"),
-    service: AreaService = Depends()
-):
-    try:
-        return service.get_all_areas_by_pagination(page, per_page)
-    except HTTPException as e:
-        raise e

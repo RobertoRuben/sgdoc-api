@@ -76,3 +76,14 @@ class AreaService:
 
     def get_all_areas_by_pagination(self, page:int , page_size:int) ->Dict[str, Any]:
         return self.area_repository.get_all_pagination(page, page_size)
+
+
+    def get_area_by_id(self, area_id: int) -> AreaResponse:
+        area = self.area_repository.get_area_by_id(area_id)
+        if not area:
+            raise HTTPException(status_code=404, detail="Area no encontrada")
+
+        return AreaResponse(
+            id=area.id,
+            nombre_area=area.nombre_area
+        )
