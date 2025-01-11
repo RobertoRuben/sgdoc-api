@@ -29,24 +29,6 @@ async def get_areas(service: AreaService = Depends()):
     except HTTPException as e:
         raise e
 
-
-@router.put("/areas/{area_id}", response_model=AreaResponse, description="Actualiza un area")
-async def update_area(area_id: int, area_request: AreaRequest, service: AreaService = Depends()):
-    try:
-        return service.update_area(area_id, area_request)
-    except HTTPException as e:
-        raise e
-
-
-@router.delete("/areas/{area_id}", description="Elimina un area")
-async def delete_area_by_id(area_id: int, service: AreaService = Depends()):
-    try:
-        service.delete_area_by_id(area_id)
-        return JSONResponse(content={"message": "Se eliminó el area correctamente"}, status_code=200)
-    except HTTPException as e:
-        raise e
-
-
 @router.get("/areas/search", response_model=List[AreaResponse], description="Busca areas por cadena de búsqueda")
 async def search_areas(
     search_string: str = Query(..., description="Cadena de búsqueda para encontrar areas"),
@@ -68,3 +50,31 @@ async def get_paginated_areas(
         return service.get_all_areas_by_pagination(page, page_size)
     except HTTPException as e:
         raise e
+
+
+@router.get("/areas/{area_id}", response_model=AreaResponse, description="Obtiene un area por su ID")
+async def get_area_by_id(area_id: int, service: AreaService = Depends()):
+    try:
+        return service.get_area_by_id(area_id)
+    except HTTPException as e:
+        raise e
+
+
+@router.put("/areas/{area_id}", response_model=AreaResponse, description="Actualiza un area")
+async def update_area(area_id: int, area_request: AreaRequest, service: AreaService = Depends()):
+    try:
+        return service.update_area(area_id, area_request)
+    except HTTPException as e:
+        raise e
+
+
+@router.delete("/areas/{area_id}", description="Elimina un area")
+async def delete_area_by_id(area_id: int, service: AreaService = Depends()):
+    try:
+        service.delete_area_by_id(area_id)
+        return JSONResponse(content={"message": "Se eliminó el area correctamente"}, status_code=200)
+    except HTTPException as e:
+        raise e
+
+
+
