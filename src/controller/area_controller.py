@@ -61,10 +61,10 @@ async def search_areas(
 @router.get("/areas/paginated", response_model=PaginatedResponse, description="Obtiene los areas paginados")
 async def get_paginated_areas(
     page: int = Query(1, description="Número de página a recuperar"),
-    per_page: int = Query(10, description="Número de registros por página"),
+    page_size: int = Query(10, description="Número de registros por página"),
     service: AreaService = Depends()
 ):
     try:
-        return service.get_all_areas_by_pagination(page, per_page)
+        return service.get_all_areas_by_pagination(page, page_size)
     except HTTPException as e:
         raise e
