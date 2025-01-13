@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from fastapi import HTTPException, Depends
 
 from src.dto.trabajador_response import TrabajadorResponse
@@ -112,6 +112,23 @@ class TrabajadorService:
                 nombre_area=trabajador['nombre_area']
             ) for trabajador in trabajadores
         ]
+
+
+    def get_trabajador_by_id(self, trabajador_id: int) -> Optional[TrabajadorResponse]:
+        trabajador = self.trabajador_repository.get_by_id(trabajador_id)
+
+        if not trabajador:
+            raise HTTPException(status_code=404, detail="Trabajador no encontrado")
+
+        return TrabajadorResponse(
+            id=trabajador.id,
+            dni=trabajador.dni,
+            nombres=trabajador.nombres,
+            apellido_paterno=trabajador.apellido_paterno,
+            apellido_materno=trabajador.apellido_materno,
+            genero=trabajador.genero,
+            area_id=trabajador.area_id
+        )
 
 
 
