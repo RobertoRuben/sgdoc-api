@@ -31,6 +31,37 @@ async def get_roles(rol_service: RolService = Depends()):
         raise e
 
 
+@router.get("/roles/search", response_model=List[RolReponse], description="Busca roles por cadena de búsqueda")
+async def search_roles(
+    search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar roles"),
+    rol_service: RolService = Depends()
+):
+    try:
+        return rol_service.find_rol_by_string(search_string)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/roles/paginated", response_model=PaginatedResponse, description="Obtiene los roles paginados")
+async def get_paginated_roles(
+    page: int = Query(1, description="Número de página a obtener"),
+    page_size: int = Query(10, description="Número de registros por página"),
+    rol_service: RolService = Depends()
+):
+    try:
+        return rol_service.get_roles_with_pagination(page, page_size)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/roles/{rol_id}", response_model=RolReponse, description="Obtiene un rol por su ID")
+async def get_rol_by_id(rol_id: int, rol_service: RolService = Depends()):
+    try:
+        return rol_service.get_rol_id(rol_id)
+    except HTTPException as e:
+        raise e
+
+
 @router.put("/roles/{rol_id}", response_model=RolReponse, description="Actualiza un rol")
 async def update_rol(rol_id: int, rol_request: RolRequest, rol_service: RolService = Depends()):
     try:
@@ -48,24 +79,4 @@ async def delete_rol(rol_id: int, rol_service: RolService = Depends()):
         raise e
 
 
-@router.get("/roles/search", response_model=List[RolReponse], description="Busca roles por cadena de búsqueda")
-async def search_roles(
-    search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar roles"),
-    rol_service: RolService = Depends()
-):
-    try:
-        return rol_service.find_rol_by_string(search_string)
-    except HTTPException as e:
-        raise e
 
-
-@router.get("/roles/paginated", response_model=PaginatedResponse, description="Obtiene los roles paginados")
-async def get_paginated_roles(
-    page: int = Query(1, description="Número de página a obtener"),
-    limit: int = Query(10, description="Número de registros por página"),
-    rol_service: RolService = Depends()
-):
-    try:
-        return rol_service.get_roles_with_pagination(page, limit)
-    except HTTPException as e:
-        raise e

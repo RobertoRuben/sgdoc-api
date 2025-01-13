@@ -79,3 +79,14 @@ class RolService:
         return self.rol_repository.get_all_pagination(page, page_size)
 
 
+    def get_rol_id(self, rol_id: int) -> RolReponse:
+        rol = self.rol_repository.get_by_id(rol_id)
+        if not rol:
+            raise HTTPException(status_code=404, detail="Rol no encontrado")
+
+        return RolReponse(
+            id=rol.id,
+            nombre_rol=rol.nombre_rol
+        )
+
+
