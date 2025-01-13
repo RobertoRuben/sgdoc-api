@@ -36,6 +36,13 @@ class TrabajadorRequest(BaseModel):
         return v
 
 
+    @field_validator("nombres")
+    def nombres_not_contains_special_characters(cls, v):
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError("El nombre del trabajador no debe contener caracteres especiales, excepto espacios")
+        return v
+
+
     @field_validator("apellido_paterno")
     def apellido_paterno_is_not_blank(cls, v):
         if v.strip() == "":
@@ -50,6 +57,13 @@ class TrabajadorRequest(BaseModel):
         return v
 
 
+    @field_validator("apellido_paterno")
+    def apellido_paterno_not_contains_special_characters(cls, v):
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError("El apellido paterno del trabajador no debe contener caracteres especiales, excepto espacios")
+        return v
+
+
     @field_validator("apellido_materno")
     def apellido_materno_is_not_blank(cls, v):
         if v.strip() == "":
@@ -61,6 +75,13 @@ class TrabajadorRequest(BaseModel):
     def apellido_materno_is_not_numeric(cls, v):
         if v.isnumeric():
             raise ValueError("El apellido materno no debe ser un número")
+        return v
+
+
+    @field_validator("apellido_materno")
+    def apellido_materno_not_contains_special_characters(cls, v):
+        if not all(char.isalnum() or char.isspace() for char in v):
+            raise ValueError("El apellido materno del trabajador no debe contener caracteres especiales, excepto espacios")
         return v
 
 
