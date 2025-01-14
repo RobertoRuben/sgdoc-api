@@ -109,3 +109,27 @@ class UsuarioService:
                 trabajador_nombre=usuario['nombres']
             ) for usuario in usuarios
         ]
+
+
+    def get_usuario_by_id(self, usuario_id: int) -> UsuarioResponse:
+        usuario = self.usuario_repository.get_by_id(usuario_id)
+        if not usuario:
+            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+        return UsuarioResponse(
+            id=usuario.id,
+            nombre_usuario=usuario.nombre_usuario,
+            fecha_creacion=usuario.fecha_creacion,
+            fecha_actualizacion=usuario.fecha_actualizacion,
+            rol_id=usuario.rol_id,
+            trabajador_id=usuario.trabajador_id,
+            is_active=usuario.is_active
+        )
+
+
+    def update_usuario_password(self, usuario_id: int, contrasena: str) -> None:
+        if not contrasena:
+            raise HTTPException(status_code=400, detail="La contraseña no puede estar vacía")
+        hashed_contrasena = self.argon_2_security.hash_password(contrasena)
+
+        self.usuario_repository.update_password_by_id(usuario_id, hashed_contrasena)
