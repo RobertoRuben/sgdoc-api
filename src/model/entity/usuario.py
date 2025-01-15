@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional,List
 from datetime import datetime
 from src.model.entity.rol import Rol
 from src.model.entity.trabajador import Trabajador
@@ -20,6 +20,6 @@ class Usuario(SQLModel, table=True):
     rol_id: int = Field(foreign_key="roles.id")
     trabajador_id: int = Field(foreign_key="trabajadores.id", unique=True)
 
-    roles: Rol | None = Relationship(back_populates="usuarios")
-    trabajador: Trabajador | None = Relationship(back_populates="usuarios")
-    recepcion_documentos: list["RecepcionDocumento"] = Relationship(back_populates="usuario")
+    roles: Optional["Rol"] = Relationship(back_populates="usuarios")
+    trabajador: Optional["Trabajador"] = Relationship(back_populates="usuarios")
+    recepcion_documentos: List["RecepcionDocumento"] = Relationship(back_populates="usuario")

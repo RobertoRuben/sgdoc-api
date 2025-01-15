@@ -45,6 +45,7 @@ class UsuarioRepository:
             }
         }
 
+
     @staticmethod
     def update_user(usuario: Usuario) -> Usuario:
         with Session(engine) as session:
@@ -61,6 +62,7 @@ class UsuarioRepository:
             session.delete(usuario)
             session.commit()
 
+
     @staticmethod
     def update_status_user_by_id(usuario_id: int, active: bool) -> None:
         with Session(engine) as session:
@@ -70,6 +72,7 @@ class UsuarioRepository:
                 .values(is_active=active)
             )
             session.commit()
+
 
     @staticmethod
     def get_by_id(usuario_id: int) -> Optional[Usuario]:
@@ -114,12 +117,24 @@ class UsuarioRepository:
 
         return usuarios_data
 
+
     @staticmethod
     def exists_by_id(usuario_id: int) -> bool:
         with Session(engine) as session:
             exists = session.exec(select(Usuario).where(Usuario.id == usuario_id)).first() is not None
         return exists
 
+
+    @staticmethod
+    def update_password_by_id(usuario_id: int, new_password: str) ->bool:
+        with Session(engine) as session:
+            session.exec(
+                update(Usuario)
+                .where(Usuario.id == usuario_id)
+                .values(contrasena=new_password)
+            )
+            session.commit()
+        return True
 
 
 

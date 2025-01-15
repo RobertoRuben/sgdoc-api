@@ -24,6 +24,17 @@ async def add_usuario(usuario_request: UsuarioRequest, service: UsuarioService =
         raise e
 
 
+@router.get("/usuarios/search", response_model=List[UsuarioDetailsResponse], description="Busca usuarios por nombre de usuario")
+async def find_by_string(
+    search_string: str = Query(..., description="Nombre del usuario a buscar"),
+    service: UsuarioService = Depends()
+):
+    try:
+        return service.find_by_string(search_string)
+    except HTTPException as e:
+        raise e
+
+
 @router.get("/usuarios/paginated", response_model=PaginatedResponse, description="Obtiene los usuarios con paginados")
 async def get_paginated_usuarios(
     page: int = Query(1, description="Número de página a recuperar", ge=1),
@@ -49,6 +60,27 @@ async def update_usuario(
 ):
     try:
         return service.update_user(usuario_id, usuario_request)
+    except HTTPException as e:
+        raise e
+
+
+@router.get("/usuarios/{usuario_id}", response_model=UsuarioResponse, description="Obtiene un usuario por ID")
+async def get_usuario(usuario_id: int, service: UsuarioService = Depends()):
+    try:
+        return service.get_usuario_by_id(usuario_id)
+    except HTTPException as e:
+        raise e
+
+
+@router.patch("/usuarios/{usuario_id}/password", description="Actualiza la contraseña de un usuario")
+async def update_usuario_password(
+    usuario_id: int,
+    contrasena: str = Query(..., description="Nueva contraseña del usuario"),
+    service: UsuarioService = Depends()
+):
+    try:
+        service.update_usuario_password(usuario_id, contrasena)
+        return JSONResponse(status_code=200, content={"message": "Contraseña actualizada correctamente"})
     except HTTPException as e:
         raise e
 
@@ -87,12 +119,3 @@ async def update_usuario_status(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.get("/usuarios/search", response_model=List[UsuarioDetailsResponse], description="Busca usuarios por nombre de usuario")
-async def find_by_string(
-    search_string: str = Query(..., description="Nombre del usuario a buscar"),
-    service: UsuarioService = Depends()
-):
-    try:
-        return service.find_by_string(search_string)
-    except HTTPException as e:
-        raise e
