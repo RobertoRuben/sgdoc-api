@@ -17,6 +17,7 @@ from src.controller.recepcion_documento_controller import router as recepcion_do
 from src.controller.derivacion_controller import router as derivacion_router, derivaciones_tag_metadata
 from src.controller.detalle_derivacion_controller import router as detalle_derivacion_router, detalle_derivaciones_tag_metadata
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
+from src.controller.documents_by_current_date_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -33,7 +34,8 @@ tags_metadata = [
     recepcion_documento_tag_metadata,
     derivaciones_tag_metadata,
     detalle_derivaciones_tag_metadata,
-    estado_documento_tag_metadata
+    estado_documento_tag_metadata,
+    documentos_by_current_date_tag_metadata
 ]
 
 @asynccontextmanager
@@ -73,3 +75,5 @@ app.include_router(recepcion_documento_router, prefix="/api/v1")
 app.include_router(derivacion_router, prefix="/api/v1")
 app.include_router(detalle_derivacion_router, prefix="/api/v1")
 app.include_router(estado_documento_router, prefix="/api/v1")
+
+app.include_router(documents_by_current_date_router, prefix="/api/v1")
