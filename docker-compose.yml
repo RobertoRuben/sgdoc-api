@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    image: sgdoc-api:windows-dev
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      TZ: America/Lima
+    deploy:
+      resources:
+        limits:
+          memory: 4g
+        reservations:
+          memory: 2g
+    restart: unless-stopped
+    volumes:
+      - type: bind
+        source: ./src
+        target: C:/app/src
+
+networks:
+  default:
+    external: false
