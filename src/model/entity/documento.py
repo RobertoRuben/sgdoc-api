@@ -39,9 +39,9 @@ class Documento(SQLModel, table=True):
     centro_poblado_id: int | None = Field(default=None, foreign_key="centros_poblados.id")
     centro_poblado: CentroPoblado | None = Relationship(back_populates="documentos")
 
-    recepcion_documentos: list["RecepcionDocumento"] = Relationship(back_populates="documento")
+    recepcion_documentos: List["RecepcionDocumento"] = Relationship(back_populates="documento", cascade_delete=True)
 
-    derivaciones: list["Derivacion"] = Relationship(back_populates="documento")
+    derivaciones: List["Derivacion"] = Relationship(back_populates="documento", cascade_delete=True)
 
-    estados_documento: List["EstadoDocumento"] = Relationship(back_populates="documento")
+    estados_documento: List["EstadoDocumento"] = Relationship(back_populates="documento", cascade_delete=True)
 

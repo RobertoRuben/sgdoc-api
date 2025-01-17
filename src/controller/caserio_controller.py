@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
 from src.service.caserio_service import CaserioService
 from src.dto.caserio_request import CaserioRequest
-from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId
+from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
 from src.dto.pagination_response import PaginatedResponse
 
 
@@ -29,6 +29,12 @@ async def get_caserios_by_centro_poblado_id(centro_poblado_id: int | None = Quer
     except HTTPException as e:
         raise e
 
+@router.get("/caserios/names", response_model=List[CaserioSimpleResponse], description="Obtiene los nombres de los caserios")
+async def get_caserios_names(caserio_service: CaserioService = Depends()):
+    try:
+        return caserio_service.get_caserios_names()
+    except HTTPException as e:
+        raise e
 
 @router.get("/caserios/search", response_model=List[CaserioResponse], description="Busca caserios por nombre")
 async def search_caserios_by_name(search_string: str, caserio_service: CaserioService = Depends()):

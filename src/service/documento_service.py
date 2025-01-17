@@ -115,6 +115,9 @@ class DocumentoService:
     def get_documentos_by_current_date(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         return self.documento_repository.get_documents_by_current_date(page, page_size)
 
+    def get_all_documents(self, p_page: int, p_page_size: int) -> Dict[str, Any]:
+        return self.documento_repository.get_all_documents_paginated(p_page, p_page_size)
+
 
     def search_entered_documents(self, p_page: int, p_page_size: int, p_dni: int, p_nombre_caserio: str,
                                  p_nombre_centro_poblado: str,
@@ -123,3 +126,9 @@ class DocumentoService:
         return self.documento_repository.search_entered_documents(p_page, p_page_size, p_dni, p_nombre_caserio,
                                                                   p_nombre_centro_poblado, p_nombre_ambito,
                                                                   p_nombre_categoria, p_fecha_ingreso)
+
+    def get_document_by_id(self, documento_id: int) -> Documento:
+        documento = self.documento_repository.get_document_by_id(documento_id)
+        if not documento:
+            raise HTTPException(status_code=404, detail="Documento no encontrado")
+        return documento

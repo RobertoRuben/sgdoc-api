@@ -39,6 +39,13 @@ class CaserioRepository:
             caserio = session.get(Caserio, caserio_id)
         return caserio
 
+    @staticmethod
+    def get_caserios_names() -> List[Caserio]:
+        with Session(engine) as session:
+            # Option 1: If you only need the names
+            caserios = session.exec(select(Caserio.id, Caserio.nombre_caserio)).all()
+            return caserios
+
 
     @staticmethod
     def exists(nombre_caserio: str) -> bool:

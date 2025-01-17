@@ -70,6 +70,15 @@ async def create_documento(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/documentos", response_model=PaginatedResponse, description="Obtiene todos los documentos")
+async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_service: DocumentoService = Depends()):
+    try:
+        return documento_service.get_all_documents(p_page, p_page_size)
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @router.get(
     "/documentos/buscar",
     response_model=PaginatedResponse,
@@ -98,6 +107,36 @@ async def search_entered_documents(
             p_fecha_ingreso=p_fecha_ingreso
         )
         return resultados
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/documentos/fecha_actual", response_model=PaginatedResponse, description="Obtiene los documentos con fecha actual")
+async def get_documents_by_current_date(
+        page: int = 1,
+        page_size: int = 10,
+        documento_service: DocumentoService = Depends()
+):
+    try:
+        return documento_service.get_documentos_by_current_date(page, page_size)
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/documentos/{documento_id}", response_model=DocumentoResponse, description="Obtiene un documento por su ID")
+async def get_documento_by_id(
+    documento_id: int,
+    documento_service: DocumentoService = Depends()
+):
+    try:
+        documento = documento_service.get_document_by_id(documento_id)
+        if not documento:
+            raise HTTPException(status_code=404, detail="Documento no encontrado")
+        return documento
     except HTTPException as he:
         raise he
     except Exception as e:
@@ -184,17 +223,6 @@ async def descargar_documento(
     return StreamingResponse(file_like, media_type="application/pdf", headers=headers)
 
 
-@router.get("/documentos/fecha_actual", response_model=PaginatedResponse, description="Obtiene los documentos con fecha actual")
-async def get_documents_by_current_date(
-        page: int = 1,
-        page_size: int = 10,
-        documento_service: DocumentoService = Depends()
-):
-    try:
-        return documento_service.get_documentos_by_current_date(page, page_size)
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+
 
 

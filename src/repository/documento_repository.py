@@ -35,8 +35,10 @@ class DocumentoRepository:
     @staticmethod
     def delete_document_by_id(documento_id: int):
         with Session(engine) as session:
-            session.exec(select(Documento).where(Documento.id == documento_id)).delete()
-            session.commit()
+            documento = session.get(Documento, documento_id)
+            if documento:
+                session.delete(documento)
+                session.commit()
 
 
     @staticmethod
@@ -86,6 +88,29 @@ class DocumentoRepository:
                         "total_pages": 0
                     }
                 }
+
+
+    @staticmethod
+    def get_all_documents_paginated(p_page: int, p_page_size: int) -> Dict[str, Any]:
+        with Session(engine) as session:
+            query = text("""SELECT fn_get_documentos_paginated(:p_page, :p_page_size)""")
+            connection = session.connection()
+            result = connection.execute(query, {"p_page": p_page, "p_page_size": p_page_size}).scalar()
+
+            if result:
+                return result
+
+            else:
+                return {
+                    "data": [],
+                    "pagination": {
+                        "current_page": p_page,
+                        "page_size": p_page_size,
+                        "total_items": 0,
+                        "total_pages": 0
+                    }
+                }
+
 
 
     @staticmethod

@@ -2,7 +2,7 @@ from typing import List, Optional, Dict, Any
 from  fastapi import HTTPException, Depends
 from src.model.entity.caserio import Caserio
 from src.dto.caserio_request import CaserioRequest
-from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId
+from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
 from src.repository.caserio_repository import CaserioRepository
 
 class CaserioService:
@@ -27,6 +27,16 @@ class CaserioService:
             nombre_caserio=caserio.nombre_caserio,
             centro_poblado_id=caserio.centro_poblado_id
         )
+
+    def get_caserios_names(self) -> List[CaserioSimpleResponse]:
+        caserios = self.caserio_repository.get_caserios_names()
+
+        return [
+            CaserioSimpleResponse(
+                id=caserio.id,
+                nombre_caserio=caserio.nombre_caserio
+            ) for caserio in caserios
+        ]
 
 
     def update_caserio(self, caserio_id: int, caserio_request: CaserioRequest) -> CaserioResponseWithCentroPobladoId:

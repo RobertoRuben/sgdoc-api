@@ -6,6 +6,11 @@ class CaserioResponse(BaseModel):
     centro_poblado_nombre: str | None
 
 
+class CaserioSimpleResponse(BaseModel):
+    id: int
+    nombre_caserio: str
+
+
 class CaserioResponseWithCentroPobladoId(BaseModel):
     id: int
     nombre_caserio: str
