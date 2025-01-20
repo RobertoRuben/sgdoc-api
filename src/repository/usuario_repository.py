@@ -144,7 +144,10 @@ class UsuarioRepository:
         """
         with Session(engine) as session:
             return session.exec(
-                select(Usuario).where(Usuario.nombre_usuario == username)
+                select(Usuario, Trabajador, Rol)
+                .join(Rol, Usuario.rol_id == Rol.id)
+                .join(Trabajador, Usuario.trabajador_id == Trabajador.id)
+                .where(Usuario.nombre_usuario == username)
             ).first()
 
 

@@ -19,13 +19,16 @@ class AuthService:
         self.token_manager = token_manager
 
     def authenticate_user(self, auth_request: AuthRequest) -> AuthResponse:
-        user: Optional[Usuario] = self.usuario_repository.find_user_by_username(auth_request.username)
-        if not user:
+        user_data = self.usuario_repository.find_user_by_username(auth_request.username)
+        if not user_data:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Usuario o contraseña incorrectos",
                 headers={"WWW-Authenticate": "Bearer"},
             )
+
+        user, trabajador, rol = user_data
+
         if not user.is_active:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -48,7 +51,10 @@ class AuthService:
         return AuthResponse(
             access_token=access_token,
             token_type="bearer",
-            refresh_token=refresh_token
+            refresh_token=refresh_token,
+            user_id=user.id,
+            rol_name=rol.nombre_rol,
+            area_id=trabajador.area_id
         )
 
 
@@ -93,5 +99,6 @@ class AuthService:
 
         return AuthResponse(
             access_token=new_access_token,
-            token_type="bearer"
+            token_type="bearer",
+
         )

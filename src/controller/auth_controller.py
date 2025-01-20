@@ -25,13 +25,17 @@ def login_for_access_token(
     return auth_service.authenticate_user(auth_request)
 
 
-@router.get("/me")
+@router.get("/me", response_model=UserInfoResponse)
 def read_users_me(current_user = Depends(get_current_user)):
+    user, trabajador, rol = current_user
+
     return UserInfoResponse(
-        id=current_user.id,
-        username=current_user.nombre_usuario,
-        rol_id=current_user.rol_id,
-        is_active=current_user.is_active
+        id=user.id,
+        username=user.nombre_usuario,
+        rol_id=user.rol_id,
+        rol_name=rol.nombre_rol,
+        is_active=user.is_active,
+        area_id=trabajador.area_id
     )
 
 
