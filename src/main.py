@@ -1,7 +1,9 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from src.db.database import create_db_and_tables
+from src.controller.auth_controller import get_current_user
+from src.controller.auth_controller import router as auth_router
 from src.controller.remitente_controller import router as remitente_router, remitentes_tag_metadata
 from src.controller.categoria_controller import router as categoria_router, categorias_tag_metadata
 from src.controller.ambito_controller import router as ambito_router, ambitos_tag_metadata
@@ -54,26 +56,27 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Permitir cualquier dominio de origen
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Permitir cualquier método
-    allow_headers=["*"]   # Permitir cualquier cabecera
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
-app.include_router(remitente_router, prefix="/api/v1")
-app.include_router(categoria_router, prefix="/api/v1")
-app.include_router(ambito_router, prefix="/api/v1")
-app.include_router(centro_poblado_router, prefix="/api/v1")
-app.include_router(caserio_router, prefix="/api/v1")
-app.include_router(rol_router, prefix="/api/v1")
-app.include_router(area_router, prefix="/api/v1")
-app.include_router(comunicacion_area_router, prefix="/api/v1")
-app.include_router(trabajador_router, prefix="/api/v1")
-app.include_router(usuario_router, prefix="/api/v1")
-app.include_router(documento_router, prefix="/api/v1")
-app.include_router(recepcion_documento_router, prefix="/api/v1")
-app.include_router(derivacion_router, prefix="/api/v1")
-app.include_router(detalle_derivacion_router, prefix="/api/v1")
-app.include_router(estado_documento_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
+app.include_router(remitente_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(categoria_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(ambito_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(centro_poblado_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(caserio_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(rol_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(area_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(comunicacion_area_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(trabajador_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(usuario_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(recepcion_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(detalle_derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(estado_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 
-app.include_router(documents_by_current_date_router, prefix="/api/v1")
+app.include_router(documents_by_current_date_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])

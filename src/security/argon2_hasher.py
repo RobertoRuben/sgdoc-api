@@ -1,7 +1,6 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError, VerificationError
 
-
 class Argon2PasswordHasher:
     def __init__(self):
         self.password_hasher = PasswordHasher()

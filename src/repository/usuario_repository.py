@@ -137,6 +137,20 @@ class UsuarioRepository:
         return True
 
 
+    @staticmethod
+    def find_user_by_username(username: str) -> Optional[Usuario]:
+        """
+        Retorna la entidad Usuario si existe, caso contrario None.
+        """
+        with Session(engine) as session:
+            return session.exec(
+                select(Usuario, Trabajador, Rol)
+                .join(Rol, Usuario.rol_id == Rol.id)
+                .join(Trabajador, Usuario.trabajador_id == Trabajador.id)
+                .where(Usuario.nombre_usuario == username)
+            ).first()
+
+
 
 
 
