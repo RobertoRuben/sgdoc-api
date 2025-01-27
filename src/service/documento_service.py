@@ -63,6 +63,7 @@ class DocumentoService:
             fecha_ingreso=created_documento.fecha_ingreso
         )
 
+
     def update_documento(self, documento_id: int,
                          documento_update_request: DocumentoUpdateRequest) -> DocumentoResponse:
         documento = self.documento_repository.get_document_by_id(documento_id)
@@ -96,11 +97,13 @@ class DocumentoService:
             fecha_ingreso=updated_documento.fecha_ingreso
         )
 
+
     def delete_document(self, documento_id: int) -> None:
         if not self.documento_repository.exists_by_id(documento_id):
             raise HTTPException(status_code=404, detail="Documento no encontrado")
 
         self.documento_repository.delete_document_by_id(documento_id)
+
 
     def descargar_documento(self, documento_id: int) -> tuple[bytes, str]:
         if not self.documento_repository.exists_by_id(documento_id):
@@ -112,20 +115,24 @@ class DocumentoService:
 
         return documento_bytes, nombre
 
+
     def get_documentos_by_current_date(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         return self.documento_repository.get_documents_by_current_date(page, page_size)
+
 
     def get_all_documents(self, p_page: int, p_page_size: int) -> Dict[str, Any]:
         return self.documento_repository.get_all_documents_paginated(p_page, p_page_size)
 
 
-    def search_entered_documents(self, p_page: int, p_page_size: int, p_dni: int, p_nombre_caserio: str,
-                                 p_nombre_centro_poblado: str,
-                                 p_nombre_ambito: str, p_nombre_categoria: str, p_fecha_ingreso: date):
+    def search_entered_documents(self, p_page: int, p_page_size: int, p_dni: int, p_id_caserio: int,
+                                 p_id_centro_poblado: int, p_id_ambito: int, p_nombre_categoria: str,
+                                 p_fecha_ingreso: date):
 
-        return self.documento_repository.search_entered_documents(p_page, p_page_size, p_dni, p_nombre_caserio,
-                                                                  p_nombre_centro_poblado, p_nombre_ambito,
-                                                                  p_nombre_categoria, p_fecha_ingreso)
+        return self.documento_repository.search_entered_documents(
+            p_page, p_page_size, p_dni, p_id_caserio, p_id_centro_poblado, p_id_ambito,
+            p_nombre_categoria, p_fecha_ingreso
+        )
+
 
     def get_document_by_id(self, documento_id: int) -> Documento:
         documento = self.documento_repository.get_document_by_id(documento_id)

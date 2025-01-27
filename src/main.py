@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from src.db.database import create_db_and_tables
@@ -20,6 +20,18 @@ from src.controller.derivacion_controller import router as derivacion_router, de
 from src.controller.detalle_derivacion_controller import router as detalle_derivacion_router, detalle_derivaciones_tag_metadata
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
 from src.controller.documents_by_current_date_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
+import logging
+# Configurar el registro
+logging.basicConfig(level=logging.INFO)
+
+allowed_subnets = [
+    "127.0.0.1",  # Permitir acceso local
+    "192.168.1.",
+    "192.168.2.",  # Agregamos esta subred
+    "172.23.32.",
+    "172.25.208.",
+    "172.27.32."
+]
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -48,15 +60,25 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="SGDOC API",
     description="API para el Sistema de Gestión de Documentos",
-    version="1.0.0",
+    version="0.1.0",
     openapi_tags=tags_metadata,
     debug=True,
     lifespan=lifespan
 )
 
+@app.middleware("http")
+async def ip_restriction_middleware(request: Request, call_next):
+    client_ip = request.client.host
+    logging.info(f"Client IP: {client_ip}")  # Registro de la IP del cliente
+    if not any(client_ip.startswith(subnet) for subnet in allowed_subnets):
+        logging.warning(f"Access denied for IP: {client_ip}")
+        raise HTTPException(status_code=403, detail="Access forbidden: your IP address is not allowed")
+    response = await call_next(request)
+    return response
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"],  # Puedes restringir esto más si es necesario
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -78,5 +100,4 @@ app.include_router(recepcion_documento_router, prefix="/api/v1", dependencies=[D
 app.include_router(derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(detalle_derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(estado_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-
 app.include_router(documents_by_current_date_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])

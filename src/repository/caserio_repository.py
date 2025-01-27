@@ -42,8 +42,10 @@ class CaserioRepository:
     @staticmethod
     def get_caserios_names() -> List[Caserio]:
         with Session(engine) as session:
-            # Option 1: If you only need the names
-            caserios = session.exec(select(Caserio.id, Caserio.nombre_caserio)).all()
+            caserios = session.exec(
+                select(Caserio.id, Caserio.nombre_caserio)
+                .where(Caserio.centro_poblado_id == None)
+            ).all()
             return caserios
 
 

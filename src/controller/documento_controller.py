@@ -87,10 +87,10 @@ async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_se
 async def search_entered_documents(
     p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
-    p_dni: Optional[int] = Query(None, ge=10000000, le=99999999, description="DNI de 8 dígitos para filtrar"),
-    p_nombre_caserio: Optional[str] = Query(None, description="Nombre del caserío"),
-    p_nombre_centro_poblado: Optional[str] = Query(None, description="Nombre del centro poblado"),
-    p_nombre_ambito: Optional[str] = Query(None, description="Nombre del ámbito"),
+    p_dni: Optional[int] = Query(None, ge=1, le=99999999, description="DNI de 8 dígitos para filtrar"),
+    p_id_caserio: Optional[int] = Query(None, description="ID del caserío"),
+    p_id_centro_poblado: Optional[int] = Query(None, description="ID del centro poblado"),
+    p_id_ambito: Optional[int] = Query(None, description="ID del ámbito"),
     p_nombre_categoria: Optional[str] = Query(None, description="Nombre de la categoría"),
     p_fecha_ingreso: Optional[date] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
     documento_service: DocumentoService = Depends()
@@ -100,9 +100,9 @@ async def search_entered_documents(
             p_page=p_page,
             p_page_size=p_page_size,
             p_dni=p_dni,
-            p_nombre_caserio=p_nombre_caserio,
-            p_nombre_centro_poblado=p_nombre_centro_poblado,
-            p_nombre_ambito=p_nombre_ambito,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
             p_nombre_categoria=p_nombre_categoria,
             p_fecha_ingreso=p_fecha_ingreso
         )

@@ -15,6 +15,7 @@ if TYPE_CHECKING:
     from src.model.entity.centro_poblado import CentroPoblado
     from src.model.entity.estado_documento import EstadoDocumento
 
+
 class Documento(SQLModel, table=True):
     __tablename__ = "documentos"
     id: int | None = Field(default=None, primary_key=True)
