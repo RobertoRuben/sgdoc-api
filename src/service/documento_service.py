@@ -10,15 +10,15 @@ from src.dto.remitente_request import RemitenteRequest
 from src.repository.documento_repository import DocumentoRepository
 from src.repository.remitente_repository import RemitenteRepository
 
-
 class DocumentoService:
 
     def __init__(self, documento_repository: DocumentoRepository = Depends(), remitente_repository: RemitenteRepository = Depends()):
         self.documento_repository = documento_repository
         self.remitente_repository = remitente_repository
 
-    def add_documento(self, remitente_request: RemitenteRequest, documento_request: DocumentoRequest) -> DocumentoResponse:
 
+    #Crear un documento
+    def add_documento(self, remitente_request: RemitenteRequest, documento_request: DocumentoRequest) -> DocumentoResponse:
         if self.documento_repository.exists_by_name(documento_request.nombre):
             raise HTTPException(status_code=400, detail="Un documento con ese nombre ya existe en la base de datos")
 
@@ -64,8 +64,8 @@ class DocumentoService:
         )
 
 
-    def update_documento(self, documento_id: int,
-                         documento_update_request: DocumentoUpdateRequest) -> DocumentoResponse:
+    #Actualizar un documento
+    def update_documento(self, documento_id: int, documento_update_request: DocumentoUpdateRequest) -> DocumentoResponse:
         documento = self.documento_repository.get_document_by_id(documento_id)
 
         if not documento:
@@ -98,6 +98,7 @@ class DocumentoService:
         )
 
 
+    #Eliminar un documento por id
     def delete_document(self, documento_id: int) -> None:
         if not self.documento_repository.exists_by_id(documento_id):
             raise HTTPException(status_code=404, detail="Documento no encontrado")
@@ -105,6 +106,15 @@ class DocumentoService:
         self.documento_repository.delete_document_by_id(documento_id)
 
 
+    #Obtener un documento por su id
+    def get_document_by_id(self, documento_id: int) -> Documento:
+        documento = self.documento_repository.get_document_by_id(documento_id)
+        if not documento:
+            raise HTTPException(status_code=404, detail="Documento no encontrado")
+        return documento
+
+
+    #Descargar un documento por su id
     def descargar_documento(self, documento_id: int) -> tuple[bytes, str]:
         if not self.documento_repository.exists_by_id(documento_id):
             raise HTTPException(status_code=404, detail="Documento no encontrado")
@@ -116,26 +126,87 @@ class DocumentoService:
         return documento_bytes, nombre
 
 
+    #Obtener todos los documentos paginados en la fecha actual
     def get_documentos_by_current_date(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         return self.documento_repository.get_documents_by_current_date(page, page_size)
 
 
+    #Obtener todos los documentos paginados
     def get_all_documents(self, p_page: int, p_page_size: int) -> Dict[str, Any]:
         return self.documento_repository.get_all_documents_paginated(p_page, p_page_size)
 
 
-    def search_entered_documents(self, p_page: int, p_page_size: int, p_dni: int, p_id_caserio: int,
-                                 p_id_centro_poblado: int, p_id_ambito: int, p_nombre_categoria: str,
-                                 p_fecha_ingreso: date):
-
+    #Buscar los documentos con paginacion
+    def search_entered_documents(
+            self,
+            p_page: int,
+            p_page_size: int,
+            p_dni: int,
+            p_id_caserio: int,
+            p_id_centro_poblado: int,
+            p_id_ambito: int,
+            p_nombre_categoria: str,
+            p_fecha_ingreso: date
+    ) -> Dict[str, Any]:
         return self.documento_repository.search_entered_documents(
-            p_page, p_page_size, p_dni, p_id_caserio, p_id_centro_poblado, p_id_ambito,
-            p_nombre_categoria, p_fecha_ingreso
+            p_page,
+            p_page_size,
+            p_dni,
+            p_id_caserio,
+            p_id_centro_poblado,
+            p_id_ambito,
+            p_nombre_categoria,
+            p_fecha_ingreso
         )
 
 
-    def get_document_by_id(self, documento_id: int) -> Documento:
-        documento = self.documento_repository.get_document_by_id(documento_id)
-        if not documento:
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
-        return documento
+    #Obtener todos los documentos enviados mediante el id del area origen
+    def get_sent_documents_by_area_id(
+            self,
+            p_area_origen_id: int,
+            p_search_document: Optional[int] = None,
+            p_id_caserio: Optional[int] = None,
+            p_id_centro_poblado: Optional[int] = None,
+            p_id_ambito: Optional[int] = None,
+            p_nombre_categoria: Optional[str] = None,
+            p_fecha_ingreso: Optional[str] = None,
+            p_page: int = 1,
+            p_page_size: int = 10
+    ) -> Dict[str, Any]:
+        return self.documento_repository.get_sent_documents_by_area_id(
+            p_area_origen_id=p_area_origen_id,
+            p_search_document=p_search_document,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
+            p_nombre_categoria=p_nombre_categoria,
+            p_fecha_ingreso=p_fecha_ingreso,
+            p_page=p_page,
+            p_page_size=p_page_size
+        )
+
+
+    #Obtener todos los documentos recibidos mediante el area destino
+    def get_received_documents_by_area_id(
+            self,
+            p_area_destino_id: int,
+            p_search_document: Optional[int] = None,
+            p_id_caserio: Optional[int] = None,
+            p_id_centro_poblado: Optional[int] = None,
+            p_id_ambito: Optional[int] = None,
+            p_nombre_categoria: Optional[str] = None,
+            p_fecha_ingreso: Optional[str] = None,
+            p_page: int = 1,
+            p_page_size: int = 10
+    ) -> Dict[str, Any]:
+        return self.documento_repository.get_received_documents_by_area_id(
+            p_area_destino_id=p_area_destino_id,
+            p_search_document=p_search_document,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
+            p_nombre_categoria=p_nombre_categoria,
+            p_fecha_ingreso=p_fecha_ingreso,
+            p_page=p_page,
+            p_page_size=p_page_size
+        )
