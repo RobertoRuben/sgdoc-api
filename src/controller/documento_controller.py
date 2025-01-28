@@ -1,15 +1,15 @@
 from datetime import date
-from typing import List, Optional
 from io import BytesIO
+from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File, Form, Path
 from starlette.responses import StreamingResponse
 from src.dto.documento_request import DocumentoRequest
-from src.dto.documento_update_request import DocumentoUpdateRequest
 from src.dto.documento_response import DocumentoResponse
-from src.dto.remitente_request import RemitenteRequest
+from src.dto.documento_update_request import DocumentoUpdateRequest
 from src.dto.pagination_response import PaginatedResponse
-from src.service.documento_service import DocumentoService
+from src.dto.remitente_request import RemitenteRequest
 from src.model.enum.genero_enum import GeneroEnum
+from src.service.documento_service import DocumentoService
 
 router = APIRouter(tags=["Documentos"])
 documentos_tag_metadata = {
@@ -17,6 +17,7 @@ documentos_tag_metadata = {
     "description": "Esta sección proporciona los endpoints para gestionar las entidades de Documentos, "
                    "incluyendo la creación, recuperación, actualización, eliminación y búsqueda de registros de Documentos.",
 }
+
 
 @router.post("/documentos", response_model=DocumentoResponse, description="Crea un nuevo documento")
 async def create_documento(
@@ -70,6 +71,7 @@ async def create_documento(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/documentos", response_model=PaginatedResponse, description="Obtiene todos los documentos")
 async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_service: DocumentoService = Depends()):
     try:
@@ -78,6 +80,7 @@ async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_se
         raise he
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get(
     "/documentos/buscar",
