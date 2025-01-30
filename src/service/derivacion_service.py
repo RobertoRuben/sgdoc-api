@@ -31,7 +31,8 @@ class DerivacionService:
         new_derivacion = Derivacion(
             area_origen_id=derivacion_request.area_origen_id,
             area_destino_id=derivacion_request.area_destino_id,
-            documento_id=derivacion_request.documento_id
+            documento_id=derivacion_request.documento_id,
+            usuario_id=derivacion_request.usuario_id
         )
         created_derivacion = self.derivacion_repository.add(new_derivacion)
 
@@ -40,8 +41,10 @@ class DerivacionService:
             fecha=created_derivacion.fecha,
             area_origen_id=created_derivacion.area_origen_id,
             area_destino_id=created_derivacion.area_destino_id,
-            documento_id=created_derivacion.documento_id
+            documento_id=created_derivacion.documento_id,
+            usuario_id=created_derivacion.usuario_id
         )
+
 
     def get_all_derivaciones(
             self,
@@ -52,6 +55,7 @@ class DerivacionService:
             documento_id_filtro: int = None
     ) -> Dict[str, Any]:
         return self.derivacion_repository.get_all(page, page_size, fecha_filtro, estado_filtro, documento_id_filtro)
+
 
     def update_derivacion(self, derivacion_id: int, derivacion_request: DerivacionRequest) -> DerivacionResponse:
         derivacion = self.derivacion_repository.get_by_id(derivacion_id)
@@ -79,8 +83,10 @@ class DerivacionService:
             fecha=derivacion.fecha,
             area_origen_id=derivacion.area_origen_id,
             area_destino_id=derivacion.area_destino_id,
-            documento_id=derivacion.documento_id
+            documento_id=derivacion.documento_id,
+            usuario_id=derivacion.usuario_id
         )
+
 
     def delete_derivacion(self, derivacion_id: int) -> None:
         derivacion = self.derivacion_repository.get_by_id(derivacion_id)

@@ -7,3 +7,4 @@ class DerivacionResponse(BaseModel):
     area_origen_id: int
     area_destino_id: int
     documento_id: int
+    usuario_id: int

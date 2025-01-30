@@ -112,16 +112,135 @@ class DocumentoRepository:
                 }
 
 
+    @staticmethod
+    def get_sent_documents_by_area_id(
+        p_area_origen_id: int,
+        p_search_document: int = None,
+        p_id_caserio: int = None,
+        p_id_centro_poblado: int = None,
+        p_id_ambito: int = None,
+        p_nombre_categoria: str = None,
+        p_fecha_ingreso: str = None,
+        p_page: int = 1,
+        p_page_size: int = 10
+    ) -> Dict[str, Any]:
+        with Session(engine) as session:
+            query = text("""
+                SELECT public.fn_documentos_get_documentos_enviados_by_area_id(
+                    :p_area_origen_id,
+                    :p_search_document,
+                    :p_id_caserio,
+                    :p_id_centro_poblado,
+                    :p_id_ambito,
+                    :p_nombre_categoria,
+                    :p_fecha_ingreso,
+                    :p_page,
+                    :p_page_size
+                )
+            """)
+            connection = session.connection()
+            result = connection.execute(query, {
+                "p_area_origen_id": p_area_origen_id,
+                "p_search_document": p_search_document,
+                "p_id_caserio": p_id_caserio,
+                "p_id_centro_poblado": p_id_centro_poblado,
+                "p_id_ambito": p_id_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso,
+                "p_page": p_page,
+                "p_page_size": p_page_size
+            }).scalar()
+
+            if result:
+                return result
+            else:
+                return {
+                    "data": [],
+                    "pagination": {
+                        "current_page": p_page,
+                        "page_size": p_page_size,
+                        "total_items": 0,
+                        "total_pages": 0
+                    }
+                }
+
 
     @staticmethod
-    def search_entered_documents(p_page: int, p_page_size: int, p_dni: Optional[int] = None, p_nombre_caserio: Optional[str] = None,
-                                 p_nombre_centro_poblado: Optional[str] = None,
-                                 p_nombre_ambito: Optional[str] = None, p_nombre_categoria: Optional[str] = None,
-                                 p_fecha_ingreso: Optional[date] = None):
+    def get_received_documents_by_area_id(
+        p_area_destino_id: int,
+        p_search_document: int = None,
+        p_id_caserio: int = None,
+        p_id_centro_poblado: int = None,
+        p_id_ambito: int = None,
+        p_nombre_categoria: str = None,
+        p_fecha_ingreso: str = None,
+        p_page: int = 1,
+        p_page_size: int = 10
+    ) -> Dict[str, Any]:
+        with Session(engine) as session:
+            query = text("""
+                SELECT public.fn_documentos_get_documentos_recibidos_by_area_id(
+                    :p_area_destino_id,
+                    :p_search_document,
+                    :p_id_caserio,
+                    :p_id_centro_poblado,
+                    :p_id_ambito,
+                    :p_nombre_categoria,
+                    :p_fecha_ingreso,
+                    :p_page,
+                    :p_page_size
+                )
+            """)
+            connection = session.connection()
+            result = connection.execute(query, {
+                "p_area_destino_id": p_area_destino_id,
+                "p_search_document": p_search_document,
+                "p_id_caserio": p_id_caserio,
+                "p_id_centro_poblado": p_id_centro_poblado,
+                "p_id_ambito": p_id_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso,
+                "p_page": p_page,
+                "p_page_size": p_page_size
+            }).scalar()
+
+            if result:
+                return result
+            else:
+                return {
+                    "data": [],
+                    "pagination": {
+                        "current_page": p_page,
+                        "page_size": p_page_size,
+                        "total_items": 0,
+                        "total_pages": 0
+                    }
+                }
+
+
+    @staticmethod
+    def search_entered_documents(
+            p_page: int,
+            p_page_size: int,
+            p_dni: Optional[int] = None,
+            p_nombre_caserio: Optional[str] = None,
+            p_nombre_centro_poblado: Optional[str] = None,
+            p_nombre_ambito: Optional[str] = None,
+            p_nombre_categoria: Optional[str] = None,
+            p_fecha_ingreso: Optional[date] = None
+        ) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text(
-                """SELECT fn_buscar_documentos_ingresados_paginated(:p_dni,:p_nombre_caserio, :p_nombre_centro_poblado, 
-                :p_nombre_ambito, :p_nombre_categoria, :p_fecha_ingreso, :p_page, :p_page_size)"""
+                """SELECT fn_buscar_documentos_ingresados_paginated(
+                :p_dni,
+                :p_nombre_caserio, 
+                :p_nombre_centro_poblado, 
+                :p_nombre_ambito, 
+                :p_nombre_categoria, 
+                :p_fecha_ingreso, 
+                :p_page, 
+                :p_page_size
+                )"""
             )
             connection = session.connection()
             result = connection.execute(query, {
