@@ -81,17 +81,14 @@ class AuthService:
                 detail="Refresh token inválido",
             )
 
-        user = self.usuario_repository.find_user_by_username(username)
-        if not user:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="No se encontró usuario para este refresh token",
-            )
+        user_data = self.usuario_repository.find_user_by_username(username)
+        if not user_data:
+            raise HTTPException(...)
+
+        user, trabajador, rol = user_data
+
         if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Usuario inactivo. No se puede refrescar.",
-            )
+            raise HTTPException(...)
 
         new_access_token = self.token_manager.create_access_token(
             {"sub": user.nombre_usuario, "scope": "access"}
@@ -99,6 +96,5 @@ class AuthService:
 
         return AuthResponse(
             access_token=new_access_token,
-            token_type="bearer",
-
+            token_type="bearer"
         )

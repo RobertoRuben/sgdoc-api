@@ -6,12 +6,15 @@ if TYPE_CHECKING:
     from src.model.entity.area import Area
     from src.model.entity.documento import Documento
     from src.model.entity.detalle_derivacion import DetalleDerivacion
-    from src.model.entity.estado_documento import EstadoDocumento
+    from src.model.entity.usuario import Usuario
 
 class Derivacion(SQLModel, table=True):
     __tablename__ = "derivaciones"
     id: int | None = Field(default=None, primary_key=True)
     fecha: datetime | None = Field(sa_column=Column(TIMESTAMP, default=datetime.now))
+
+    usuario_id: int | None = Field(default=None, foreign_key="usuarios.id")
+    usuario: Optional["Usuario"] = Relationship(back_populates="derivaciones")
 
     area_origen_id: int = Field(foreign_key="areas.id")
     area_origen: Optional["Area"] = Relationship(

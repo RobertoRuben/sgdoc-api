@@ -10,6 +10,7 @@ class DetalleDerivacion(SQLModel, table=True):
     estado: EstadoDerivacionEnum
     comentario: str = Field(sa_column=Column(Text))
     fecha: datetime | None = Field(sa_column=Column(TIMESTAMP, default=datetime.now))
+    recepcionada: bool | None = Field(default=False)
     usuario_recepcion_id: int | None
 
     derivacion_id: int = Field(foreign_key="derivaciones.id")

@@ -23,3 +23,4 @@ class Usuario(SQLModel, table=True):
     roles: Optional["Rol"] = Relationship(back_populates="usuarios")
     trabajador: Optional["Trabajador"] = Relationship(back_populates="usuarios")
     recepcion_documentos: List["RecepcionDocumento"] = Relationship(back_populates="usuario")
+    derivaciones: List["Derivacion"] = Relationship(back_populates="usuario")

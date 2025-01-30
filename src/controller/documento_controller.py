@@ -22,13 +22,11 @@ documentos_tag_metadata = {
 @router.post("/documentos", response_model=DocumentoResponse, description="Crea un nuevo documento")
 async def create_documento(
     documento_file: UploadFile = File(..., description="Archivo PDF del documento"),
-
     dni: int = Form(..., ge=10000000, le=99999999, description="DNI de 8 dígitos"),
     nombres: str = Form(..., min_length=1, description="El nombre no debe estar vacío"),
     apellido_paterno: str = Form(..., min_length=1, description="El apellido paterno no debe estar vacío"),
     apellido_materno: str = Form(..., min_length=1, description="El apellido materno no debe estar vacío"),
     genero: GeneroEnum = Form(..., description="El género debe ser Masculino o Femenino"),
-
     folios: int = Form(..., ge=1, description="El número de folios debe ser mayor o igual a 1"),
     nombre: str = Form(..., min_length=1, description="El nombre del documento no puede estar vacío"),
     asunto: str = Form(..., min_length=1, description="El asunto no puede estar vacío"),
@@ -36,7 +34,6 @@ async def create_documento(
     categoria_id: int = Form(..., ge=1, description="El id de la categoría debe ser mayor o igual a 1"),
     caserio_id: Optional[int] = Form(None, ge=1, description="El id del caserío debe ser mayor o igual a 1 si se proporciona"),
     centro_poblado_id: Optional[int] = Form(None, ge=1, description="El id del centro poblado debe ser mayor o igual a 1 si se proporciona"),
-
     documento_service: DocumentoService = Depends()
 ):
     try:
@@ -116,6 +113,77 @@ async def search_entered_documents(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+@router.get(
+    "/documentos/enviados",
+    response_model=PaginatedResponse,
+    description="Obtiene documentos enviados por un área específica con filtros y paginación"
+)
+async def get_sent_documents_by_area_id(
+    p_area_origen_id: int = Query(..., ge=1, description="ID del área de origen"),
+    p_search_document: Optional[str] = Query(None, description="Palabra clave para buscar documentos"),
+    p_id_caserio: Optional[int] = Query(None, description="ID del caserío"),
+    p_id_centro_poblado: Optional[int] = Query(None, description="ID del centro poblado"),
+    p_id_ambito: Optional[int] = Query(None, description="ID del ámbito"),
+    p_nombre_categoria: Optional[str] = Query(None, description="Nombre de la categoría"),
+    p_fecha_ingreso: Optional[date] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
+    p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
+    p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
+    documento_service: DocumentoService = Depends()
+):
+    try:
+        return documento_service.get_sent_documents_by_area_id(
+            p_area_origen_id=p_area_origen_id,
+            p_search_document=p_search_document,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
+            p_nombre_categoria=p_nombre_categoria,
+            p_fecha_ingreso=p_fecha_ingreso,
+            p_page=p_page,
+            p_page_size=p_page_size
+        )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get(
+    "/documentos/recibidos",
+    response_model=PaginatedResponse,
+    description="Obtiene documentos recibidos por un área específica con filtros y paginación"
+)
+async def get_received_documents_by_area_id(
+    p_area_destino_id: int = Query(..., ge=1, description="ID del área de destino"),
+    p_search_document: Optional[str] = Query(None, description="Palabra clave para buscar documentos"),
+    p_id_caserio: Optional[int] = Query(None, description="ID del caserío"),
+    p_id_centro_poblado: Optional[int] = Query(None, description="ID del centro poblado"),
+    p_id_ambito: Optional[int] = Query(None, description="ID del ámbito"),
+    p_nombre_categoria: Optional[str] = Query(None, description="Nombre de la categoría"),
+    p_fecha_ingreso: Optional[str] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
+    p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
+    p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
+    documento_service: DocumentoService = Depends()
+):
+    print(">>> Parámetros", p_page_size, p_search_document, p_id_caserio, p_id_centro_poblado, p_fecha_ingreso)
+    try:
+        return documento_service.get_received_documents_by_area_id(
+            p_area_destino_id=p_area_destino_id,
+            p_search_document=p_search_document,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
+            p_nombre_categoria=p_nombre_categoria,
+            p_fecha_ingreso=p_fecha_ingreso,
+            p_page=p_page,
+            p_page_size=p_page_size
+        )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/documentos/fecha_actual", response_model=PaginatedResponse, description="Obtiene los documentos con fecha actual")
 async def get_documents_by_current_date(
         page: int = 1,
@@ -153,12 +221,7 @@ async def get_documento_by_id(
 )
 async def update_documento(
     documento_id: int = Path(..., ge=1, description="ID del documento a actualizar"),
-
-    documento_file: Optional[UploadFile] = File(
-        None,
-        description="Archivo PDF del documento (opcional)"
-    ),
-
+    documento_file: Optional[UploadFile] = File(None,description="Archivo PDF del documento (opcional)"),
     folios: int = Form(..., ge=1, description="El número de folios debe ser mayor o igual a 1"),
     nombre: str = Form(..., min_length=1, description="El nombre del documento no puede estar vacío"),
     asunto: str = Form(..., min_length=1, description="El asunto no puede estar vacío"),
@@ -166,7 +229,6 @@ async def update_documento(
     categoria_id: int = Form(..., ge=1, description="El id de la categoría debe ser mayor o igual a 1"),
     caserio_id: Optional[int] = Form(None, ge=1, description="El id del caserío debe ser mayor o igual a 1 si se proporciona"),
     centro_poblado_id: Optional[int] = Form(None, ge=1, description="El id del centro poblado debe ser mayor o igual a 1 si se proporciona"),
-
     documento_service: DocumentoService = Depends()
 ):
     try:
