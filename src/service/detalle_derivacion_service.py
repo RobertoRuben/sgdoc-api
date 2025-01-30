@@ -62,6 +62,7 @@ class DetalleDerivacionService:
                 estado=detalle.estado,
                 comentario=detalle.comentario,
                 fecha=detalle.fecha,
+                recepcionada=detalle.recepcionada,
                 usuario_recepcion_id=detalle.usuario_recepcion_id
             )
             for detalle in detalles_derivacion
@@ -70,7 +71,6 @@ class DetalleDerivacionService:
 
     def update_detalle_derivacion(self, detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequest) -> DetalleDerivacionResponse:
         # Validar existencia de la derivación
-
         if not self.derivacion_repository.exists_by_id(detalle_derivacion_request.derivacion_id):
             raise HTTPException(status_code=404, detail="No existe una derivación con ese ID")
 
