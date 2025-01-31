@@ -185,6 +185,31 @@ class DocumentoService:
             p_page_size=p_page_size
         )
 
+    #Obtener todos los documentos rechazados mediante el area destino
+    def get_rejected_documents_by_area_id(
+            self,
+            p_area_destino_id: int,
+            p_search_document: Optional[int] = None,
+            p_id_caserio: Optional[int] = None,
+            p_id_centro_poblado: Optional[int] = None,
+            p_id_ambito: Optional[int] = None,
+            p_nombre_categoria: Optional[str] = None,
+            p_fecha_ingreso: Optional[str] = None,
+            p_page: int = 1,
+            p_page_size: int = 10,
+    ) -> Dict[str, Any]:
+        return self.documento_repository.get_rejected_documents_by_area_id(
+            p_area_destino_id=p_area_destino_id,
+            p_search_document=p_search_document,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
+            p_nombre_categoria=p_nombre_categoria,
+            p_fecha_ingreso=p_fecha_ingreso,
+            p_page=p_page,
+            p_page_size=p_page_size
+        )
+
 
     #Obtener todos los documentos recibidos mediante el area destino
     def get_received_documents_by_area_id(
@@ -197,7 +222,8 @@ class DocumentoService:
             p_nombre_categoria: Optional[str] = None,
             p_fecha_ingreso: Optional[str] = None,
             p_page: int = 1,
-            p_page_size: int = 10
+            p_page_size: int = 10,
+            p_recepcionada: Optional[bool] = None  # Se agrega el parámetro de filtro
     ) -> Dict[str, Any]:
         return self.documento_repository.get_received_documents_by_area_id(
             p_area_destino_id=p_area_destino_id,
@@ -208,5 +234,6 @@ class DocumentoService:
             p_nombre_categoria=p_nombre_categoria,
             p_fecha_ingreso=p_fecha_ingreso,
             p_page=p_page,
-            p_page_size=p_page_size
+            p_page_size=p_page_size,
+            p_recepcionada=p_recepcionada  # Se pasa el parámetro al repositorio
         )

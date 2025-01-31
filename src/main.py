@@ -29,6 +29,7 @@ allowed_subnets = [
     "192.168.1.",
     "192.168.2.",  # Agregamos esta subred
     "172.23.32.",
+    "localhost",
     "172.25.208.",
     "172.27.32."
 ]

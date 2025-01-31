@@ -1,7 +1,8 @@
-from typing import List, Optional
+from typing import List, Tuple, Optional
 from sqlmodel import  Session, select, func, or_
 from src.db.database import engine
 from src.model.entity.detalle_derivacion import DetalleDerivacion
+from src.model.entity.usuario import Usuario
 
 class DetalleDerivacionRepository:
 
@@ -13,12 +14,16 @@ class DetalleDerivacionRepository:
             session.refresh(detalle_derivacion)
         return detalle_derivacion
 
-
     @staticmethod
-    def get_all_by_derivacion_id(derivacion_id: int) -> List[DetalleDerivacion]:
+    def get_all_by_derivacion_id(derivacion_id: int) -> List[Tuple[DetalleDerivacion, str]]:
         with Session(engine) as session:
-            detalles_derivacion = session.exec(select(DetalleDerivacion).where(DetalleDerivacion.derivacion_id == derivacion_id)).all()
-        return detalles_derivacion
+            query = (
+                select(DetalleDerivacion, Usuario.nombre_usuario)
+                .join(Usuario, DetalleDerivacion.usuario_recepcion_id == Usuario.id, isouter=True)
+                .where(DetalleDerivacion.derivacion_id == derivacion_id)
+            )
+            resultados = session.exec(query).all()
+        return resultados
 
 
     @staticmethod
