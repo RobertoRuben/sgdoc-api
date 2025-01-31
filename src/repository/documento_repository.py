@@ -175,11 +175,66 @@ class DocumentoRepository:
         p_nombre_categoria: str = None,
         p_fecha_ingreso: str = None,
         p_page: int = 1,
-        p_page_size: int = 10
+        p_page_size: int = 10,
+        p_recepcionada: bool = None  # Se agrega el parámetro de filtrado
     ) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text("""
                 SELECT public.fn_documentos_get_documentos_recibidos_by_area_id(
+                    :p_area_destino_id,
+                    :p_search_document,
+                    :p_id_caserio,
+                    :p_id_centro_poblado,
+                    :p_id_ambito,
+                    :p_nombre_categoria,
+                    :p_fecha_ingreso,
+                    :p_page,
+                    :p_page_size,
+                    :p_recepcionada  -- Se incluye el nuevo parámetro en la consulta
+                )
+            """)
+            connection = session.connection()
+            result = connection.execute(query, {
+                "p_area_destino_id": p_area_destino_id,
+                "p_search_document": p_search_document,
+                "p_id_caserio": p_id_caserio,
+                "p_id_centro_poblado": p_id_centro_poblado,
+                "p_id_ambito": p_id_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso,
+                "p_page": p_page,
+                "p_page_size": p_page_size,
+                "p_recepcionada": p_recepcionada  # Se pasa el nuevo parámetro
+            }).scalar()
+
+            if result:
+                return result
+            else:
+                return {
+                    "data": [],
+                    "pagination": {
+                        "current_page": p_page,
+                        "page_size": p_page_size,
+                        "total_items": 0,
+                        "total_pages": 0
+                    }
+                }
+
+    @staticmethod
+    def get_rejected_documents_by_area_id(
+        p_area_destino_id: int,
+        p_search_document: int = None,
+        p_id_caserio: int = None,
+        p_id_centro_poblado: int = None,
+        p_id_ambito: int = None,
+        p_nombre_categoria: str = None,
+        p_fecha_ingreso: str = None,
+        p_page: int = 1,
+        p_page_size: int = 10,
+    ) -> Dict[str, Any]:
+        with Session(engine) as session:
+            query = text("""
+                SELECT public.fn_documentos_get_documentos_rechazados_by_area_id(
                     :p_area_destino_id,
                     :p_search_document,
                     :p_id_caserio,
@@ -216,7 +271,6 @@ class DocumentoRepository:
                         "total_pages": 0
                     }
                 }
-
 
     @staticmethod
     def search_entered_documents(

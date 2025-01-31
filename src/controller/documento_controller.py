@@ -163,11 +163,49 @@ async def get_received_documents_by_area_id(
     p_fecha_ingreso: Optional[str] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
     p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
+    p_recepcionada: Optional[bool] = Query(None, description="Filtrar por confirmación (recepcionada)"),
+    documento_service: DocumentoService = Depends()
+):
+    print(">>> Parámetros", p_page_size, p_search_document, p_id_caserio, p_id_centro_poblado, p_fecha_ingreso, p_recepcionada)
+    try:
+        return documento_service.get_received_documents_by_area_id(
+            p_area_destino_id=p_area_destino_id,
+            p_search_document=p_search_document,
+            p_id_caserio=p_id_caserio,
+            p_id_centro_poblado=p_id_centro_poblado,
+            p_id_ambito=p_id_ambito,
+            p_nombre_categoria=p_nombre_categoria,
+            p_fecha_ingreso=p_fecha_ingreso,
+            p_page=p_page,
+            p_page_size=p_page_size,
+            p_recepcionada=p_recepcionada  # Se pasa al servicio
+        )
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get(
+    "/documentos/rechazados",
+    response_model=PaginatedResponse,
+    description="Obtiene documentos recibidos por un área específica con filtros y paginación"
+)
+async def get_rejected_documents_by_area_id(
+    p_area_destino_id: int = Query(..., ge=1, description="ID del área de destino"),
+    p_search_document: Optional[str] = Query(None, description="Palabra clave para buscar documentos"),
+    p_id_caserio: Optional[int] = Query(None, description="ID del caserío"),
+    p_id_centro_poblado: Optional[int] = Query(None, description="ID del centro poblado"),
+    p_id_ambito: Optional[int] = Query(None, description="ID del ámbito"),
+    p_nombre_categoria: Optional[str] = Query(None, description="Nombre de la categoría"),
+    p_fecha_ingreso: Optional[str] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
+    p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
+    p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
     documento_service: DocumentoService = Depends()
 ):
     print(">>> Parámetros", p_page_size, p_search_document, p_id_caserio, p_id_centro_poblado, p_fecha_ingreso)
     try:
-        return documento_service.get_received_documents_by_area_id(
+        return documento_service.get_rejected_documents_by_area_id(
             p_area_destino_id=p_area_destino_id,
             p_search_document=p_search_document,
             p_id_caserio=p_id_caserio,
