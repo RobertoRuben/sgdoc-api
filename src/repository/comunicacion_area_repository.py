@@ -8,7 +8,7 @@ class ComunicacionAreaRepository:
     def get_all_paginated(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text("""
-                SELECT fn_comunicacion_areas_get_paginated_data(:page, :page_size)
+                SELECT fn_comunicacion_areas_listar_paginado(:page, :page_size)
             """)
             connection = session.connection()
             result = connection.execute(query, {"page": page, "page_size": page_size}).scalar()
@@ -30,7 +30,7 @@ class ComunicacionAreaRepository:
     def get_areas_destino_by_area_origen_id(area_origen_id: int) -> List[Dict[str, Any]]:
         with Session(engine) as session:
             query = text("""
-                SELECT fn_obtener_areas_destino_por_area_origen_id(:area_origen_id)
+                SELECT fn_comunicaciones_areas_obtener_area_destino_por_area_origen_id(:area_origen_id)
             """)
             connection = session.connection()
             result = connection.execute(query, {"area_origen_id": area_origen_id}).scalar()

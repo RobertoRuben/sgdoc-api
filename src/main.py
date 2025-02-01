@@ -15,7 +15,6 @@ from src.controller.comunicacion_area_controller import router as comunicacion_a
 from src.controller.trabajador_controller import router as trabajador_router, trabajadores_tag_metadata
 from src.controller.usuario_controller import router as usuario_router, usuarios_metadata
 from src.controller.documento_controller import router as documento_router, documentos_tag_metadata
-from src.controller.recepcion_documento_controller import router as recepcion_documento_router, recepcion_documento_tag_metadata
 from src.controller.derivacion_controller import router as derivacion_router, derivaciones_tag_metadata
 from src.controller.detalle_derivacion_controller import router as detalle_derivacion_router, detalle_derivaciones_tag_metadata
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
@@ -46,7 +45,6 @@ tags_metadata = [
     trabajadores_tag_metadata,
     usuarios_metadata,
     documentos_tag_metadata,
-    recepcion_documento_tag_metadata,
     derivaciones_tag_metadata,
     detalle_derivaciones_tag_metadata,
     estado_documento_tag_metadata,
@@ -97,7 +95,6 @@ app.include_router(comunicacion_area_router, prefix="/api/v1", dependencies=[Dep
 app.include_router(trabajador_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(usuario_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(recepcion_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(detalle_derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(estado_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])

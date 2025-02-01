@@ -4,7 +4,7 @@ from src.model.enum.estado_derivacion_enum import EstadoDerivacionEnum
 class DetalleDerivacionRequest(BaseModel):
     estado: EstadoDerivacionEnum
     comentario: str | None = Field(None, description="Comentario del detalle de derivación")
-    usuario_recepcion_id: int | None = Field(None, description="Id del usuario que recibe la derivación")
+    usuario_id: int | None = Field(None, description="Id del usuario que recibe la derivación")
     derivacion_id: int = Field(..., description="Id de la derivación a la que pertenece el detalle")
 
 
@@ -26,8 +26,8 @@ class DetalleDerivacionRequest(BaseModel):
             raise ValueError("El comentario no puede ser numérico")
         return v
 
-    @field_validator("usuario_recepcion_id")
-    def usuario_recepcion_id_not_negative(cls, v):
+    @field_validator("usuario_id")
+    def usuario_id_not_negative(cls, v):
         if v and v < 0:
             raise ValueError("El id del usuario de recepción no puede ser negativo")
         return v

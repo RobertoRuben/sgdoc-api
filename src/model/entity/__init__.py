@@ -9,10 +9,9 @@ from .comunicacion_area import ComunicacionArea
 from .trabajador import Trabajador
 from .usuario import Usuario
 from .documento import Documento
-from .recepcion_documento import RecepcionDocumento
 from .derivacion import Derivacion
 from .detalle_derivacion import DetalleDerivacion
 from .estado_documento import EstadoDocumento
 
 __all__ = ["Ambito", "Caserio", "Categoria", "CentroPoblado", "Remitente", "Rol", "Area", "ComunicacionArea",
-           "Trabajador", "Usuario", "Documento", "RecepcionDocumento", "Derivacion", "DetalleDerivacion", "EstadoDocumento"]
+           "Trabajador", "Usuario", "Documento", "Derivacion", "DetalleDerivacion", "EstadoDocumento"]

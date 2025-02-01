@@ -25,18 +25,18 @@ class DetalleDerivacionService:
             raise HTTPException(status_code=404, detail="No existe una derivación con ese ID")
 
         # Validar existencia del usuario
-        if not self.usuario_repository.exists_by_id(derivacion_request.usuario_recepcion_id):
+        if not self.usuario_repository.exists_by_id(derivacion_request.usuario_id):
             raise HTTPException(status_code=404, detail="No existe un usuario con ese ID")
 
         # Mejorar la validación para incluir tanto None como string vacío
         if derivacion_request.estado == EstadoDerivacionEnum.recepcionada and (derivacion_request.comentario is None or derivacion_request.comentario.strip() == ""):
-            derivacion_request.comentario = f"La derivación ha sido recepcionada por el área destino por el usuario {derivacion_request.usuario_recepcion_id}"
+            derivacion_request.comentario = f"La derivación ha sido recepcionada por el área destino por el usuario {derivacion_request.usuario_id}"
 
         # Crear nueva entidad
         new_detalle_derivacion = DetalleDerivacion(
             estado=derivacion_request.estado,
             comentario=derivacion_request.comentario,
-            usuario_recepcion_id=derivacion_request.usuario_recepcion_id,
+            usuario_id=derivacion_request.usuario_id,
             derivacion_id=derivacion_request.derivacion_id,
             recepcionada=True
         )
@@ -51,7 +51,7 @@ class DetalleDerivacionService:
             comentario=created_detalle_derivacion.comentario,
             fecha=created_detalle_derivacion.fecha,
             recepcionada=created_detalle_derivacion.recepcionada,
-            usuario_recepcion_id=created_detalle_derivacion.usuario_recepcion_id
+            usuario_id=created_detalle_derivacion.usuario_id
         )
 
     def get_all_detalle_derivacion_by_id(self, derivacion_id: int) -> List[DetalleDerivacionDetailsResponse]:
@@ -65,7 +65,7 @@ class DetalleDerivacionService:
                 comentario=detalle.comentario,
                 fecha=detalle.fecha,
                 recepcionada=detalle.recepcionada,
-                usuario_recepcion_id=detalle.usuario_recepcion_id,
+                usuario_id=detalle.usuario_id,
                 nombre_usuario=nombre_usuario
             )
             for detalle, nombre_usuario in detalles_derivacion
@@ -81,12 +81,12 @@ class DetalleDerivacionService:
             raise HTTPException(status_code=404, detail="No existe un detalle de derivacion con ese id")
 
         # Validar existencia del usuario
-        if not self.usuario_repository.exists_by_id(detalle_derivacion_request.usuario_recepcion_id):
+        if not self.usuario_repository.exists_by_id(detalle_derivacion_request.usuario_id):
             raise HTTPException(status_code=404, detail="No existe un usuario con ese ID")
 
         # Mejorar la validación para incluir tanto None como string vacío
         if detalle_derivacion_request.estado == EstadoDerivacionEnum.recepcionada and (detalle_derivacion_request.comentario is None or detalle_derivacion_request.comentario.strip() == ""):
-            detalle_derivacion_request.comentario = f"La derivación ha sido recepcionada por el área destino por el usuario {detalle_derivacion_request.usuario_recepcion_id}"
+            detalle_derivacion_request.comentario = f"La derivación ha sido recepcionada por el área destino por el usuario {detalle_derivacion_request.usuario_id}"
 
         # Obtener entidad existente
         detalle_derivacion = self.detalle_derivacion_repository.get_by_id(detalle_derivacion_id)
@@ -94,7 +94,7 @@ class DetalleDerivacionService:
         # Actualizar entidad
         detalle_derivacion.estado = detalle_derivacion_request.estado
         detalle_derivacion.comentario = detalle_derivacion_request.comentario
-        detalle_derivacion.usuario_recepcion_id = detalle_derivacion_request.usuario_recepcion_id
+        detalle_derivacion.usuario_id = detalle_derivacion_request.usuario_id
 
         # Persistir en base de datos
         updated_detalle_derivacion = self.detalle_derivacion_repository.update_detalle_derivacion(detalle_derivacion)
@@ -105,7 +105,7 @@ class DetalleDerivacionService:
             estado=updated_detalle_derivacion.estado,
             comentario=updated_detalle_derivacion.comentario,
             fecha=updated_detalle_derivacion.fecha,
-            usuario_recepcion_id=updated_detalle_derivacion.usuario_recepcion_id,
+            usuario_id=updated_detalle_derivacion.usuario_id,
         )
 
 

@@ -47,7 +47,7 @@ class TrabajadorRepository:
     def get_all_id_and_name() -> List[Dict[str, Any]]:
         with Session(engine) as session:
             query = text("""
-                SELECT fn_listar_trabajadores()
+                SELECT fn_trabajadores_listar()
             """)
             connection = session.connection()
             result = connection.execute(query).scalar()

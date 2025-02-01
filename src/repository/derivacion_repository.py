@@ -19,7 +19,7 @@ class DerivacionRepository:
 
         with Session(engine) as session:
             query = text("""
-                SELECT fn_derivaciones_filtered_paginated(:page, :page_size, :fecha_filtro, :estado_filtro, :documento_id_filtro)
+                SELECT fn_derivaciones_filtrar_paginated(:page, :page_size, :fecha_filtro, :estado_filtro, :documento_id_filtro)
             """)
             connection = session.connection()
             result = connection.execute(query, {

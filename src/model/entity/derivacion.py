@@ -28,7 +28,7 @@ class Derivacion(SQLModel, table=True):
         sa_relationship_kwargs={"foreign_keys": "Derivacion.area_destino_id"}
     )
 
-    documento_id: int = Field(foreign_key="documentos.id")
+    documento_id: int = Field(foreign_key="documentos.id", ondelete="CASCADE")
     documento: Optional["Documento"] = Relationship(back_populates="derivaciones")
 
-    detalles_derivacion: List["DetalleDerivacion"] = Relationship(back_populates="derivacion")
+    detalles_derivacion: List["DetalleDerivacion"] = Relationship(back_populates="derivacion", cascade_delete=True)

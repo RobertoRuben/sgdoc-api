@@ -19,8 +19,9 @@ class DetalleDerivacionRepository:
         with Session(engine) as session:
             query = (
                 select(DetalleDerivacion, Usuario.nombre_usuario)
-                .join(Usuario, DetalleDerivacion.usuario_recepcion_id == Usuario.id, isouter=True)
+                .join(Usuario, DetalleDerivacion.usuario_id == Usuario.id, isouter=True)
                 .where(DetalleDerivacion.derivacion_id == derivacion_id)
+                .order_by(DetalleDerivacion.id.desc())
             )
             resultados = session.exec(query).all()
         return resultados

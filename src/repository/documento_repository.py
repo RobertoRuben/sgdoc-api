@@ -71,7 +71,7 @@ class DocumentoRepository:
     @staticmethod
     def get_documents_by_current_date(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         with Session(engine) as session:
-            query = text("""SELECT fn_documentos_get_by_current_date_paginated(:page, :page_size)""")
+            query = text("""SELECT fn_documentos_listar_por_fecha_actual_paginado(:page, :page_size)""")
             connection = session.connection()
             result = connection.execute(query, {"page": page, "page_size": page_size}).scalar()
 
@@ -93,7 +93,7 @@ class DocumentoRepository:
     @staticmethod
     def get_all_documents_paginated(p_page: int, p_page_size: int) -> Dict[str, Any]:
         with Session(engine) as session:
-            query = text("""SELECT fn_get_documentos_paginated(:p_page, :p_page_size)""")
+            query = text("""SELECT fn_documentos_listar_paginado(:p_page, :p_page_size)""")
             connection = session.connection()
             result = connection.execute(query, {"p_page": p_page, "p_page_size": p_page_size}).scalar()
 
@@ -126,7 +126,7 @@ class DocumentoRepository:
     ) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text("""
-                SELECT public.fn_documentos_get_documentos_enviados_by_area_id(
+                SELECT public.fn_documentos_listar_enviados_por_area_origen_id(
                     :p_area_origen_id,
                     :p_search_document,
                     :p_id_caserio,
@@ -180,7 +180,7 @@ class DocumentoRepository:
     ) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text("""
-                SELECT public.fn_documentos_get_documentos_recibidos_by_area_id(
+                SELECT public.fn_documentos_listar_recibidos_por_area_destino_id(
                     :p_area_destino_id,
                     :p_search_document,
                     :p_id_caserio,
@@ -220,6 +220,7 @@ class DocumentoRepository:
                     }
                 }
 
+
     @staticmethod
     def get_rejected_documents_by_area_id(
         p_area_destino_id: int,
@@ -234,7 +235,7 @@ class DocumentoRepository:
     ) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text("""
-                SELECT public.fn_documentos_get_documentos_rechazados_by_area_id(
+                SELECT public.fn_documentos_listar_rechazados_por_area_destino_id(
                     :p_area_destino_id,
                     :p_search_document,
                     :p_id_caserio,
@@ -285,7 +286,7 @@ class DocumentoRepository:
         ) -> Dict[str, Any]:
         with Session(engine) as session:
             query = text(
-                """SELECT fn_buscar_documentos_ingresados_paginated(
+                """SELECT fn_documentos_buscar_ingresados_paginado(
                 :p_dni,
                 :p_nombre_caserio, 
                 :p_nombre_centro_poblado, 

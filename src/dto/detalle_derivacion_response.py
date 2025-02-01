@@ -7,4 +7,4 @@ class DetalleDerivacionResponse(BaseModel):
     comentario: str | None
     fecha: datetime
     recepcionada: bool | None
-    usuario_recepcion_id: int | None
+    usuario_id: int | None

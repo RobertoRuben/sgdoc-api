@@ -11,7 +11,7 @@ class DetalleDerivacion(SQLModel, table=True):
     comentario: str = Field(sa_column=Column(Text))
     fecha: datetime | None = Field(sa_column=Column(TIMESTAMP, default=datetime.now))
     recepcionada: bool | None = Field(default=False)
-    usuario_recepcion_id: int | None
+    usuario_id: int | None
 
-    derivacion_id: int = Field(foreign_key="derivaciones.id")
+    derivacion_id: int = Field(foreign_key="derivaciones.id", ondelete="CASCADE")
     derivacion: Optional["Derivacion"] = Relationship(back_populates="detalles_derivacion")

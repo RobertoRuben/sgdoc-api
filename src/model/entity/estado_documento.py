@@ -13,6 +13,6 @@ class EstadoDocumento(SQLModel, table=True):
     fecha: datetime | None = Field(sa_column=Column(TIMESTAMP, default=datetime.now))
     comentario: str | None = Field(sa_column=Column(Text))
 
-    documento_id: int | None = Field(foreign_key="documentos.id")
+    documento_id: int | None = Field(foreign_key="documentos.id", ondelete="CASCADE")
     documento: Optional["Documento"] = Relationship(back_populates="estados_documento")
 
