@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
+from src.exception.handlers import register_exception_handlers
 from src.db.database import create_db_and_tables
 from src.controller.auth_controller import get_current_user
 from src.controller.auth_controller import router as auth_router
@@ -20,13 +21,12 @@ from src.controller.detalle_derivacion_controller import router as detalle_deriv
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
 from src.controller.documents_by_current_date_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
 import logging
-# Configurar el registro
 logging.basicConfig(level=logging.INFO)
 
 allowed_subnets = [
-    "127.0.0.1",  # Permitir acceso local
+    "127.0.0.1",
     "192.168.1.",
-    "192.168.2.",  # Agregamos esta subred
+    "192.168.2.",
     "172.23.32.",
     "localhost",
     "172.25.208.",
@@ -64,6 +64,8 @@ app = FastAPI(
     debug=True,
     lifespan=lifespan
 )
+
+register_exception_handlers(app)
 
 @app.middleware("http")
 async def ip_restriction_middleware(request: Request, call_next):
