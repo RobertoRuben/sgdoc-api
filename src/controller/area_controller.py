@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import Depends, APIRouter, Query
 from fastapi.responses import JSONResponse
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse
+from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse, DeleteSuccessfulResponse
 from src.dto.area_response import AreaResponse
 from src.dto.area_request import AreaRequest
 from src.dto.pagination_response import PaginatedResponse
@@ -108,7 +108,7 @@ async def update_area(area_id: int, area_request: AreaRequest, service: AreaServ
 
 
 @router.delete(
-    "/areas/{area_id}",
+    "/areas/{area_id}", response_model=DeleteSuccessfulResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
         404: {"description": "El área no existe", "model": ErrorResponse},
