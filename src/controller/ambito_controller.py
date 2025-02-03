@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from src.dto.ambito_request import AmbitoRequest
 from src.dto.ambito_response import AmbitoResponse
 from src.dto.pagination_response import PaginatedResponse
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse
+from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse, DeleteSuccessfulResponse
 from src.service.ambito_service import AmbitoService
 
 router = APIRouter(tags=["Ambitos"])
@@ -101,7 +101,7 @@ async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: 
 
 
 @router.delete(
-    "/ambitos/{ambito_id}",
+    "/ambitos/{ambito_id}", response_model=DeleteSuccessfulResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
