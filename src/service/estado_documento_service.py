@@ -1,5 +1,6 @@
 from typing import Dict, Any, List
-from fastapi import HTTPException, Depends
+from fastapi import Depends
+from src.exception import NotFoundException
 from src.model.entity.estado_documento import EstadoDocumento
 from src.dto.estado_documento_request import EstadoDocumentoRequest
 from src.dto.estado_documento_response import EstadoDocumentoResponse
@@ -12,9 +13,8 @@ class EstadoDocumentoService:
         self.documento_repository = documento_repository
 
     def add_estado_documento(self, estado_documento_request: EstadoDocumentoRequest) -> EstadoDocumentoResponse:
-
         if not self.documento_repository.exists_by_id(estado_documento_request.documento_id):
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
+            raise NotFoundException("Documento no encontrado")
 
         estado_documento = EstadoDocumento(
             estado=estado_documento_request.estado,
@@ -39,7 +39,7 @@ class EstadoDocumentoService:
         estado_documento = self.estado_documento_repository.get_estado_documento_by_id(estado_documento_id)
 
         if not self.documento_repository.exists_by_id(estado_documento_request.documento_id):
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
+            raise NotFoundException("Documento no encontrado")
 
         estado_documento.estado = estado_documento_request.estado
         estado_documento.comentario = estado_documento_request.comentario
@@ -57,10 +57,10 @@ class EstadoDocumentoService:
 
     def delete_documento(self, estado_documento_id: int) -> None:
         if not self.estado_documento_repository.exits_estado_documento_by_id(estado_documento_id):
-            raise HTTPException(status_code=404, detail="Estado de documento no encontrado")
+            raise NotFoundException("Estado del documento no encontrado")
         self.estado_documento_repository.delete_by_id(estado_documento_id)
 
 
     def get_all_by_id(self, documento_id: int) -> List[EstadoDocumento]:
-        return self.estado_documento_repository.get_all_by_id(documento_id)
+        return self.estado_documento_repository.get_all_estados_by_id(documento_id)
 
