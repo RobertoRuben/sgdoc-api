@@ -4,7 +4,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File, Form, Path
 from starlette.responses import StreamingResponse
 from src.exception import InternalServerException
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse, DeleteSuccessfulResponse
+from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema, FileDownloadResponseSchema
 from src.exception import  BadRequestException
 from src.dto.documento_request import DocumentoRequest
 from src.dto.documento_response import DocumentoResponse
@@ -26,11 +26,11 @@ documentos_tag_metadata = {
     "/documentos",
     response_model=DocumentoResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
-        422: {"description": "Error de validación", "model": ValidationErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Crea un nuevo documento"
 )
@@ -82,9 +82,9 @@ async def create_documento(
 @router.get(
     "/documentos",
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     response_model=PaginatedResponse,
     description="Obtiene todos los documentos"
@@ -97,9 +97,9 @@ async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_se
     "/documentos/buscar",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Busca documentos según criterios específicos"
 )
@@ -130,9 +130,9 @@ async def search_entered_documents(
     "/documentos/enviados",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene documentos enviados por un área específica con filtros y paginación"
 )
@@ -165,9 +165,9 @@ async def get_sent_documents_by_area_id(
     "/documentos/recibidos",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene documentos recibidos por un área específica con filtros y paginación"
 )
@@ -202,9 +202,9 @@ async def get_received_documents_by_area_id(
     "/documentos/rechazados",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene documentos recibidos por un área específica con filtros y paginación"
 )
@@ -237,9 +237,9 @@ async def get_rejected_documents_by_area_id(
     "/documentos/fecha_actual",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene los documentos con fecha actual"
 )
@@ -251,9 +251,9 @@ async def get_documents_by_current_date(page: int = 1, page_size: int = 10, docu
     "/documentos/{documento_id}",
     response_model=DocumentoResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene un documento por su ID"
 )
@@ -265,12 +265,12 @@ async def get_documento_by_id(documento_id: int, documento_service: DocumentoSer
     "/documentos/{documento_id}",
     response_model=DocumentoResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
-        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
-        422: {"description": "Error de validación", "model": ValidationErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Actualiza un documento existente"
 )
@@ -312,12 +312,12 @@ async def update_documento(
 
 @router.delete(
     "/documentos/{documento_id}",
-    response_model=DeleteSuccessfulResponse,
+    response_model=DeleteSuccessfulResponseSchema,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Elimina un documento por su ID"
 )
@@ -328,6 +328,12 @@ async def delete_documento(documento_id: int, documento_service: DocumentoServic
 
 @router.get(
     "/documentos/{documento_id}/descargar",
+    response_model=FileDownloadResponseSchema,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Descarga el documento por su ID"
 )
 async def descargar_documento(documento_id: int, documento_service: DocumentoService = Depends()):

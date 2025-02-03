@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from src.dto.caserio_request import CaserioRequest
 from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
 from src.dto.pagination_response import PaginatedResponse
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse, DeleteSuccessfulResponse
+from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.service.caserio_service import CaserioService
 
 router = APIRouter(tags=["Caserios"])
@@ -22,11 +22,11 @@ caserios_tag_metadata = {
     "/caserios",
     response_model=CaserioResponseWithCentroPobladoId,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        409: {"description": "Conflicto - El caserio ya existe", "model": ErrorResponse},
-        422: {"description": "Error de validación", "model": ValidationErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El caserio ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Crea un nuevo caserio"
 )
@@ -38,9 +38,9 @@ async def add_caserio(caserio_request: CaserioRequest, service: CaserioService =
     "/caserios",
     response_model=List[CaserioResponseWithCentroPobladoId],
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene todos los caserios, filtrados por centro poblado si se proporciona un ID"
 )
@@ -55,9 +55,9 @@ async def get_caserios_by_centro_poblado_id(
     "/caserios/names",
     response_model=List[CaserioSimpleResponse],
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene los nombres de todos los caserios"
 )
@@ -69,10 +69,10 @@ async def get_caserios_names(service: CaserioService = Depends()):
     "/caserios/search",
     response_model=List[CaserioResponse],
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "No se encontraron caserios", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "No se encontraron caserios", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Busca caserios por nombre"
 )
@@ -87,9 +87,9 @@ async def search_caserios_by_name(
     "/caserios/paginated",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene los caserios paginados"
 )
@@ -105,10 +105,10 @@ async def get_paginated_caserios(
     "/caserios/{caserio_id}",
     response_model=CaserioResponseWithCentroPobladoId,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Caserio no encontrado", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Caserio no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene un caserio por su ID"
 )
@@ -120,12 +120,12 @@ async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends()
     "/caserios/{caserio_id}",
     response_model=CaserioResponseWithCentroPobladoId,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Caserio no encontrado", "model": ErrorResponse},
-        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
-        422: {"description": "Error de validación", "model": ValidationErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Caserio no encontrado", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Actualiza un caserio"
 )
@@ -135,12 +135,12 @@ async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, servi
 
 @router.delete(
     "/caserios/{caserio_id}",
-    response_model=DeleteSuccessfulResponse,
+    response_model=DeleteSuccessfulResponseSchema,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Caserio no encontrado", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Caserio no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Elimina un caserio"
 )

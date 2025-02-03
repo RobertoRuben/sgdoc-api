@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse, DeleteSuccessfulResponse
+from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.service.categoria_service import CategoriaService
 from src.dto.categoria_request import CategoriaRequest
 from src.dto.categoria_response import CategoriaResponse
@@ -19,11 +19,11 @@ categorias_tag_metadata={
     "/categorias",
     response_model=CategoriaResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
-        422: {"description": "Error de validación", "model": ValidationErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Crea una nueva categoria")
 async def add_categoria(categoria_request: CategoriaRequest, service: CategoriaService = Depends()):
@@ -34,9 +34,9 @@ async def add_categoria(categoria_request: CategoriaRequest, service: CategoriaS
     "/categorias",
     response_model=List[CategoriaResponse],
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene todas las categorias")
 async def get_categorias(service: CategoriaService = Depends()):
@@ -47,10 +47,10 @@ async def get_categorias(service: CategoriaService = Depends()):
     "/categorias/search",
     response_model=List[CategoriaResponse],
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Busca categorias por cadena de búsqueda"
 )
@@ -65,9 +65,9 @@ async def search_categorias(
     "/categorias/paginated",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene las categorias paginadas"
 )
@@ -83,10 +83,10 @@ async def get_paginated_categorias(
     "/categorias/{categoria_id}",
     response_model=CategoriaResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene una categoria por su ID"
 )
@@ -98,12 +98,12 @@ async def get_categoria_by_id(categoria_id: int, service: CategoriaService = Dep
     "/categorias/{categoria_id}",
     response_model=CategoriaResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
-        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
-        422: {"description": "Error de validación", "model": ValidationErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Actualiza una categoria"
 )
@@ -113,12 +113,12 @@ async def update_categoria(categoria_id: int, categoria_request: CategoriaReques
 
 @router.delete(
     "/categorias/{categoria_id}",
-    response_model=DeleteSuccessfulResponse,
+    response_model=DeleteSuccessfulResponseSchema,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Elimina una categoria"
 )

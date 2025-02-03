@@ -1,6 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends
-from src.schemas import ErrorResponse, NotAuthenticatedResponse
+from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema
 from src.dto.comunicacion_destino_response import ComunicacionDestinoResponse
 from src.dto.pagination_response import PaginatedResponse
 from src.service.comunicacion_area_service import ComunicacionAreaService
@@ -17,9 +17,9 @@ comunicaciones_area_tag_metadata={
     "/comunicaciones-area",
     response_model=PaginatedResponse,
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene todas las comunicaciones entre áreas"
 )
@@ -31,9 +31,9 @@ async def get_all_comunicaciones_area(page: int = 1, page_size: int = 10, servic
     "/comunicaciones-area/{area_origen_id}/destinos",
     response_model=List[ComunicacionDestinoResponse],
     responses={
-        400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
-        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene las áreas destino por ID de área de origen"
 )
