@@ -1,5 +1,6 @@
 from typing import  List, Any, Dict
-from fastapi import HTTPException, Depends
+from fastapi import Depends
+from src.exception import ConflictException, NotFoundException
 from src.dto.area_request import AreaRequest
 from src.dto.area_response import AreaResponse
 from src.model.entity.area import Area
@@ -13,7 +14,7 @@ class AreaService:
 
     def add_area(self, area_request: AreaRequest) -> AreaResponse:
         if self.area_repository.exists(area_request.nombre_area):
-            raise HTTPException(status_code=400, detail="El area ya existe")
+            raise ConflictException("El area ya existe")
 
         area = Area(
             nombre_area=area_request.nombre_area
@@ -26,6 +27,7 @@ class AreaService:
             nombre_area=area.nombre_area
         )
 
+
     def get_all_areas(self) -> List[AreaResponse]:
         areas = self.area_repository.get_all_areas()
 
@@ -36,17 +38,21 @@ class AreaService:
             ) for area in areas
         ]
 
-
     def update_area(self, area_id: int, area_request: AreaRequest) -> AreaResponse:
         area = self.area_repository.get_area_by_id(area_id)
         if not area:
-            raise HTTPException(status_code=404, detail="Area no encontrada")
+            raise NotFoundException("El area no existe")
+
+        if area.nombre_area == area_request.nombre_area:
+            return AreaResponse(
+                id=area.id,
+                nombre_area=area.nombre_area
+            )
 
         if self.area_repository.exists(area_request.nombre_area):
-            raise HTTPException(status_code=400, detail="El area ya existe")
+            raise ConflictException("El area ya existe")
 
         area.nombre_area = area_request.nombre_area
-
         area = self.area_repository.update_area(area)
 
         return AreaResponse(
@@ -58,7 +64,7 @@ class AreaService:
     def delete_area_by_id(self, area_id: int) -> None:
         area = self.area_repository.get_area_by_id(area_id)
         if not area:
-            raise HTTPException(status_code=404, detail="Area no encontrada")
+            raise NotFoundException("El area no existe")
 
         self.area_repository.delete_area_by_id(area_id)
 
@@ -81,7 +87,7 @@ class AreaService:
     def get_area_by_id(self, area_id: int) -> AreaResponse:
         area = self.area_repository.get_area_by_id(area_id)
         if not area:
-            raise HTTPException(status_code=404, detail="Area no encontrada")
+            raise NotFoundException("El area no existe")
 
         return AreaResponse(
             id=area.id,
