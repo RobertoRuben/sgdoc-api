@@ -115,6 +115,7 @@ async def update_centro_poblado(centro_poblado_id: int, centro_poblado_request: 
 
 @router.delete(
     "/centros-poblados/{centro_poblado_id}",
+    response_model=DeleteSuccessfulResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
