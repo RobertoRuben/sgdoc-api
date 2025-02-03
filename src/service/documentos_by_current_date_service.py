@@ -2,11 +2,11 @@ from typing import List
 
 from fastapi import Depends
 from src.dto.documentos_by_current_date_response import DocumentosByCurrentDateResponse, TotalDerivedDocumentsToday, TotalPendingDerivedDocumentsToday, TotalDocumentsByCaserioToday
-from src.repository.documentos_by_current_date_repository import DocumentosByCurrentDateRepository
+from src.repository.mesa_de_partes_dashboard_repository import MesaDePartesDashboardRepository
 
 class DocumentsByCurrentDateService:
 
-    def __init__(self, documentos_by_current_date_repository: DocumentosByCurrentDateRepository = Depends()):
+    def __init__(self, documentos_by_current_date_repository: MesaDePartesDashboardRepository = Depends()):
         self.documentos_by_current_date_repository = documentos_by_current_date_repository
 
 

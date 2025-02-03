@@ -5,7 +5,7 @@ from src.model.entity.documento import Documento
 from src.model.entity.derivacion import Derivacion
 from src.model.entity.caserio import Caserio
 
-class DocumentosByCurrentDateRepository:
+class MesaDePartesDashboardRepository:
 
     @staticmethod
     def get_number_documentos_by_current_date() -> int:

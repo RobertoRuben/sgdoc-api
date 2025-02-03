@@ -19,6 +19,11 @@ derivaciones_tag_metadata={
 @router.get(
     "/derivaciones",
     response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponse},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
+        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+    },
     description="Obtiene todas las derivaciones con filtros opcionales y paginación"
 )
 async def get_derivaciones(
@@ -44,6 +49,8 @@ async def get_derivaciones(
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
+        422: {"description": "Error de validación", "model": ValidationErrorResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
     },
     description="Crea una nueva derivación"
