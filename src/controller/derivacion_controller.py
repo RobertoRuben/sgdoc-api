@@ -1,7 +1,7 @@
 from typing import Optional
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from typing import List
+from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse, DeleteSuccessfulResponse
 from src.dto.pagination_response import PaginatedResponse
 from src.dto.derivacion_request import DerivacionRequest
 from src.dto.derivacion_response import DerivacionResponse
@@ -29,37 +29,55 @@ async def get_derivaciones(
     documento_id: Optional[int] = Query(None, description="Filtro por ID del documento"),
     service: DerivacionService = Depends()
 ):
-    try:
-        return service.get_all_derivaciones(
-            page=page,
-            page_size=page_size,
-            fecha_filtro=fecha,
-            estado_filtro=estado,
-            documento_id_filtro=documento_id
-        )
-    except HTTPException as e:
-        raise e
+    return service.get_all_derivaciones(
+        page=page,
+        page_size=page_size,
+        fecha_filtro=fecha,
+        estado_filtro=estado,
+        documento_id_filtro=documento_id
+    )
 
-@router.post("/derivaciones", response_model=DerivacionResponse, description="Crea una nueva derivación")
+
+@router.post(
+    "/derivaciones",
+    response_model=DerivacionResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponse},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
+        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+    },
+    description="Crea una nueva derivación"
+)
 async def add_derivacion(derivacion_request: DerivacionRequest, service: DerivacionService = Depends()):
-    try:
-        return service.add_derivacion(derivacion_request)
-    except HTTPException as e:
-        raise e
+    return service.add_derivacion(derivacion_request)
 
 
-@router.put("/derivaciones/{derivacion_id}", response_model=DerivacionResponse, description="Actualiza una derivación")
+@router.put(
+    "/derivaciones/{derivacion_id}",
+    response_model=DerivacionResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponse},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
+        422: {"description": "Error de validación", "model": ValidationErrorResponse},
+        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+    },
+    description="Actualiza una derivación")
 async def update_derivacion(derivacion_id: int, derivacion_request: DerivacionRequest, service: DerivacionService = Depends()):
-    try:
-        return service.update_derivacion(derivacion_id, derivacion_request)
-    except HTTPException as e:
-        raise e
+    return service.update_derivacion(derivacion_id, derivacion_request)
 
 
-@router.delete("/derivaciones/{derivacion_id}", description="Elimina una derivación")
+@router.delete(
+    "/derivaciones/{derivacion_id}",
+    response_model=DeleteSuccessfulResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponse},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponse},
+        500: {"description": "Error interno del servidor", "model": ErrorResponse},
+    },
+    description="Elimina una derivación")
 async def delete_derivacion(derivacion_id: int, service: DerivacionService = Depends()):
-    try:
-        service.delete_derivacion(derivacion_id)
-        return JSONResponse(content={"message": "Se eliminó la derivación correctamente"}, status_code=200)
-    except HTTPException as e:
-        raise e
+    service.delete_derivacion(derivacion_id)
+    return JSONResponse(content={"message": "Se eliminó la derivación correctamente"}, status_code=200)
