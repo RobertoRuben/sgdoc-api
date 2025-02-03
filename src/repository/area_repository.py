@@ -131,6 +131,7 @@ class AreaRepository:
                 ).all()
                 total_items = session.exec(select(func.count()).select_from(Area)).first()
                 total_pages = (total_items + page_size - 1) // page_size
+
                 return {
                     "data": areas,
                     "pagination": {

@@ -1,5 +1,6 @@
 from typing import List, Optional, Dict, Any
-from  fastapi import HTTPException, Depends
+from fastapi import Depends
+from src.exception import ConflictException, NotFoundException
 from src.model.entity.caserio import Caserio
 from src.dto.caserio_request import CaserioRequest
 from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
@@ -13,7 +14,7 @@ class CaserioService:
 
     def add_caserio(self, caserio_request: CaserioRequest) -> CaserioResponseWithCentroPobladoId:
         if self.caserio_repository.exists(caserio_request.nombre_caserio):
-            raise HTTPException(status_code=400, detail="El caserio ya existe")
+            raise ConflictException("El caserio ya existe")
 
         caserio = Caserio(
             nombre_caserio=caserio_request.nombre_caserio,
@@ -28,6 +29,7 @@ class CaserioService:
             centro_poblado_id=caserio.centro_poblado_id
         )
 
+
     def get_caserios_names(self) -> List[CaserioSimpleResponse]:
         caserios = self.caserio_repository.get_caserios_names()
 
@@ -40,12 +42,19 @@ class CaserioService:
 
 
     def update_caserio(self, caserio_id: int, caserio_request: CaserioRequest) -> CaserioResponseWithCentroPobladoId:
-        if self.caserio_repository.exists(caserio_request.nombre_caserio):
-            raise HTTPException(status_code=400, detail="Un caserio con ese nombre ya se encuentra registrado")
-
-        caserio = self.caserio_repository.get_by_id(caserio_id)
+        caserio = self.caserio_repository.get_caserio_by_id(caserio_id)
         if not caserio:
-            raise HTTPException(status_code=404, detail="Caserio no encontrado")
+            raise NotFoundException("El caserio no existe")
+
+        if caserio.nombre_caserio == caserio_request.nombre_caserio:
+            return CaserioResponseWithCentroPobladoId(
+                id=caserio.id,
+                nombre_caserio=caserio.nombre_caserio,
+                centro_poblado_id=caserio.centro_poblado_id
+            )
+
+        if self.caserio_repository.exists(caserio_request.nombre_caserio):
+            raise ConflictException("El caserio ya existe")
 
         caserio.nombre_caserio = caserio_request.nombre_caserio
         caserio.centro_poblado_id = caserio_request.centro_poblado_id
@@ -60,11 +69,11 @@ class CaserioService:
 
 
     def delete_caserio_by_id(self, caserio_id: int) -> None:
-        caserio = self.caserio_repository.get_by_id(caserio_id)
+        caserio = self.caserio_repository.get_caserio_by_id(caserio_id)
         if not caserio:
-            raise HTTPException(status_code=404, detail="Caserio no encontrado")
+            raise NotFoundException("El caserio no existe")
 
-        self.caserio_repository.delete_by_id(caserio_id)
+        self.caserio_repository.delete_caserio_by_id(caserio_id)
 
 
     def get_all_caserios_by_centro_poblado_id(self, centro_poblado_id: int | None) -> List[CaserioResponseWithCentroPobladoId]:
@@ -78,11 +87,12 @@ class CaserioService:
             ) for caserio in caserios
         ]
 
+
     def find_by_string(self, search_string: str) -> List[CaserioResponse]:
         caserios = self.caserio_repository.find_by_string(search_string)
 
         if not caserios:
-            raise HTTPException(status_code=404, detail="Caserio no encontrado")
+            raise NotFoundException("No se encontraron caserios")
 
         return [
             CaserioResponse(
@@ -98,11 +108,12 @@ class CaserioService:
 
 
     def get_caserio_by_id(self, caserio_id: int) -> Optional[CaserioResponseWithCentroPobladoId]:
-        caserio = self.caserio_repository.get_by_id(caserio_id)
+        caserio = self.caserio_repository.get_caserio_by_id(caserio_id)
         if not caserio:
-            raise HTTPException(status_code=404, detail="Caserio no encontrado")
+            raise NotFoundException("El caserio no existe")
 
         return CaserioResponseWithCentroPobladoId(
             id=caserio.id,
             nombre_caserio=caserio.nombre_caserio,
-            centro_poblado_id=caserio.centro_poblado_id)
+            centro_poblado_id=caserio.centro_poblado_id
+        )
