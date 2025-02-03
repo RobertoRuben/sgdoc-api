@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from src.dto.ambito_request import AmbitoRequest
 from src.dto.ambito_response import AmbitoResponse
 from src.dto.pagination_response import PaginatedResponse
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticated
+from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse
 from src.service.ambito_service import AmbitoService
 
 router = APIRouter(tags=["Ambitos"])
@@ -23,7 +23,7 @@ ambitos_tag_metadata = {
     response_model=AmbitoResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
         422: {"description": "Error de validación", "model": ValidationErrorResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
@@ -39,7 +39,7 @@ async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Dep
     response_model=List[AmbitoResponse],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
     },
     description="Obtiene todos los ambitos documentales"
@@ -53,7 +53,7 @@ async def get_ambitos(service: AmbitoService = Depends()):
     response_model=PaginatedResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
     },
     description="Obtiene los ambitos documentales paginados"
@@ -71,7 +71,7 @@ async def get_paginated_ambitos(
     response_model=List[AmbitoResponse],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
     },
     description="Busca ambitos documentales por cadena de búsqueda"
@@ -88,7 +88,7 @@ async def search_ambitos(
     response_model=AmbitoResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         404: {"description": "Ambito no encontrado", "model": ErrorResponse},
         409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
         422: {"description": "Error de validación", "model": ValidationErrorResponse},
@@ -104,7 +104,7 @@ async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: 
     "/ambitos/{ambito_id}",
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         404: {"description": "Ambito no encontrado", "model": ErrorResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
     },
@@ -120,7 +120,7 @@ async def delete_ambito(ambito_id: int, service: AmbitoService = Depends()):
     response_model=AmbitoResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         404: {"description": "Ambito no encontrado", "model": ErrorResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},
     },

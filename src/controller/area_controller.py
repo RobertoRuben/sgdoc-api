@@ -1,7 +1,7 @@
 from typing import List
 from fastapi import Depends, APIRouter, Query
 from fastapi.responses import JSONResponse
-from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticated
+from src.schemas import ErrorResponse, ValidationErrorResponse, NotAuthenticatedResponse
 from src.dto.area_response import AreaResponse
 from src.dto.area_request import AreaRequest
 from src.dto.pagination_response import PaginatedResponse
@@ -20,7 +20,7 @@ areas_tag_metadata = {
     response_model=AreaResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponse},
-        401: {"description": "No autorizado", "model": NotAuthenticated},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponse},
         409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponse},
         422: {"description": "Error de validación", "model": ValidationErrorResponse},
         500: {"description": "Error interno del servidor", "model": ErrorResponse},

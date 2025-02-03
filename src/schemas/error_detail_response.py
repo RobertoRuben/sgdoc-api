@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class ErrorDetail(BaseModel):
+class ErrorDetailResponse(BaseModel):
     field: Optional[str]
     message: str

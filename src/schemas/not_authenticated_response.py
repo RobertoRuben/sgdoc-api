@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
-class NotAuthenticated(BaseModel):
+class NotAuthenticatedResponse(BaseModel):
     detail: str = "Not authenticated"
