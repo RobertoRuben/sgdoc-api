@@ -72,6 +72,9 @@ class AreaService:
     def find_areas_by_string(self, search_string: str) -> List[AreaResponse]:
         areas = self.area_repository.find_by_string(search_string)
 
+        if not areas:
+            raise NotFoundException("No se encontraron areas")
+
         return [
             AreaResponse(
                 id=area.id,
