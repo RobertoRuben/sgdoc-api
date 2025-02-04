@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status, Depends
-from typing import Optional
+from src.exception import UnauthorizedException, ForbiddenException
 from src.dto.auth_request import AuthRequest
 from src.dto.auth_response import AuthResponse
 from src.security.argon2_hasher import Argon2PasswordHasher
@@ -21,24 +21,22 @@ class AuthService:
     def authenticate_user(self, auth_request: AuthRequest) -> AuthResponse:
         user_data = self.usuario_repository.find_user_by_username(auth_request.username)
         if not user_data:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+            raise UnauthorizedException(
                 detail="Usuario o contraseña incorrectos",
-                headers={"WWW-Authenticate": "Bearer"},
+                headers={"WWW-Authenticate": "Bearer"}
             )
 
         user, trabajador, rol = user_data
 
         if not user.is_active:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Este usuario está inactivo. Contacte al administrador.",
+            raise ForbiddenException(
+                detail="Este usuario está inactivo. Contacte al administrador."
             )
+
         if not self.argon2_hasher.verify_password(user.contrasena, auth_request.password):
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+            raise UnauthorizedException(
                 detail="Usuario o contraseña incorrectos",
-                headers={"WWW-Authenticate": "Bearer"},
+                headers={"WWW-Authenticate": "Bearer"}
             )
 
         access_token = self.token_manager.create_access_token(
@@ -62,11 +60,11 @@ class AuthService:
         payload = self.token_manager.decode_token(token)
         username: str = payload.get("sub")
         if not username:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+            raise UnauthorizedException(
                 detail="Token inválido: faltó 'sub'",
-                headers={"WWW-Authenticate": "Bearer"},
+                headers={"WWW-Authenticate": "Bearer"}
             )
+
         return username
 
 
@@ -76,19 +74,18 @@ class AuthService:
         scope: str = payload.get("scope")
 
         if not username or scope != "refresh":
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Refresh token inválido",
-            )
+            raise UnauthorizedException(detail="Refresh token inválido")
 
         user_data = self.usuario_repository.find_user_by_username(username)
         if not user_data:
-            raise HTTPException(...)
+            raise UnauthorizedException(detail="Usuario no encontrado")
 
         user, trabajador, rol = user_data
 
         if not user.is_active:
-            raise HTTPException(...)
+            raise ForbiddenException(
+                detail="Este usuario está inactivo. Contacte al administrador."
+            )
 
         new_access_token = self.token_manager.create_access_token(
             {"sub": user.nombre_usuario, "scope": "access"}

@@ -1,4 +1,4 @@
-from .http_exceptions import BadRequestException, NotFoundException, ConflictException
+from .http_exceptions import BadRequestException, NotFoundException, ConflictException, UnauthorizedException, ForbiddenException
 from .server_exceptions import DatabaseException, InternalServerException
 
 __all__ = [
@@ -7,4 +7,6 @@ __all__ = [
     "ConflictException",
     "DatabaseException",
     "InternalServerException",
+    "UnauthorizedException",
+    "ForbiddenException"
 ]

@@ -1,7 +1,7 @@
 import jwt
 from datetime import datetime, timedelta, timezone
 from jwt import PyJWTError
-from fastapi import HTTPException, status
+from src.exception import UnauthorizedException
 
 SECRET_KEY = "e88731089b8fdcc5539e5f9017dc7d83bcfaf38367fd777caaa5e69f63bd935f"
 ALGORITHM = "HS256"
@@ -29,8 +29,7 @@ class TokenManager:
             payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
             return payload
         except PyJWTError:
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
+            raise UnauthorizedException(
                 detail="Token inválido o expirado",
                 headers={"WWW-Authenticate": "Bearer"},
             )
