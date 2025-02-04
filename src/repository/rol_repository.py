@@ -1,5 +1,7 @@
 from typing import List, Optional, Dict, Any
+from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel import Session, select, func, or_, Text
+from src.exception import DatabaseException
 from src.model.entity.rol import Rol
 from src.db.database import engine
 
@@ -8,82 +10,122 @@ class RolRepository:
     @staticmethod
     def add_rol(rol: Rol) -> Rol:
         with Session(engine) as session:
-            session.add(rol)
-            session.commit()
-            session.refresh(rol)
-        return rol
+            try:
+                session.add(rol)
+                session.commit()
+                session.refresh(rol)
+                return rol
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al guardar el rol en la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def get_all() -> List[Rol]:
         with Session(engine) as session:
-            roles = session.exec(select(Rol)).all()
-        return roles
+            try:
+                roles = session.exec(select(Rol)).all()
+                return list(roles)
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al obtener los roles de la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def update_rol(rol: Rol) -> Rol:
         with Session(engine) as session:
-            session.add(rol)
-            session.commit()
-            session.refresh(rol)
-        return rol
+            try:
+                session.add(rol)
+                session.commit()
+                session.refresh(rol)
+                return rol
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al actualizar el rol en la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def delete_by_id(rol_id: int) -> None:
         with Session(engine) as session:
-            rol = session.get(Rol, rol_id)
-            if rol:
-                session.delete(rol)
-                session.commit()
+            try:
+                rol = session.get(Rol, rol_id)
+                if rol:
+                    session.delete(rol)
+                    session.commit()
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al eliminar el rol de la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def get_by_id(rol_id: int) -> Optional[Rol]:
         with Session(engine) as session:
-            rol = session.get(Rol, rol_id)
-        return rol
+            try:
+                rol = session.get(Rol, rol_id)
+                return rol
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al obtener el rol de la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def exists(nombre_rol: str) -> bool:
         with Session(engine) as session:
-            exists = session.exec(select(Rol).where(Rol.nombre_rol == nombre_rol)).first() is not None
-        return exists
+            try:
+                exists = session.exec(select(Rol).where(Rol.nombre_rol == nombre_rol)).first() is not None
+                return exists
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al verificar si existe el rol en la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def find_by_string(search_string: str) -> List[Rol]:
         with Session(engine) as session:
-            search_filter = or_(
-                Rol.nombre_rol.contains(search_string),
-                func.cast(Rol.id, Text).contains(search_string)
-            )
-            roles = session.exec(select(Rol).where(search_filter)).all()
-        return roles
+            try:
+                search_filter = or_(
+                    Rol.nombre_rol.contains(search_string),
+                    func.cast(Rol.id, Text).contains(search_string)
+                )
+                roles = session.exec(select(Rol).where(search_filter)).all()
+                return roles
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al buscar los roles en la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 
 
     @staticmethod
     def get_all_pagination(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         offset = (page - 1) * page_size
         with Session(engine) as session:
-            roles = session.exec(
-                select(Rol)
-                .order_by(Rol.id)
-                .offset(offset)
-                .limit(page_size)
-            ).all()
-            total_items = session.exec(select(func.count()).select_from(Rol)).first()
-            total_pages = (total_items + page_size - 1) // page_size
+            try:
+                roles = session.exec(
+                    select(Rol)
+                    .order_by(Rol.id)
+                    .offset(offset)
+                    .limit(page_size)
+                ).all()
+                total_items = session.exec(select(func.count()).select_from(Rol)).first()
+                total_pages = (total_items + page_size - 1) // page_size
 
-        return {
-            "data": roles,
-            "pagination": {
-                "current_page": page,
-                "page_size": page_size,
-                "total_items": total_items,
-                "total_pages": total_pages
-            }
-        }
+                return {
+                    "data": roles,
+                    "pagination": {
+                        "current_page": page,
+                        "page_size": page_size,
+                        "total_items": total_items,
+                        "total_pages": total_pages
+                    }
+                }
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al obtener los roles de la base de datos") from e
+            except Exception as e:
+                raise DatabaseException("Error inesperado") from e
 

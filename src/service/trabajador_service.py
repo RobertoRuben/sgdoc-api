@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
-from fastapi import HTTPException, Depends
-
+from fastapi import Depends
+from src.exception import NotFoundException, ConflictException
 from src.dto.trabajador_response import TrabajadorResponse
 from src.dto.trabajador_request import TrabajadorRequest
 from src.dto.trabajador_simple_response import TrabajadorSimpleReponse
@@ -15,9 +15,8 @@ class TrabajadorService:
 
 
     def add_trabajador(self, trabajador_request: TrabajadorRequest) -> TrabajadorResponse:
-
         if self.trabajador_repository.exists_trabajador_by_dni(trabajador_request.dni):
-            raise HTTPException(status_code=400, detail="El trabajador ya existe en la base de datos")
+            raise ConflictException("El trabajador ya existe en la base de datos")
 
         new_trabajador = Trabajador(
             dni=trabajador_request.dni,
@@ -61,10 +60,21 @@ class TrabajadorService:
         trabajador = self.trabajador_repository.get_by_id(trabajador_id)
 
         if not trabajador:
-            raise HTTPException(status_code=404, detail="El trabajador no existe en la base de datos")
+            raise NotFoundException("Trabajador no encontrado")
+
+        if trabajador.dni == trabajador_request.dni:
+            return TrabajadorResponse(
+                id=trabajador.id,
+                dni=trabajador.dni,
+                nombres=trabajador.nombres,
+                apellido_paterno=trabajador.apellido_paterno,
+                apellido_materno=trabajador.apellido_materno,
+                genero=trabajador.genero,
+                area_id=trabajador.area_id
+            )
 
         if self.trabajador_repository.exists_trabajador_by_dni(trabajador_request.dni):
-            raise HTTPException(status_code=400, detail="El trabajador ya existe en la base de datos")
+            raise NotFoundException("El trabajador ya existe en la base de datos")
 
         trabajador.dni = trabajador_request.dni
         trabajador.nombres = trabajador_request.nombres
@@ -90,7 +100,7 @@ class TrabajadorService:
         trabajador = self.trabajador_repository.get_by_id(trabajador_id)
 
         if not trabajador:
-            raise HTTPException(status_code=404, detail="El trabajador no existe en la base de datos")
+            raise NotFoundException("Trabajador no encontrado")
 
         self.trabajador_repository.delete_by_id(trabajador_id)
 
@@ -99,7 +109,7 @@ class TrabajadorService:
         trabajadores = self.trabajador_repository.find_by_string(search_string)
 
         if not trabajadores:
-            raise HTTPException(status_code=404, detail="Trabajador no encontrado")
+            raise NotFoundException("No se encontraron trabajadores")
 
         return [
             TrabajadorDetailResponse(
@@ -118,7 +128,7 @@ class TrabajadorService:
         trabajador = self.trabajador_repository.get_by_id(trabajador_id)
 
         if not trabajador:
-            raise HTTPException(status_code=404, detail="Trabajador no encontrado")
+            raise NotFoundException("Trabajador no encontrado")
 
         return TrabajadorResponse(
             id=trabajador.id,

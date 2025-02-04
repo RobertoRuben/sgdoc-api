@@ -1,6 +1,7 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
+from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.service.detalle_derivacion_service import DetalleDerivacionService
 from src.dto.detalle_derivacion_request import DetalleDerivacionRequest
 from src.dto.detalle_derivacion_response import DetalleDerivacionResponse
@@ -15,31 +16,64 @@ detalle_derivaciones_tag_metadata={
                    " ofrece funcionalidades de paginación y conteo de registros.",
 }
 
-@router.post("/detalle-derivaciones", response_model=DetalleDerivacionResponse, description="Crea un nuevo detalle de derivación")
+@router.post(
+    "/detalle-derivaciones",
+    response_model=DetalleDerivacionResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Crea un nuevo detalle de derivación"
+)
 async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRequest, service: DetalleDerivacionService = Depends()):
-    try:
-        return service.add_detalle_derivacion(detalle_derivacion_request)
-    except HTTPException as e:
-        raise e
+    return service.add_detalle_derivacion(detalle_derivacion_request)
 
-@router.get("/detalle-derivaciones/{derivacion_id}", response_model=List[DetalleDerivacionDetailsResponse], description="Obtiene todos los detalles de derivación de una derivación")
+
+@router.get(
+    "/detalle-derivaciones/{derivacion_id}",
+    response_model=List[DetalleDerivacionDetailsResponse],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene todos los detalles de derivación de una derivación"
+)
 async def get_all_detalle_derivacion_by_id(derivacion_id: int, service: DetalleDerivacionService = Depends()):
-    try:
-        return service.get_all_detalle_derivacion_by_id(derivacion_id)
-    except HTTPException as e:
-        raise e
+    return service.get_all_detalle_derivacion_by_id(derivacion_id)
 
-@router.put("/detalle-derivaciones/{detalle_derivacion_id}", response_model=DetalleDerivacionDetailsResponse, description="Actualiza un detalle de derivación")
+
+@router.put(
+    "/detalle-derivaciones/{detalle_derivacion_id}",
+    response_model=DetalleDerivacionDetailsResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Actualiza un detalle de derivación"
+)
 async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequest, service: DetalleDerivacionService = Depends()):
-    try:
-        return service.update_detalle_derivacion(detalle_derivacion_id, detalle_derivacion_request)
-    except HTTPException as e:
-        raise
+    return service.update_detalle_derivacion(detalle_derivacion_id, detalle_derivacion_request)
 
-@router.delete("/detalle-derivaciones/{detalle_derivacion_id}", description="Elimina un detalle de derivación")
+
+@router.delete(
+    "/detalle-derivaciones/{detalle_derivacion_id}",
+    response_model=DeleteSuccessfulResponseSchema,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Elimina un detalle de derivación"
+)
 async def delete_detalle_derivacion(detalle_derivacion_id: int, service: DetalleDerivacionService = Depends()):
-    try:
-        service.delete_detalle_derivacion_by_id(detalle_derivacion_id)
-        return JSONResponse(content={"message": "Se eliminó el detalle de derivación correctamente"}, status_code=200)
-    except HTTPException as e:
-        raise e
+    service.delete_detalle_derivacion_by_id(detalle_derivacion_id)
+    return JSONResponse(content={"message": "Se eliminó el detalle de derivación correctamente"}, status_code=200)

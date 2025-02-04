@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
-from fastapi import HTTPException, Depends
+from fastapi import Depends
+from src.exception import ConflictException, NotFoundException
 from src.model.entity.remitente import Remitente
 from src.dto.remitente_request import RemitenteRequest
 from src.dto.remitente_response import RemitenteResponse
@@ -13,7 +14,7 @@ class RemitenteService:
 
     def add_remitente(self, remitente_request: RemitenteRequest) -> RemitenteResponse:
         if self.remitente_repository.exists(remitente_request.dni):
-            raise HTTPException(status_code=400, detail="El remitente ya existe en la base de datos")
+            raise ConflictException("El DNI ya existe en la base de datos")
 
         new_remitente = Remitente(
             dni = remitente_request.dni,
@@ -38,24 +39,36 @@ class RemitenteService:
     def get_remitentes(self) -> List[RemitenteResponse]:
         remitentes = self.remitente_repository.get_all()
 
-        return [RemitenteResponse(
-            id=remitente.id,
-            dni=remitente.dni,
-            nombres=remitente.nombres,
-            apellido_paterno=remitente.apellido_paterno,
-            apellido_materno=remitente.apellido_materno,
-            genero=remitente.genero
-        ) for remitente in remitentes]
+        return [
+            RemitenteResponse(
+                id=remitente.id,
+                dni=remitente.dni,
+                nombres=remitente.nombres,
+                apellido_paterno=remitente.apellido_paterno,
+                apellido_materno=remitente.apellido_materno,
+                genero=remitente.genero
+            ) for remitente in remitentes
+        ]
 
 
     def update_remitente(self, remitente_id: int, remitente_request: RemitenteRequest) -> RemitenteResponse:
         remitente = self.remitente_repository.get_by_id(remitente_id)
 
         if not remitente:
-            raise HTTPException(status_code=404, detail="Remitente no encontrado")
+            raise NotFoundException("Remitente no encontrado")
+
+        if remitente.dni == remitente_request.dni:
+            return RemitenteResponse(
+                id=remitente.id,
+                dni=remitente.dni,
+                nombres=remitente.nombres,
+                apellido_paterno=remitente.apellido_paterno,
+                apellido_materno=remitente.apellido_materno,
+                genero=remitente.genero
+            )
 
         if self.remitente_repository.exists(remitente_request.dni):
-            raise HTTPException(status_code=400, detail="El DNI ya existe en la base de datos")
+            raise NotFoundException("El DNI ya existe en la base de datos")
 
         remitente.dni = remitente_request.dni
         remitente.nombres = remitente_request.nombres
@@ -78,29 +91,35 @@ class RemitenteService:
     def delete_remitente(self, remitente_id: int) -> None:
         remitente = self.remitente_repository.get_by_id(remitente_id)
         if not remitente:
-            raise HTTPException(status_code=404, detail="Remitente no encontrado")
+            raise NotFoundException("Remitente no encontrado")
 
         self.remitente_repository.delete_by_id(remitente_id)
 
 
     def find_remitentes_by_string(self, search_string: str) -> List[RemitenteResponse]:
         remitentes = self.remitente_repository.find_by_string(search_string)
+
         if not remitentes:
-            raise HTTPException(status_code=404, detail="No se encontraron resulatdos que coincidan con su busqueda.")
-        return [RemitenteResponse(
-            id=remitente.id,
-            dni=remitente.dni,
-            nombres=remitente.nombres,
-            apellido_paterno=remitente.apellido_paterno,
-            apellido_materno=remitente.apellido_materno,
-            genero=remitente.genero
-        ) for remitente in remitentes]
+            raise NotFoundException("No se encontraron remitentes con la cadena de búsqueda")
+
+        return [
+            RemitenteResponse(
+                id=remitente.id,
+                dni=remitente.dni,
+                nombres=remitente.nombres,
+                apellido_paterno=remitente.apellido_paterno,
+                apellido_materno=remitente.apellido_materno,
+                genero=remitente.genero
+            ) for remitente in remitentes
+        ]
 
 
     def get_remitente_by_id(self, remitente_id: int) -> RemitenteResponse:
         remitente = self.remitente_repository.get_by_id(remitente_id)
+
         if not remitente:
-            raise HTTPException(status_code=404, detail="Remitente no encontrado")
+            raise NotFoundException("Remitente no encontrado")
+
         return RemitenteResponse(
             id=remitente.id,
             dni=remitente.dni,

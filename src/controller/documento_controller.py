@@ -3,6 +3,9 @@ from io import BytesIO
 from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File, Form, Path
 from starlette.responses import StreamingResponse
+from src.exception import InternalServerException
+from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema, FileDownloadResponseSchema
+from src.exception import  BadRequestException
 from src.dto.documento_request import DocumentoRequest
 from src.dto.documento_response import DocumentoResponse
 from src.dto.documento_update_request import DocumentoUpdateRequest
@@ -19,7 +22,18 @@ documentos_tag_metadata = {
 }
 
 
-@router.post("/documentos", response_model=DocumentoResponse, description="Crea un nuevo documento")
+@router.post(
+    "/documentos",
+    response_model=DocumentoResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Crea un nuevo documento"
+)
 async def create_documento(
     documento_file: UploadFile = File(..., description="Archivo PDF del documento"),
     dni: int = Form(..., ge=10000000, le=99999999, description="DNI de 8 dígitos"),
@@ -38,7 +52,7 @@ async def create_documento(
 ):
     try:
         if documento_file.content_type != "application/pdf":
-            raise HTTPException(status_code=400, detail="El archivo debe ser de tipo PDF")
+            raise BadRequestException("El archivo debe ser de tipo PDF")
 
         documento_bytes = await documento_file.read()
 
@@ -60,28 +74,33 @@ async def create_documento(
             caserio_id=caserio_id,
             centro_poblado_id=centro_poblado_id
         )
-
-        created_documento = documento_service.add_documento(remitente_request, documento_request)
-        return created_documento
-    except HTTPException as he:
-        raise he
+        return documento_service.add_documento(remitente_request, documento_request)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InternalServerException("Ocurrió un error al crear el documento") from e
 
 
-@router.get("/documentos", response_model=PaginatedResponse, description="Obtiene todos los documentos")
+@router.get(
+    "/documentos",
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    response_model=PaginatedResponse,
+    description="Obtiene todos los documentos"
+)
 async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_service: DocumentoService = Depends()):
-    try:
-        return documento_service.get_all_documents(p_page, p_page_size)
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return documento_service.get_all_documents(p_page, p_page_size)
 
 
 @router.get(
     "/documentos/buscar",
     response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Busca documentos según criterios específicos"
 )
 async def search_entered_documents(
@@ -95,8 +114,7 @@ async def search_entered_documents(
     p_fecha_ingreso: Optional[date] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
     documento_service: DocumentoService = Depends()
 ):
-    try:
-        resultados = documento_service.search_entered_documents(
+    return documento_service.search_entered_documents(
             p_page=p_page,
             p_page_size=p_page_size,
             p_dni=p_dni,
@@ -106,16 +124,16 @@ async def search_entered_documents(
             p_nombre_categoria=p_nombre_categoria,
             p_fecha_ingreso=p_fecha_ingreso
         )
-        return resultados
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get(
     "/documentos/enviados",
     response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Obtiene documentos enviados por un área específica con filtros y paginación"
 )
 async def get_sent_documents_by_area_id(
@@ -130,27 +148,27 @@ async def get_sent_documents_by_area_id(
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
     documento_service: DocumentoService = Depends()
 ):
-    try:
-        return documento_service.get_sent_documents_by_area_id(
-            p_area_origen_id=p_area_origen_id,
-            p_search_document=p_search_document,
-            p_id_caserio=p_id_caserio,
-            p_id_centro_poblado=p_id_centro_poblado,
-            p_id_ambito=p_id_ambito,
-            p_nombre_categoria=p_nombre_categoria,
-            p_fecha_ingreso=p_fecha_ingreso,
-            p_page=p_page,
-            p_page_size=p_page_size
-        )
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return documento_service.get_sent_documents_by_area_id(
+        p_area_origen_id=p_area_origen_id,
+        p_search_document=p_search_document,
+        p_id_caserio=p_id_caserio,
+        p_id_centro_poblado=p_id_centro_poblado,
+        p_id_ambito=p_id_ambito,
+        p_nombre_categoria=p_nombre_categoria,
+        p_fecha_ingreso=p_fecha_ingreso,
+        p_page=p_page,
+        p_page_size=p_page_size
+    )
 
 
 @router.get(
     "/documentos/recibidos",
     response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Obtiene documentos recibidos por un área específica con filtros y paginación"
 )
 async def get_received_documents_by_area_id(
@@ -166,29 +184,28 @@ async def get_received_documents_by_area_id(
     p_recepcionada: Optional[bool] = Query(None, description="Filtrar por confirmación (recepcionada)"),
     documento_service: DocumentoService = Depends()
 ):
-    print(">>> Parámetros", p_page_size, p_search_document, p_id_caserio, p_id_centro_poblado, p_fecha_ingreso, p_recepcionada)
-    try:
-        return documento_service.get_received_documents_by_area_id(
-            p_area_destino_id=p_area_destino_id,
-            p_search_document=p_search_document,
-            p_id_caserio=p_id_caserio,
-            p_id_centro_poblado=p_id_centro_poblado,
-            p_id_ambito=p_id_ambito,
-            p_nombre_categoria=p_nombre_categoria,
-            p_fecha_ingreso=p_fecha_ingreso,
-            p_page=p_page,
-            p_page_size=p_page_size,
-            p_recepcionada=p_recepcionada  # Se pasa al servicio
-        )
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return documento_service.get_received_documents_by_area_id(
+        p_area_destino_id=p_area_destino_id,
+        p_search_document=p_search_document,
+        p_id_caserio=p_id_caserio,
+        p_id_centro_poblado=p_id_centro_poblado,
+        p_id_ambito=p_id_ambito,
+        p_nombre_categoria=p_nombre_categoria,
+        p_fecha_ingreso=p_fecha_ingreso,
+        p_page=p_page,
+        p_page_size=p_page_size,
+        p_recepcionada=p_recepcionada
+    )
 
 
 @router.get(
     "/documentos/rechazados",
     response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Obtiene documentos recibidos por un área específica con filtros y paginación"
 )
 async def get_rejected_documents_by_area_id(
@@ -203,58 +220,58 @@ async def get_rejected_documents_by_area_id(
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
     documento_service: DocumentoService = Depends()
 ):
-    print(">>> Parámetros", p_page_size, p_search_document, p_id_caserio, p_id_centro_poblado, p_fecha_ingreso)
-    try:
-        return documento_service.get_rejected_documents_by_area_id(
-            p_area_destino_id=p_area_destino_id,
-            p_search_document=p_search_document,
-            p_id_caserio=p_id_caserio,
-            p_id_centro_poblado=p_id_centro_poblado,
-            p_id_ambito=p_id_ambito,
-            p_nombre_categoria=p_nombre_categoria,
-            p_fecha_ingreso=p_fecha_ingreso,
-            p_page=p_page,
-            p_page_size=p_page_size
-        )
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return documento_service.get_rejected_documents_by_area_id(
+        p_area_destino_id=p_area_destino_id,
+        p_search_document=p_search_document,
+        p_id_caserio=p_id_caserio,
+        p_id_centro_poblado=p_id_centro_poblado,
+        p_id_ambito=p_id_ambito,
+        p_nombre_categoria=p_nombre_categoria,
+        p_fecha_ingreso=p_fecha_ingreso,
+        p_page=p_page,
+        p_page_size=p_page_size
+    )
 
 
-@router.get("/documentos/fecha_actual", response_model=PaginatedResponse, description="Obtiene los documentos con fecha actual")
-async def get_documents_by_current_date(
-        page: int = 1,
-        page_size: int = 10,
-        documento_service: DocumentoService = Depends()
-):
-    try:
-        return documento_service.get_documentos_by_current_date(page, page_size)
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@router.get(
+    "/documentos/fecha_actual",
+    response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene los documentos con fecha actual"
+)
+async def get_documents_by_current_date(page: int = 1, page_size: int = 10, documento_service: DocumentoService = Depends()):
+    return documento_service.get_documentos_by_current_date(page, page_size)
 
 
-@router.get("/documentos/{documento_id}", response_model=DocumentoResponse, description="Obtiene un documento por su ID")
-async def get_documento_by_id(
-    documento_id: int,
-    documento_service: DocumentoService = Depends()
-):
-    try:
-        documento = documento_service.get_document_by_id(documento_id)
-        if not documento:
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
-        return documento
-    except HTTPException as he:
-        raise he
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@router.get(
+    "/documentos/{documento_id}",
+    response_model=DocumentoResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene un documento por su ID"
+)
+async def get_documento_by_id(documento_id: int, documento_service: DocumentoService = Depends()):
+    return documento_service.get_document_by_id(documento_id)
 
 
 @router.put(
     "/documentos/{documento_id}",
     response_model=DocumentoResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Actualiza un documento existente"
 )
 async def update_documento(
@@ -287,43 +304,50 @@ async def update_documento(
             centro_poblado_id=centro_poblado_id
         )
 
-        updated_documento = documento_service.update_documento(documento_id, documento_request)
-        return updated_documento
+        return documento_service.update_documento(documento_id, documento_request)
 
-    except HTTPException as he:
-        raise he
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise InternalServerException("Ocurrió un error al actualizar el documento") from e
 
 
-@router.delete("/documentos/{documento_id}", description="Elimina un documento por su ID")
-async def delete_documento(
-    documento_id: int,
-    documento_service: DocumentoService = Depends()
-):
+@router.delete(
+    "/documentos/{documento_id}",
+    response_model=DeleteSuccessfulResponseSchema,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Elimina un documento por su ID"
+)
+async def delete_documento(documento_id: int, documento_service: DocumentoService = Depends()):
+    documento_service.delete_document(documento_id)
+    return {"message": "Documento eliminado correctamente"}
+
+
+@router.get(
+    "/documentos/{documento_id}/descargar",
+    response_model=FileDownloadResponseSchema,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Descarga el documento por su ID"
+)
+async def descargar_documento(documento_id: int, documento_service: DocumentoService = Depends()):
     try:
-        documento_service.delete_document(documento_id)
-        return {"message": "Documento eliminado correctamente"}
-    except HTTPException as he:
-        raise he
+        documento_bytes, nombre = documento_service.descargar_documento(documento_id)
+
+        file_like = BytesIO(documento_bytes)
+
+        headers = {
+            "Content-Disposition": f'attachment; filename="{nombre}.pdf"'
+        }
+        return StreamingResponse(file_like, media_type="application/pdf", headers=headers)
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.get("/documentos/{documento_id}/descargar", description="Descarga el documento por su ID")
-async def descargar_documento(
-        documento_id: int,
-        documento_service: DocumentoService = Depends()
-):
-    documento_bytes, nombre = documento_service.descargar_documento(documento_id)
-
-    file_like = BytesIO(documento_bytes)
-
-    headers = {
-        "Content-Disposition": f'attachment; filename="{nombre}.pdf"'
-    }
-
-    return StreamingResponse(file_like, media_type="application/pdf", headers=headers)
+        raise InternalServerException("Ocurrió un error al descargar el documento") from e
 
 
 

@@ -1,5 +1,6 @@
 from typing import List
-from fastapi import APIRouter, HTTPException, Depends, Query
+from fastapi import APIRouter, Depends
+from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema
 from src.dto.comunicacion_destino_response import ComunicacionDestinoResponse
 from src.dto.pagination_response import PaginatedResponse
 from src.service.comunicacion_area_service import ComunicacionAreaService
@@ -12,23 +13,30 @@ comunicaciones_area_tag_metadata={
                    "incluyendo la creación, recuperación, actualización, eliminación y búsqueda de registros de Comunicación entre Áreas.",
 }
 
-@router.get("/comunicaciones_area", response_model=PaginatedResponse, description="Obtiene todas las comunicaciones entre áreas")
+@router.get(
+    "/comunicaciones-area",
+    response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene todas las comunicaciones entre áreas"
+)
 async def get_all_comunicaciones_area(page: int = 1, page_size: int = 10, service: ComunicacionAreaService = Depends()):
-    try:
-        return service.get_all(page, page_size)
-    except HTTPException as e:
-        raise e
+    return service.get_all(page, page_size)
 
-@router.get("/comunicaciones_area/{area_origen_id}/destinos",response_model=List[ComunicacionDestinoResponse],
+
+@router.get(
+    "/comunicaciones-area/{area_origen_id}/destinos",
+    response_model=List[ComunicacionDestinoResponse],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
     description="Obtiene las áreas destino por ID de área de origen"
 )
-async def get_areas_destino_by_area_origen_id(
-    area_origen_id: int,
-    service: ComunicacionAreaService = Depends()
+async def get_areas_destino_by_area_origen_id(area_origen_id: int, service: ComunicacionAreaService = Depends()
 ):
-    try:
-        return service.get_areas_destino_by_area_origen_id(area_origen_id)
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return service.get_areas_destino_by_area_origen_id(area_origen_id)

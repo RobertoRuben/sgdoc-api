@@ -1,6 +1,7 @@
 from typing import List, Dict, Any
 from fastapi import HTTPException, Depends
 from src.model.entity.categoria import Categoria
+from src.exception import ConflictException, NotFoundException
 from src.dto.categoria_request import CategoriaRequest
 from src.dto.categoria_response import CategoriaResponse
 from src.repository.categoria_repository import CategoriaRepository
@@ -13,7 +14,7 @@ class CategoriaService:
 
     def add_categoria(self, categoria_request: CategoriaRequest) -> CategoriaResponse:
         if self.categoria_repository.exists(categoria_request.nombre_categoria):
-            raise HTTPException(status_code=400, detail="La categoria ya existe en la base de datos")
+            raise ConflictException("La categoria de documento ya existe en la base de datos")
 
         new_categoria = Categoria(
             nombre_categoria=categoria_request.nombre_categoria
@@ -27,12 +28,13 @@ class CategoriaService:
         )
 
 
-    def get_categorias(self) -> List[CategoriaResponse]:
-        categorias = self.categoria_repository.get_all()
+    def get_all_categorias(self) -> List[CategoriaResponse]:
+        categorias = self.categoria_repository.get_all_categorias()
 
-        return [CategoriaResponse(
-            id=categoria.id,
-            nombre_categoria=categoria.nombre_categoria
+        return [
+            CategoriaResponse(
+                id=categoria.id,
+                nombre_categoria=categoria.nombre_categoria
         ) for categoria in categorias]
 
 
@@ -40,7 +42,13 @@ class CategoriaService:
         categoria = self.categoria_repository.get_by_id(categoria_id)
 
         if not categoria:
-            raise HTTPException(status_code=404, detail="Categoria no encontrada")
+            raise NotFoundException("Categoria de documento no encontrada")
+
+        if categoria.nombre_categoria == categoria_request.nombre_categoria:
+            return CategoriaResponse(
+                id=categoria.id,
+                nombre_categoria=categoria.nombre_categoria
+            )
 
         if self.categoria_repository.exists(categoria_request.nombre_categoria):
             raise HTTPException(status_code=400, detail="La categoria ya existe en la base de datos")
@@ -55,11 +63,11 @@ class CategoriaService:
         )
 
 
-    def delete_categoria(self, categoria_id: int):
+    def delete_categoria_by_id(self, categoria_id: int):
         categoria = self.categoria_repository.get_by_id(categoria_id)
 
         if not categoria:
-            raise HTTPException(status_code=404, detail="Categoria no encontrada")
+            raise NotFoundException("Categoria de documento no encontrada")
 
         self.categoria_repository.delete_by_id(categoria_id)
 
@@ -67,13 +75,12 @@ class CategoriaService:
     def find_categoria_by_string(self, nombre_categoria: str) -> List[CategoriaResponse]:
         categorias = self.categoria_repository.find_by_string(nombre_categoria)
 
-        if not categorias:
-            raise HTTPException(status_code=404, detail="Categoria de documento no encontrada")
-
-        return [CategoriaResponse(
-            id=categoria.id,
-            nombre_categoria=categoria.nombre_categoria
-        ) for categoria in categorias]
+        return [
+            CategoriaResponse(
+                id=categoria.id,
+                nombre_categoria=categoria.nombre_categoria
+            ) for categoria in categorias
+        ]
 
 
 

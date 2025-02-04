@@ -1,6 +1,7 @@
 from typing import List
-from fastapi import HTTPException, Depends, APIRouter, Query
+from fastapi import Depends, APIRouter, Query
 from fastapi.responses import JSONResponse
+from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.dto.area_response import AreaResponse
 from src.dto.area_request import AreaRequest
 from src.dto.pagination_response import PaginatedResponse
@@ -14,67 +15,107 @@ areas_tag_metadata = {
                    " creación, recuperación, actualización, eliminación y búsqueda de registros de areas.",
 }
 
-@router.post("/areas", response_model=AreaResponse, description="Crea un nuevo area")
+@router.post(
+    "/areas",
+    response_model=AreaResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Crea una nueva área en la organización"
+)
 async def add_area(area_request: AreaRequest, service: AreaService = Depends()):
-    try:
-        return service.add_area(area_request)
-    except HTTPException as e:
-        raise e
+    return service.add_area(area_request)
 
 
-@router.get("/areas", response_model=List[AreaResponse], description="Obtiene todos los areas")
+@router.get(
+    "/areas",
+    response_model=List[AreaResponse],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene todas las áreas"
+)
 async def get_areas(service: AreaService = Depends()):
-    try:
-        return service.get_all_areas()
-    except HTTPException as e:
-        raise e
+    return service.get_all_areas()
 
-@router.get("/areas/search", response_model=List[AreaResponse], description="Busca areas por cadena de búsqueda")
+
+@router.get(
+    "/areas/search",
+    response_model=List[AreaResponse],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Busca áreas por cadena de búsqueda"
+)
 async def search_areas(
-    search_string: str = Query(..., description="Cadena de búsqueda para encontrar areas"),
+    search_string: str = Query(..., description="Cadena de búsqueda para encontrar áreas"),
     service: AreaService = Depends()
 ):
-    try:
-        return service.find_areas_by_string(search_string)
-    except HTTPException as e:
-        raise e
+    return service.find_areas_by_string(search_string)
 
 
-@router.get("/areas/paginated", response_model=PaginatedResponse, description="Obtiene los areas paginados")
+@router.get(
+    "/areas/paginated",
+    response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene las áreas paginadas"
+)
 async def get_paginated_areas(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
     service: AreaService = Depends()
 ):
-    try:
-        return service.get_all_areas_by_pagination(page, page_size)
-    except HTTPException as e:
-        raise e
+    return service.get_all_areas_by_pagination(page, page_size)
 
 
-@router.get("/areas/{area_id}", response_model=AreaResponse, description="Obtiene un area por su ID")
+@router.get(
+    "/areas/{area_id}",
+    response_model=AreaResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        404: {"description": "El área no existe", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene un área por su ID"
+)
 async def get_area_by_id(area_id: int, service: AreaService = Depends()):
-    try:
-        return service.get_area_by_id(area_id)
-    except HTTPException as e:
-        raise e
+    return service.get_area_by_id(area_id)
 
 
-@router.put("/areas/{area_id}", response_model=AreaResponse, description="Actualiza un area")
+@router.put(
+    "/areas/{area_id}",
+    response_model=AreaResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        404: {"description": "El área no existe", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Actualiza un área"
+)
 async def update_area(area_id: int, area_request: AreaRequest, service: AreaService = Depends()):
-    try:
-        return service.update_area(area_id, area_request)
-    except HTTPException as e:
-        raise e
+    return service.update_area(area_id, area_request)
 
 
-@router.delete("/areas/{area_id}", description="Elimina un area")
+@router.delete(
+    "/areas/{area_id}", response_model=DeleteSuccessfulResponseSchema,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        404: {"description": "El área no existe", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Elimina un área"
+)
 async def delete_area_by_id(area_id: int, service: AreaService = Depends()):
-    try:
-        service.delete_area_by_id(area_id)
-        return JSONResponse(content={"message": "Se eliminó el area correctamente"}, status_code=200)
-    except HTTPException as e:
-        raise e
-
-
-
+    service.delete_area_by_id(area_id)
+    return JSONResponse(content={"message": "Se eliminó el área correctamente"}, status_code=200)

@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
-from fastapi import HTTPException, Depends
+from fastapi import Depends
+from src.exception import NotFoundException, ConflictException
 from src.model.entity.centro_poblado import CentroPoblado
 from src.dto.centro_poblado_request import CentroPobladoRequest
 from src.dto.centro_poblado_response import CentroPobladoResponse
@@ -13,7 +14,7 @@ class CentroPobladoService:
 
     def add_centro_poblado(self, centro_poblado_request: CentroPobladoRequest) -> CentroPobladoResponse:
         if self.centro_poblado_repository.exist(centro_poblado_request.nombre_centro_poblado):
-            raise HTTPException(status_code=400, detail="El centro poblado ya existe en la base de datos")
+            raise ConflictException("El centro poblado ya existe en la base de datos")
 
         new_centro_poblado = CentroPoblado(
             nombre_centro_poblado = centro_poblado_request.nombre_centro_poblado
@@ -30,20 +31,28 @@ class CentroPobladoService:
     def get_all_centros_poblados(self) -> List[CentroPobladoResponse]:
         centros_poblados = self.centro_poblado_repository.get_all()
 
-        return [CentroPobladoResponse(
-            id=centro_poblado.id,
-            nombre_centro_poblado=centro_poblado.nombre_centro_poblado
-        ) for centro_poblado in centros_poblados]
+        return [
+            CentroPobladoResponse(
+                id=centro_poblado.id,
+                nombre_centro_poblado=centro_poblado.nombre_centro_poblado
+            ) for centro_poblado in centros_poblados
+        ]
 
 
     def update_centro_poblado(self, centro_poblado_id: int, centro_poblado_request: CentroPobladoRequest) -> CentroPobladoResponse:
         centro_poblado = self.centro_poblado_repository.get_by_id(centro_poblado_id)
 
         if not centro_poblado:
-            raise HTTPException(status_code=404, detail="Centro poblado no encontrado")
+            raise NotFoundException("Centro poblado no encontrado")
+
+        if centro_poblado.nombre_centro_poblado == centro_poblado_request.nombre_centro_poblado:
+            return CentroPobladoResponse(
+                id=centro_poblado.id,
+                nombre_centro_poblado=centro_poblado.nombre_centro_poblado
+            )
 
         if self.centro_poblado_repository.exist(centro_poblado_request.nombre_centro_poblado):
-            raise HTTPException(status_code=400, detail="El nombre del centro poblado ya existe en la base de datos")
+            raise ConflictException("El centro poblado ya existe en la base de datos")
 
         centro_poblado.nombre_centro_poblado = centro_poblado_request.nombre_centro_poblado
 
@@ -59,7 +68,7 @@ class CentroPobladoService:
         centro_poblado = self.centro_poblado_repository.get_by_id(centro_poblado_id)
 
         if not centro_poblado:
-            raise HTTPException(status_code=404, detail="Centro poblado no encontrado")
+            raise NotFoundException("Centro poblado no encontrado")
 
         self.centro_poblado_repository.delete_by_id(centro_poblado_id)
 
@@ -68,12 +77,14 @@ class CentroPobladoService:
         centros_poblados = self.centro_poblado_repository.find_by_string(search_string)
 
         if not centros_poblados:
-            raise HTTPException(status_code=404, detail="Centro poblado no encontrado")
+            raise NotFoundException("Centro poblado no encontrado")
 
-        return [CentroPobladoResponse(
-            id=centro_poblado.id,
-            nombre_centro_poblado=centro_poblado.nombre_centro_poblado
-        ) for centro_poblado in centros_poblados]
+        return [
+            CentroPobladoResponse(
+                id=centro_poblado.id,
+                nombre_centro_poblado=centro_poblado.nombre_centro_poblado
+            ) for centro_poblado in centros_poblados
+        ]
 
 
     def get_all_centros_poblados_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
@@ -84,7 +95,7 @@ class CentroPobladoService:
         centro_poblado = self.centro_poblado_repository.get_by_id(centro_poblado_id)
 
         if not centro_poblado:
-            raise HTTPException(status_code=404, detail="Centro poblado no encontrado")
+            raise NotFoundException("Centro poblado no encontrado")
 
         return CentroPobladoResponse(
             id=centro_poblado.id,

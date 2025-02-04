@@ -1,6 +1,7 @@
-from fastapi import APIRouter, HTTPException, Depends, Query
-from fastapi.responses import JSONResponse
 from typing import List
+from fastapi import APIRouter, Depends, Query
+from fastapi.responses import JSONResponse
+from src.schemas import *
 from src.dto.trabajador_response import TrabajadorResponse
 from src.dto.trabajador_request import TrabajadorRequest
 from src.dto.trabajador_simple_response import TrabajadorSimpleReponse
@@ -17,65 +18,116 @@ trabajadores_tag_metadata={
                    " ofrece funcionalidades de paginación y conteo de registros.",
 }
 
-@router.post("/trabajadores", response_model=TrabajadorResponse, description="Crea un nuevo trabajador")
+@router.post(
+    "/trabajadores",
+    response_model=TrabajadorResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Crea un nuevo trabajador"
+)
 async def add_trabajador(trabajador_request: TrabajadorRequest, service: TrabajadorService = Depends()):
-    try:
-        return service.add_trabajador(trabajador_request)
-    except HTTPException as e:
-        raise e
+    return service.add_trabajador(trabajador_request)
 
 
-@router.get("/trabajadores/names", response_model=List[TrabajadorSimpleReponse], description="Obtiene el id y nombres concatenados de los trabajadores")
+@router.get(
+    "/trabajadores/names",
+    response_model=List[TrabajadorSimpleReponse],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene el id y nombres concatenados de los trabajadores"
+)
 async def get_all_trabajadores(service: TrabajadorService = Depends()):
     return service.get_all_id_and_trabajador_name()
 
 
-@router.get("/trabajadores/search", response_model=List[TrabajadorDetailResponse], description="Busca trabajadores por nombre")
+@router.get(
+    "/trabajadores/search",
+    response_model=List[TrabajadorDetailResponse],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Busca trabajadores por nombre"
+)
 async def find_by_string(
     search_string: str = Query(..., description="Nombre del trabajador a buscar"),
     service: TrabajadorService = Depends()
 ):
-    try:
-        return service.find_by_string(search_string)
-    except HTTPException as e:
-        raise e
+    return service.find_by_string(search_string)
 
 
-@router.get("/trabajadores/paginated", response_model=PaginatedResponse, description="Obtiene los trabajadores con paginados")
+@router.get(
+    "/trabajadores/paginated",
+    response_model=PaginatedResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene los trabajadores con paginados"
+)
 async def get_paginated_trabajadores(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
     service: TrabajadorService = Depends()
 ):
-    try:
-        return service.get_all_trabajadores_by_pagination(page, page_size)
-    except HTTPException as e:
-        raise e
+    return service.get_all_trabajadores_by_pagination(page, page_size)
 
 
-@router.get("/trabajadores/{trabajador_id}", response_model=TrabajadorResponse, description="Obtiene un trabajador por id")
+@router.get(
+    "/trabajadores/{trabajador_id}",
+    response_model=TrabajadorResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene un trabajador por id"
+)
 async def get_trabajador_by_id(trabajador_id: int, service: TrabajadorService = Depends()):
-    try:
-        return service.get_trabajador_by_id(trabajador_id)
-    except HTTPException as e:
-        raise e
+    return service.get_trabajador_by_id(trabajador_id)
 
 
-@router.put("/trabajadores/{trabajador_id}", response_model=TrabajadorResponse, description="Actualiza un trabajador")
+@router.put(
+    "/trabajadores/{trabajador_id}",
+    response_model=TrabajadorResponse,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        409: {"description": "Conflicto - El recurso ya existe", "model": ErrorResponseSchema},
+        422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Actualiza un trabajador"
+)
 async def update_trabajador(trabajador_id: int, trabajador_request: TrabajadorRequest, service: TrabajadorService = Depends()):
-    try:
-        return service.update_trabajador(trabajador_id, trabajador_request)
-    except HTTPException as e:
-        raise e
+    return service.update_trabajador(trabajador_id, trabajador_request)
 
 
-@router.delete("/trabajadores/{trabajador_id}", description="Elimina un trabajador")
+@router.delete(
+    "/trabajadores/{trabajador_id}",
+    response_model=DeleteSuccessfulResponseSchema,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Elimina un trabajador"
+)
 async def delete_trabajador(trabajador_id: int, service: TrabajadorService = Depends()):
-    try:
-        service.delete_trabajador(trabajador_id)
-        return JSONResponse(status_code=200, content={"message": "Trabajador eliminado correctamente"})
-    except HTTPException as e:
-        raise e
+    service.delete_trabajador(trabajador_id)
+    return JSONResponse(status_code=200, content={"message": "Trabajador eliminado correctamente"})
 
 
 

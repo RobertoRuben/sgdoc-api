@@ -1,6 +1,7 @@
 from datetime import date
-from typing import List, Optional, Dict, Any
-from fastapi import HTTPException, Depends
+from typing import Optional, Dict, Any
+from fastapi import Depends
+from src.exception import NotFoundException, ConflictException
 from src.model.entity.documento import Documento
 from src.model.entity.remitente import Remitente
 from src.dto.documento_request import DocumentoRequest
@@ -17,10 +18,9 @@ class DocumentoService:
         self.remitente_repository = remitente_repository
 
 
-    #Crear un documento
     def add_documento(self, remitente_request: RemitenteRequest, documento_request: DocumentoRequest) -> DocumentoResponse:
         if self.documento_repository.exists_by_name(documento_request.nombre):
-            raise HTTPException(status_code=400, detail="Un documento con ese nombre ya existe en la base de datos")
+            raise ConflictException("Ya existe un documento con el nombre proporcionado")
 
         if self.remitente_repository.exists(remitente_request.dni):
             existing_remitente = self.remitente_repository.get_by_dni(remitente_request.dni)
@@ -64,12 +64,11 @@ class DocumentoService:
         )
 
 
-    #Actualizar un documento
     def update_documento(self, documento_id: int, documento_update_request: DocumentoUpdateRequest) -> DocumentoResponse:
         documento = self.documento_repository.get_document_by_id(documento_id)
 
         if not documento:
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
+            raise NotFoundException("Documento no encontrado")
 
         if documento_update_request.documento_bytes is not None:
             documento.documento_bytes = documento_update_request.documento_bytes
@@ -98,45 +97,40 @@ class DocumentoService:
         )
 
 
-    #Eliminar un documento por id
     def delete_document(self, documento_id: int) -> None:
         if not self.documento_repository.exists_by_id(documento_id):
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
+            raise NotFoundException("Documento no encontrado")
 
         self.documento_repository.delete_document_by_id(documento_id)
 
 
-    #Obtener un documento por su id
     def get_document_by_id(self, documento_id: int) -> Documento:
         documento = self.documento_repository.get_document_by_id(documento_id)
         if not documento:
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
+            raise NotFoundException("Documento no encontrado")
         return documento
 
 
-    #Descargar un documento por su id
     def descargar_documento(self, documento_id: int) -> tuple[bytes, str]:
         if not self.documento_repository.exists_by_id(documento_id):
-            raise HTTPException(status_code=404, detail="Documento no encontrado")
+            raise NotFoundException("Documento no encontrado")
+
         documento_bytes, nombre = self.documento_repository.get_document_bytes_and_name_by_id(documento_id)
 
         if not documento_bytes or not nombre:
-            raise HTTPException(status_code=404, detail="El documento no tiene contenido o nombre")
+            raise ConflictException("El documento no tiene contenido")
 
         return documento_bytes, nombre
 
 
-    #Obtener todos los documentos paginados en la fecha actual
     def get_documentos_by_current_date(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         return self.documento_repository.get_documents_by_current_date(page, page_size)
 
 
-    #Obtener todos los documentos paginados
     def get_all_documents(self, p_page: int, p_page_size: int) -> Dict[str, Any]:
         return self.documento_repository.get_all_documents_paginated(p_page, p_page_size)
 
 
-    #Buscar los documentos con paginacion
     def search_entered_documents(
             self,
             p_page: int,
@@ -160,7 +154,6 @@ class DocumentoService:
         )
 
 
-    #Obtener todos los documentos enviados mediante el id del area origen
     def get_sent_documents_by_area_id(
             self,
             p_area_origen_id: int,
@@ -185,7 +178,7 @@ class DocumentoService:
             p_page_size=p_page_size
         )
 
-    #Obtener todos los documentos rechazados mediante el area destino
+
     def get_rejected_documents_by_area_id(
             self,
             p_area_destino_id: int,
@@ -211,7 +204,6 @@ class DocumentoService:
         )
 
 
-    #Obtener todos los documentos recibidos mediante el area destino
     def get_received_documents_by_area_id(
             self,
             p_area_destino_id: int,
@@ -223,7 +215,7 @@ class DocumentoService:
             p_fecha_ingreso: Optional[str] = None,
             p_page: int = 1,
             p_page_size: int = 10,
-            p_recepcionada: Optional[bool] = None  # Se agrega el parámetro de filtro
+            p_recepcionada: Optional[bool] = None
     ) -> Dict[str, Any]:
         return self.documento_repository.get_received_documents_by_area_id(
             p_area_destino_id=p_area_destino_id,
@@ -235,5 +227,5 @@ class DocumentoService:
             p_fecha_ingreso=p_fecha_ingreso,
             p_page=p_page,
             p_page_size=p_page_size,
-            p_recepcionada=p_recepcionada  # Se pasa el parámetro al repositorio
+            p_recepcionada=p_recepcionada
         )
