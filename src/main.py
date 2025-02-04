@@ -19,7 +19,7 @@ from src.controller.documento_controller import router as documento_router, docu
 from src.controller.derivacion_controller import router as derivacion_router, derivaciones_tag_metadata
 from src.controller.detalle_derivacion_controller import router as detalle_derivacion_router, detalle_derivaciones_tag_metadata
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
-from src.controller.documents_by_current_date_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
+from src.controller.dashboard_mesa_partes_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
 import logging
 logging.basicConfig(level=logging.INFO)
 
