@@ -1,5 +1,6 @@
 from typing import List, Dict, Any
-from fastapi import HTTPException, Depends
+from fastapi import Depends
+from src.exception import NotFoundException, ConflictException
 from src.security.argon2_hasher import Argon2PasswordHasher
 from src.dto.usuario_details_response import UsuarioDetailsResponse
 from src.repository.usuario_repository import UsuarioRepository
@@ -16,10 +17,10 @@ class UsuarioService:
     def add_usuario(self, usuario_request: UsuarioRequest) -> UsuarioResponse:
 
         if self.usuario_repository.exists_by_trabajador_id(usuario_request.trabajador_id):
-            raise HTTPException(status_code=400, detail="El trabajador ya tiene un usuario asignado")
+            raise ConflictException("El trabajador ya tiene un usuario asociado")
 
         if self.usuario_repository.exists_by_username(usuario_request.nombre_usuario):
-            raise HTTPException(status_code=400, detail="El nombre de usuario ya existe")
+            raise ConflictException("El nombre de usuario ya está en uso")
 
         hashed_contrasena = self.argon_2_security.hash_password(usuario_request.contrasena)
 
@@ -50,7 +51,24 @@ class UsuarioService:
     def update_user(self, usuario_id, usuario_request: UsuarioRequest) -> UsuarioResponse:
         usuario = self.usuario_repository.get_by_id(usuario_id)
         if not usuario:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            raise NotFoundException("Usuario no encontrado")
+
+        if usuario.nombre_usuario == usuario_request.nombre_usuario and usuario.trabajador_id == usuario_request.trabajador_id:
+            return UsuarioResponse(
+                id=usuario.id,
+                nombre_usuario=usuario.nombre_usuario,
+                fecha_creacion=usuario.fecha_creacion,
+                fecha_actualizacion=usuario.fecha_actualizacion,
+                rol_id=usuario.rol_id,
+                trabajador_id=usuario.trabajador_id,
+                is_active=usuario.is_active
+            )
+
+        if self.usuario_repository.exists_by_trabajador_id(usuario_request.trabajador_id):
+            raise ConflictException("El trabajador ya tiene un usuario asociado")
+
+        if self.usuario_repository.exists_by_username(usuario_request.nombre_usuario):
+            raise ConflictException("El nombre de usuario ya está en uso")
 
         hashed_contrasena = self.argon_2_security.hash_password(usuario_request.contrasena)
 
@@ -75,7 +93,7 @@ class UsuarioService:
     def delete_user(self, usuario_id: int) -> None:
         usuario = self.usuario_repository.get_by_id(usuario_id)
         if not usuario:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            raise NotFoundException("Usuario no encontrado")
 
         self.usuario_repository.delete_by_id(usuario_id)
 
@@ -83,11 +101,11 @@ class UsuarioService:
     def update_user_status(self, usuario_id: int, active: bool) -> None:
         usuario = self.usuario_repository.get_by_id(usuario_id)
         if not usuario:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            raise NotFoundException("Usuario no encontrado")
 
         if usuario.is_active == active:
             estado = "activado" if active else "desactivado"
-            raise HTTPException(status_code=400, detail=f"El usuario ya está {estado}")
+            raise NotFoundException(f"El usuario ya está {estado}")
 
         self.usuario_repository.update_status_user_by_id(usuario_id, active)
 
@@ -96,7 +114,7 @@ class UsuarioService:
         usuarios = self.usuario_repository.find_by_string(search_string)
 
         if not usuarios:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            raise NotFoundException("No se encontraron usuarios")
 
         return [
             UsuarioDetailsResponse(
@@ -114,7 +132,7 @@ class UsuarioService:
     def get_usuario_by_id(self, usuario_id: int) -> UsuarioResponse:
         usuario = self.usuario_repository.get_by_id(usuario_id)
         if not usuario:
-            raise HTTPException(status_code=404, detail="Usuario no encontrado")
+            raise NotFoundException("Usuario no encontrado")
 
         return UsuarioResponse(
             id=usuario.id,
@@ -129,7 +147,7 @@ class UsuarioService:
 
     def update_usuario_password(self, usuario_id: int, contrasena: str) -> None:
         if not contrasena:
-            raise HTTPException(status_code=400, detail="La contraseña no puede estar vacía")
+            raise NotFoundException("La contraseña no puede estar vacía")
         hashed_contrasena = self.argon_2_security.hash_password(contrasena)
 
         self.usuario_repository.update_password_by_id(usuario_id, hashed_contrasena)
