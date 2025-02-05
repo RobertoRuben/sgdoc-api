@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
-
 from src.service.auth_service import AuthService
 from src.repository.usuario_repository import UsuarioRepository
 from src.model.entity.usuario import Usuario

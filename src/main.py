@@ -20,6 +20,8 @@ from src.controller.derivacion_controller import router as derivacion_router, de
 from src.controller.detalle_derivacion_controller import router as detalle_derivacion_router, detalle_derivaciones_tag_metadata
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
 from src.controller.dashboard_mesa_partes_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
+from src.controller.notificacion_controller import router as notificacion_router, notificaciones_tag_metadata
+from src.websocket.notificaciones_ws import router as notificaciones_ws_router
 import logging
 logging.basicConfig(level=logging.INFO)
 
@@ -48,7 +50,8 @@ tags_metadata = [
     derivaciones_tag_metadata,
     detalle_derivaciones_tag_metadata,
     estado_documento_tag_metadata,
-    documentos_by_current_date_tag_metadata
+    documentos_by_current_date_tag_metadata,
+    notificaciones_tag_metadata
 ]
 
 @asynccontextmanager
@@ -70,7 +73,7 @@ register_exception_handlers(app)
 @app.middleware("http")
 async def ip_restriction_middleware(request: Request, call_next):
     client_ip = request.client.host
-    logging.info(f"Client IP: {client_ip}")  # Registro de la IP del cliente
+    logging.info(f"Client IP: {client_ip}")
     if not any(client_ip.startswith(subnet) for subnet in allowed_subnets):
         logging.warning(f"Access denied for IP: {client_ip}")
         raise HTTPException(status_code=403, detail="Access forbidden: your IP address is not allowed")
@@ -79,7 +82,7 @@ async def ip_restriction_middleware(request: Request, call_next):
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Puedes restringir esto más si es necesario
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"]
@@ -101,3 +104,5 @@ app.include_router(derivacion_router, prefix="/api/v1", dependencies=[Depends(ge
 app.include_router(detalle_derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(estado_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
 app.include_router(documents_by_current_date_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(notificacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
+app.include_router(notificaciones_ws_router, prefix="/api/v1", tags=["WebSocket Notificaciones"])

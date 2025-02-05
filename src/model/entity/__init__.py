@@ -12,6 +12,7 @@ from .documento import Documento
 from .derivacion import Derivacion
 from .detalle_derivacion import DetalleDerivacion
 from .estado_documento import EstadoDocumento
+from .notifcacion import Notificacion
 
 __all__ = ["Ambito", "Caserio", "Categoria", "CentroPoblado", "Remitente", "Rol", "Area", "ComunicacionArea",
-           "Trabajador", "Usuario", "Documento", "Derivacion", "DetalleDerivacion", "EstadoDocumento"]
+           "Trabajador", "Usuario", "Documento", "Derivacion", "DetalleDerivacion", "EstadoDocumento", "Notificacion"]
