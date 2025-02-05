@@ -12,3 +12,7 @@ class DocumentoResponse(BaseModel):
     caserio_id: int
     centro_poblado_id: int | None
     fecha_ingreso: datetime
+
+
+class DocumentosNoConfirmadosResponseDTO(BaseModel):
+    total: int

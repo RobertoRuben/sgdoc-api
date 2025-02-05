@@ -5,7 +5,7 @@ from src.exception import NotFoundException, ConflictException
 from src.model.entity.documento import Documento
 from src.model.entity.remitente import Remitente
 from src.dto.documento_request import DocumentoRequest
-from src.dto.documento_response import DocumentoResponse
+from src.dto.documento_response import DocumentoResponse, DocumentosNoConfirmadosResponseDTO
 from src.dto.documento_update_request import DocumentoUpdateRequest
 from src.dto.remitente_request import RemitenteRequest
 from src.repository.documento_repository import DocumentoRepository
@@ -229,3 +229,8 @@ class DocumentoService:
             p_page_size=p_page_size,
             p_recepcionada=p_recepcionada
         )
+
+
+    def get_documentos_no_confirmados(self, p_area_destino_id: int) -> DocumentosNoConfirmadosResponseDTO:
+        total = self.documento_repository.get_total_unconfirmed_received_documents_today(p_area_destino_id)
+        return DocumentosNoConfirmadosResponseDTO(total=total)

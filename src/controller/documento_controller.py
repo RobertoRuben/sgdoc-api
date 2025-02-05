@@ -4,10 +4,10 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException, Depends, Query, UploadFile, File, Form, Path
 from starlette.responses import StreamingResponse
 from src.exception import InternalServerException
-from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema, FileDownloadResponseSchema
+from src.schemas import *
 from src.exception import  BadRequestException
 from src.dto.documento_request import DocumentoRequest
-from src.dto.documento_response import DocumentoResponse
+from src.dto.documento_response import DocumentoResponse, DocumentosNoConfirmadosResponseDTO
 from src.dto.documento_update_request import DocumentoUpdateRequest
 from src.dto.pagination_response import PaginatedResponse
 from src.dto.remitente_request import RemitenteRequest
@@ -245,6 +245,23 @@ async def get_rejected_documents_by_area_id(
 )
 async def get_documents_by_current_date(page: int = 1, page_size: int = 10, documento_service: DocumentoService = Depends()):
     return documento_service.get_documentos_by_current_date(page, page_size)
+
+
+@router.get(
+    "/documentos/no-confirmados",
+    response_model=DocumentosNoConfirmadosResponseDTO,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene la cantidad de documentos no confirmados recibidos hoy por un área de destino específica"
+)
+async def get_documentos_no_confirmados(
+    p_area_destino_id: int = Query(..., ge=1, description="ID del área de destino"),
+    documento_service: DocumentoService = Depends()
+):
+    return documento_service.get_documentos_no_confirmados(p_area_destino_id)
 
 
 @router.get(

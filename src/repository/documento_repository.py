@@ -396,3 +396,19 @@ class DocumentoRepository:
                 raise DatabaseException("Error al intentar buscar los documentos ingresados") from e
             except Exception as e:
                 raise DatabaseException("Error desconocido al intentar buscar los documentos ingresados") from e
+
+
+    @staticmethod
+    def get_total_unconfirmed_received_documents_today(p_area_destino_id: int) -> int:
+        with Session(engine) as session:
+            try:
+                query = text("SELECT fn_documentos_total_recibidos_no_confirmados_hoy(:p_area_destino_id)")
+                connection = session.connection()
+                result = connection.execute(query, {"p_area_destino_id": p_area_destino_id}).scalar()
+
+                return result if result is not None else 0
+
+            except SQLAlchemyError as e:
+                raise DatabaseException("Error al intentar obtener el total de documentos no confirmados") from e
+            except Exception as e:
+                raise DatabaseException("Error desconocido al intentar obtener documentos no confirmados") from e
