@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class AreaRequest(BaseModel):
+class AreaRequestDTO(BaseModel):
     nombre_area: str = Field(..., description="El nombre del área municipal es obligatorio")
 
     @field_validator("nombre_area")

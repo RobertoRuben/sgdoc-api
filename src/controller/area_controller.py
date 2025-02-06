@@ -2,10 +2,10 @@ from typing import List
 from fastapi import Depends, APIRouter, Query
 from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.dto.area_response import AreaResponse
-from src.dto.area_request import AreaRequest
+from src.dto.area_response_dto import AreaResponseDTO
+from src.dto.area_request_dto import AreaRequestDTO
 from src.dto.pagination_response import PaginatedResponse
-from src.service.areas_service import AreaService
+from src.service.imp.area_service_imp import AreaServiceImpl
 
 router = APIRouter(tags=["Areas"])
 
@@ -17,7 +17,7 @@ areas_tag_metadata = {
 
 @router.post(
     "/areas",
-    response_model=AreaResponse,
+    response_model=AreaResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -27,26 +27,26 @@ areas_tag_metadata = {
     },
     description="Crea una nueva área en la organización"
 )
-async def add_area(area_request: AreaRequest, service: AreaService = Depends()):
+async def add_area(area_request: AreaRequestDTO, service: AreaServiceImpl = Depends()):
     return service.add_area(area_request)
 
 
 @router.get(
     "/areas",
-    response_model=List[AreaResponse],
+    response_model=List[AreaResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene todas las áreas"
 )
-async def get_areas(service: AreaService = Depends()):
+async def get_areas(service: AreaServiceImpl = Depends()):
     return service.get_all_areas()
 
 
 @router.get(
     "/areas/search",
-    response_model=List[AreaResponse],
+    response_model=List[AreaResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
@@ -55,9 +55,9 @@ async def get_areas(service: AreaService = Depends()):
 )
 async def search_areas(
     search_string: str = Query(..., description="Cadena de búsqueda para encontrar áreas"),
-    service: AreaService = Depends()
+    service: AreaServiceImpl = Depends()
 ):
-    return service.find_areas_by_string(search_string)
+    return service.find_area(search_string)
 
 
 @router.get(
@@ -72,14 +72,14 @@ async def search_areas(
 async def get_paginated_areas(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: AreaService = Depends()
+    service: AreaServiceImpl = Depends()
 ):
-    return service.get_all_areas_by_pagination(page, page_size)
+    return service.get_all_areas_paginated(page, page_size)
 
 
 @router.get(
     "/areas/{area_id}",
-    response_model=AreaResponse,
+    response_model=AreaResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         404: {"description": "El área no existe", "model": ErrorResponseSchema},
@@ -87,13 +87,13 @@ async def get_paginated_areas(
     },
     description="Obtiene un área por su ID"
 )
-async def get_area_by_id(area_id: int, service: AreaService = Depends()):
+async def get_area_by_id(area_id: int, service: AreaServiceImpl = Depends()):
     return service.get_area_by_id(area_id)
 
 
 @router.put(
     "/areas/{area_id}",
-    response_model=AreaResponse,
+    response_model=AreaResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         404: {"description": "El área no existe", "model": ErrorResponseSchema},
@@ -103,7 +103,7 @@ async def get_area_by_id(area_id: int, service: AreaService = Depends()):
     },
     description="Actualiza un área"
 )
-async def update_area(area_id: int, area_request: AreaRequest, service: AreaService = Depends()):
+async def update_area(area_id: int, area_request: AreaRequestDTO, service: AreaServiceImpl = Depends()):
     return service.update_area(area_id, area_request)
 
 
@@ -116,6 +116,6 @@ async def update_area(area_id: int, area_request: AreaRequest, service: AreaServ
     },
     description="Elimina un área"
 )
-async def delete_area_by_id(area_id: int, service: AreaService = Depends()):
+async def delete_area_by_id(area_id: int, service: AreaServiceImpl = Depends()):
     service.delete_area_by_id(area_id)
     return JSONResponse(content={"message": "Se eliminó el área correctamente"}, status_code=200)

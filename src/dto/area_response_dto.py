@@ -1,5 +1,5 @@
 from pydantic import BaseModel
 
-class AreaResponse(BaseModel):
+class AreaResponseDTO(BaseModel):
     id: int
     nombre_area: str
