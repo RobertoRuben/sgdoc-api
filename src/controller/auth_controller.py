@@ -3,8 +3,8 @@ from fastapi.security import OAuth2PasswordRequestForm
 from src.security.dependencies import get_current_user
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema
 from typing import Annotated
-from src.dto.auth_request import AuthRequest
-from src.dto.auth_response import AuthResponse
+from src.dto.auth_request_dto import AuthRequestDTO
+from src.dto.auth_response_dto import AuthResponseDTO
 from src.dto.refresh_token import RefreshTokenRequest
 from src.dto.user_info_response import UserInfoResponse
 from src.service.auth_service import AuthService
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post(
     "/login",
-    response_model=AuthResponse,
+    response_model=AuthResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
@@ -24,8 +24,8 @@ router = APIRouter(prefix="/auth", tags=["Auth"])
 def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     auth_service: AuthService = Depends()
-) -> AuthResponse:
-    auth_request = AuthRequest(
+) -> AuthResponseDTO:
+    auth_request = AuthRequestDTO(
         username=form_data.username,
         password=form_data.password
     )
@@ -56,7 +56,7 @@ def read_users_me(current_user = Depends(get_current_user)):
 
 @router.post(
     "/refresh",
-    response_model=AuthResponse,
+    response_model=AuthResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},

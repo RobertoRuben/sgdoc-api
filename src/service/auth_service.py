@@ -1,10 +1,9 @@
-from fastapi import HTTPException, status, Depends
+from fastapi import Depends
 from src.exception import UnauthorizedException, ForbiddenException
-from src.dto.auth_request import AuthRequest
-from src.dto.auth_response import AuthResponse
+from src.dto.auth_request_dto import AuthRequestDTO
+from src.dto.auth_response_dto import AuthResponseDTO
 from src.security.argon2_hasher import Argon2PasswordHasher
 from src.security.token_manager import TokenManager
-from src.model.entity.usuario import Usuario
 from src.repository.usuario_repository import UsuarioRepository
 
 class AuthService:
@@ -18,7 +17,7 @@ class AuthService:
         self.usuario_repository = usuario_repository
         self.token_manager = token_manager
 
-    def authenticate_user(self, auth_request: AuthRequest) -> AuthResponse:
+    def authenticate_user(self, auth_request: AuthRequestDTO) -> AuthResponseDTO:
         user_data = self.usuario_repository.find_user_by_username(auth_request.username)
         if not user_data:
             raise UnauthorizedException(
@@ -46,7 +45,7 @@ class AuthService:
             {"sub": user.nombre_usuario, "scope": "refresh"}
         )
 
-        return AuthResponse(
+        return AuthResponseDTO(
             access_token=access_token,
             token_type="bearer",
             refresh_token=refresh_token,
@@ -68,7 +67,7 @@ class AuthService:
         return username
 
 
-    def refresh_access_token(self, refresh_token: str) -> AuthResponse:
+    def refresh_access_token(self, refresh_token: str) -> AuthResponseDTO:
         payload = self.token_manager.decode_token(refresh_token)
         username: str = payload.get("sub")
         scope: str = payload.get("scope")
@@ -91,7 +90,7 @@ class AuthService:
             {"sub": user.nombre_usuario, "scope": "access"}
         )
 
-        return AuthResponse(
+        return AuthResponseDTO(
             access_token=new_access_token,
             token_type="bearer"
         )
