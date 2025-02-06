@@ -1,4 +1,4 @@
 from pydantic import BaseModel
 
-class RefreshTokenRequest(BaseModel):
+class RefreshTokenRequestDTO(BaseModel):
     refresh_token: str

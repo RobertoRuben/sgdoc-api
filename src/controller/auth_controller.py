@@ -5,8 +5,8 @@ from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema
 from typing import Annotated
 from src.dto.auth_request_dto import AuthRequestDTO
 from src.dto.auth_response_dto import AuthResponseDTO
-from src.dto.refresh_token import RefreshTokenRequest
-from src.dto.user_info_response import UserInfoResponse
+from src.dto.refresh_token_request_dto import RefreshTokenRequestDTO
+from src.dto.authenticated_user_response_dto import AuthenticatedUserResponseDTO
 from src.service.auth_service import AuthService
 
 
@@ -34,7 +34,7 @@ def login_for_access_token(
 
 @router.get(
     "/me",
-    response_model=UserInfoResponse,
+    response_model=AuthenticatedUserResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
@@ -44,7 +44,7 @@ def login_for_access_token(
 def read_users_me(current_user = Depends(get_current_user)):
     user, trabajador, rol = current_user
 
-    return UserInfoResponse(
+    return AuthenticatedUserResponseDTO(
         id=user.id,
         username=user.nombre_usuario,
         rol_id=user.rol_id,
@@ -64,7 +64,7 @@ def read_users_me(current_user = Depends(get_current_user)):
     },
 )
 def refresh_token(
-    req: RefreshTokenRequest,
+    req: RefreshTokenRequestDTO,
     auth_service: AuthService = Depends()
 ):
     return auth_service.refresh_access_token(req.refresh_token)

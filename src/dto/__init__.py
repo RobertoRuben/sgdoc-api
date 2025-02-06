@@ -8,9 +8,11 @@ from .categoria_documento_request_dto import CategoriaDocumentoRequestDTO
 from .categoria_documento_response_dto import CategoriaDocumentoResponseDTO
 from .auth_request_dto import AuthRequestDTO
 from .auth_response_dto import AuthResponseDTO
+from .authenticated_user_response_dto import AuthenticatedUserResponseDTO
+from .refresh_token_request_dto import RefreshTokenRequestDTO
 from .paginated_response import PaginatedResponseDTO
 
 
 __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaResponseDTO", "PaginatedResponseDTO",
            "CaserioRequestDTO", "CaserioResponseDTO", "CategoriaDocumentoResponseDTO", "CategoriaDocumentoRequestDTO",
-           "AuthRequestDTO", "AuthResponseDTO"]
+           "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO"]

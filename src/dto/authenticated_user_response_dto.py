@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class UserInfoResponse(BaseModel):
+class AuthenticatedUserResponseDTO(BaseModel):
     id: int
     username: str
     rol_id: int
