@@ -4,12 +4,12 @@ from sqlmodel import select, or_, func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.exception import DatabaseException
-from src.db.database import get_session
+from src.db.database import get_async_session
 from src.model.entity.ambito import Ambito
 
 class AmbitoRepository:
 
-    def __init__(self, session: AsyncSession = Depends(get_session)):
+    def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session
 
     async def add_ambito(self, ambito: Ambito) -> Ambito:
