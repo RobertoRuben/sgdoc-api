@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from src.exception.handlers import register_exception_handlers
-from src.db.database import create_db_and_tables
+from src.db.database import init_db
 from src.controller.auth_controller import get_current_user
 from src.controller.auth_controller import router as auth_router
 from src.controller.remitente_controller import router as remitente_router, remitentes_tag_metadata
@@ -24,6 +24,8 @@ from src.controller.notificacion_controller import router as notificacion_router
 from src.websocket.notificaciones_ws import router as notificaciones_ws_router
 import logging
 logging.basicConfig(level=logging.INFO)
+
+API_VERSION = "/api/v1"
 
 allowed_subnets = [
     "127.0.0.1",
@@ -56,7 +58,7 @@ tags_metadata = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
+    await init_db()
     yield
 
 app = FastAPI(
@@ -88,21 +90,21 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(remitente_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(categoria_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(ambito_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(centro_poblado_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(caserio_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(rol_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(area_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(comunicacion_area_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(trabajador_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(usuario_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(detalle_derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(estado_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(documents_by_current_date_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(notificacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(notificaciones_ws_router, prefix="/api/v1", tags=["WebSocket Notificaciones"])
+app.include_router(auth_router, prefix=API_VERSION)
+app.include_router(remitente_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(categoria_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(ambito_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(centro_poblado_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(caserio_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(rol_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(area_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(comunicacion_area_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(trabajador_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(usuario_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(documento_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(derivacion_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(detalle_derivacion_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(estado_documento_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(documents_by_current_date_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(notificacion_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(notificaciones_ws_router, prefix=API_VERSION, tags=["WebSocket Notificaciones"])
