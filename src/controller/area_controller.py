@@ -7,7 +7,7 @@ from src.schemas import (
     NotAuthenticatedResponseSchema,
     DeleteSuccessfulResponseSchema
 )
-from src.dto import  AreaResponseDTO, PaginatedResponseDTO
+from src.dto import  AreaResponseDTO, AreaRequestDTO, PaginatedResponseDTO
 from src.service.imp.area_service_imp import AreaServiceImpl
 
 router = APIRouter(prefix="/areas",tags=["Areas"])
