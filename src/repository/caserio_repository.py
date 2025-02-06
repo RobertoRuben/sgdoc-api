@@ -38,7 +38,7 @@ class CaserioRepository:
                 .where(Caserio.centro_poblado_id == None)
             )
             caserios = result.all()
-            return caserios
+            return list(caserios)
         except SQLAlchemyError as e:
             raise DatabaseException(
                 detail="Ocurrio un error al obtener la lista de nombres de los caserios",
