@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class CategoriaRequest(BaseModel):
+class CategoriaDocumentoRequestDTO(BaseModel):
     nombre_categoria: str = Field(..., description="El nombre de la categoría del documento es obligatorio y no debe quedar en blanco")
 
     @field_validator("nombre_categoria")

@@ -2,9 +2,9 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.service.categoria_service import CategoriaService
-from src.dto.categoria_request import CategoriaRequest
-from src.dto.categoria_response import CategoriaResponse
+from src.service.imp.categoria_documento_service_imp import CategoriaDocumentoServiceImp
+from src.dto.categoria_documento_request_dto import CategoriaDocumentoRequestDTO
+from src.dto.categoria_documento_response_dto import CategoriaDocumentoResponseDTO
 from src.dto.paginated_response import PaginatedResponseDTO
 
 router = APIRouter(tags=["Categorias"])
@@ -17,7 +17,7 @@ categorias_tag_metadata={
 
 @router.post(
     "/categorias",
-    response_model=CategoriaResponse,
+    response_model=CategoriaDocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -26,26 +26,26 @@ categorias_tag_metadata={
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Crea una nueva categoria")
-async def add_categoria(categoria_request: CategoriaRequest, service: CategoriaService = Depends()):
-    return service.add_categoria(categoria_request)
+async def add_categoria(categoria_request: CategoriaDocumentoRequestDTO, service: CategoriaDocumentoServiceImp = Depends()):
+    return service.add_categoria_documento(categoria_request)
 
 
 @router.get(
     "/categorias",
-    response_model=List[CategoriaResponse],
+    response_model=List[CategoriaDocumentoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Obtiene todas las categorias")
-async def get_categorias(service: CategoriaService = Depends()):
-    return service.get_all_categorias()
+async def get_categorias(service: CategoriaDocumentoServiceImp = Depends()):
+    return service.get_all_categorias_documento()
 
 
 @router.get(
     "/categorias/search",
-    response_model=List[CategoriaResponse],
+    response_model=List[CategoriaDocumentoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -56,9 +56,9 @@ async def get_categorias(service: CategoriaService = Depends()):
 )
 async def search_categorias(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar categorias"),
-    service: CategoriaService = Depends()
+    service: CategoriaDocumentoServiceImp = Depends()
 ):
-    return service.find_categoria_by_string(search_string)
+    return service.find_categoria_documento(search_string)
 
 
 @router.get(
@@ -74,14 +74,14 @@ async def search_categorias(
 async def get_paginated_categorias(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: CategoriaService = Depends()
+    service: CategoriaDocumentoServiceImp = Depends()
 ):
-    return service.get_categorias_by_pagination(page, page_size)
+    return service.get_categorias_documento_paginated(page, page_size)
 
 
 @router.get(
     "/categorias/{categoria_id}",
-    response_model=CategoriaResponse,
+    response_model=CategoriaDocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -90,13 +90,13 @@ async def get_paginated_categorias(
     },
     description="Obtiene una categoria por su ID"
 )
-async def get_categoria_by_id(categoria_id: int, service: CategoriaService = Depends()):
-    return service.get_categoria_by_id(categoria_id)
+async def get_categoria_by_id(categoria_id: int, service: CategoriaDocumentoServiceImp = Depends()):
+    return service.get_categoria_documento_by_id(categoria_id)
 
 
 @router.put(
     "/categorias/{categoria_id}",
-    response_model=CategoriaResponse,
+    response_model=CategoriaDocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -107,8 +107,8 @@ async def get_categoria_by_id(categoria_id: int, service: CategoriaService = Dep
     },
     description="Actualiza una categoria"
 )
-async def update_categoria(categoria_id: int, categoria_request: CategoriaRequest, service: CategoriaService = Depends()):
-    return service.update_categoria(categoria_id, categoria_request)
+async def update_categoria(categoria_id: int, categoria_request: CategoriaDocumentoRequestDTO, service: CategoriaDocumentoServiceImp = Depends()):
+    return service.update_categoria_documento(categoria_id, categoria_request)
 
 
 @router.delete(
@@ -122,8 +122,8 @@ async def update_categoria(categoria_id: int, categoria_request: CategoriaReques
     },
     description="Elimina una categoria"
 )
-async def delete_categoria(categoria_id: int, service: CategoriaService = Depends()):
-    service.delete_categoria_by_id(categoria_id)
+async def delete_categoria(categoria_id: int, service: CategoriaDocumentoServiceImp = Depends()):
+    service.delete_categoria_documento_by_id(categoria_id)
     return JSONResponse(content={"message": "Se eliminó la categoria correctamente"}, status_code=200)
 
 
