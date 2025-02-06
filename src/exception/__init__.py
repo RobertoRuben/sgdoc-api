@@ -1,6 +1,6 @@
 from .http_exceptions import BadRequestException, NotFoundException, ConflictException, UnauthorizedException, ForbiddenException
-from .server_exceptions import InternalServerException
 from .database_exception import DatabaseException
+from .internal_server_exception import InternalServerException
 
 __all__ = [
     "BadRequestException",

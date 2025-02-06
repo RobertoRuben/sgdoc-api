@@ -63,7 +63,7 @@ async def get_paginated_ambitos(
     page_size: int = Query(10, description="Número de registros por página"),
     service: AmbitoService = Depends()
 ):
-    return service.get_ambitos_by_pagination(page, page_size)
+    return service.get_ambitos_paginated(page, page_size)
 
 
 @router.get(
@@ -80,7 +80,7 @@ async def search_ambitos(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar ambitos documentales"),
     service: AmbitoService = Depends()
 ):
-    return service.find_ambito_by_string(search_string)
+    return service.find_ambito(search_string)
 
 
 @router.put(
