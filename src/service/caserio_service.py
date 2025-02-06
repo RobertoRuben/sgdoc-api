@@ -104,7 +104,7 @@ class CaserioService:
 
 
     def get_all_caserios_by_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
-        return self.caserio_repository.get_all_pagination(page, page_size)
+        return self.caserio_repository.get_all_paginated(page, page_size)
 
 
     def get_caserio_by_id(self, caserio_id: int) -> Optional[CaserioResponseWithCentroPobladoId]:
