@@ -22,6 +22,13 @@ router = APIRouter(
     tags=["Ambitos"]
 )
 
+ambitos_tag_metadata = {
+    "name": "Ambitos",
+    "description": (
+        "Esta sección proporciona los endpoints para gestionar la entidad de Ambito Documental, incluyendo la "
+        "creación, recuperación, actualización, eliminación y búsqueda de registros de ambitos documentales."
+    ),
+}
 
 @router.post(
     "",
