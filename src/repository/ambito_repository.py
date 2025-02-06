@@ -4,7 +4,7 @@ from sqlmodel import select, or_, func
 from sqlalchemy.exc import SQLAlchemyError
 from sqlmodel.ext.asyncio.session import AsyncSession
 from src.exception import DatabaseException
-from src.db.database import engine, get_session
+from src.db.database import get_session
 from src.model.entity.ambito import Ambito
 
 class AmbitoRepository:
