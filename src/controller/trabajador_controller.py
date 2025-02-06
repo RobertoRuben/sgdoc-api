@@ -6,7 +6,7 @@ from src.dto.trabajador_response import TrabajadorResponse
 from src.dto.trabajador_request import TrabajadorRequest
 from src.dto.trabajador_simple_response import TrabajadorSimpleReponse
 from src.dto.trabajador_detail_response import TrabajadorDetailResponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.trabajador_service import TrabajadorService
 
 router = APIRouter(tags=["Trabajadores"])
@@ -67,7 +67,7 @@ async def find_by_string(
 
 @router.get(
     "/trabajadores/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

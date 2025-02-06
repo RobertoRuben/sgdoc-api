@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.dto.ambito_request_dto import AmbitoRequestDTO
 from src.dto.ambito_response_dto import AmbitoResponseDTO
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.schemas import (
     ErrorResponseSchema,
     ValidationErrorResponseSchema,
@@ -55,7 +55,7 @@ async def get_ambitos(service: AmbitoService = Depends(get_ambito_service_imp)):
 
 @router.get(
     "/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

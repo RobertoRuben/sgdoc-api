@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema, ValidationErrorResponseSchema
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.dto.estado_documento_request import EstadoDocumentoRequest
 from src.dto.estado_documento_response import EstadoDocumentoResponse
 from src.service.estado_documento_service import EstadoDocumentoService
@@ -33,7 +33,7 @@ async def add_estado_documento(estado_documento_request: EstadoDocumentoRequest,
 
 @router.get(
     "/estados-documento",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

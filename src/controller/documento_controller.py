@@ -9,7 +9,7 @@ from src.exception import  BadRequestException
 from src.dto.documento_request import DocumentoRequest
 from src.dto.documento_response import DocumentoResponse, DocumentosNoConfirmadosResponseDTO
 from src.dto.documento_update_request import DocumentoUpdateRequest
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.dto.remitente_request import RemitenteRequest
 from src.model.enum.genero_enum import GeneroEnum
 from src.service.documento_service import DocumentoService
@@ -86,7 +86,7 @@ async def create_documento(
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     description="Obtiene todos los documentos"
 )
 async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_service: DocumentoService = Depends()):
@@ -95,7 +95,7 @@ async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_se
 
 @router.get(
     "/documentos/buscar",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -128,7 +128,7 @@ async def search_entered_documents(
 
 @router.get(
     "/documentos/enviados",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -163,7 +163,7 @@ async def get_sent_documents_by_area_id(
 
 @router.get(
     "/documentos/recibidos",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -200,7 +200,7 @@ async def get_received_documents_by_area_id(
 
 @router.get(
     "/documentos/rechazados",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -235,7 +235,7 @@ async def get_rejected_documents_by_area_id(
 
 @router.get(
     "/documentos/fecha_actual",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

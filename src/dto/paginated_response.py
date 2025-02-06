@@ -7,6 +7,6 @@ class PaginationMeta(BaseModel):
     total_items: int
     total_pages: int
 
-class PaginatedResponse(BaseModel):
+class PaginatedResponseDTO(BaseModel):
     data: List[Any]
     pagination: PaginationMeta

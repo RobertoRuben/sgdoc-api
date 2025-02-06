@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.dto.centro_poblado_response import CentroPobladoResponse
 from src.dto.centro_poblado_request import CentroPobladoRequest
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.centro_poblado_service import CentroPobladoService
 
 router = APIRouter(tags=["Centros Poblados"])
@@ -66,7 +66,7 @@ async def search_centros_poblados(
 
 @router.get(
     "/centros-poblados/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

@@ -5,7 +5,7 @@ from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotA
 from src.service.categoria_service import CategoriaService
 from src.dto.categoria_request import CategoriaRequest
 from src.dto.categoria_response import CategoriaResponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 
 router = APIRouter(tags=["Categorias"])
 
@@ -63,7 +63,7 @@ async def search_categorias(
 
 @router.get(
     "/categorias/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

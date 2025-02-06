@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends
 from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema
 from src.dto.comunicacion_destino_response import ComunicacionDestinoResponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.comunicacion_area_service import ComunicacionAreaService
 
 router = APIRouter(tags=["Comunicaciones entre Áreas"])
@@ -15,7 +15,7 @@ comunicaciones_area_tag_metadata={
 
 @router.get(
     "/comunicaciones-area",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

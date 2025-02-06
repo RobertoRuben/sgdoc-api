@@ -5,7 +5,7 @@ from src.schemas import *
 from src.service.remitente_service import RemitenteService
 from src.dto.remitente_request import RemitenteRequest
 from src.dto.remitente_response import RemitenteResponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 
 router = APIRouter(tags=["Remitentes"])
 
@@ -65,7 +65,7 @@ async def search_remitentes(
 
 @router.get(
     "/remitentes/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

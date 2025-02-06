@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.dto.caserio_request import CaserioRequest
 from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.service.caserio_service import CaserioService
 
@@ -85,7 +85,7 @@ async def search_caserios_by_name(
 
 @router.get(
     "/caserios/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

@@ -5,7 +5,7 @@ from src.schemas import *
 from src.dto.usuario_response import UsuarioResponse
 from src.dto.usuario_request import UsuarioRequest
 from src.dto.usuario_details_response import UsuarioDetailsResponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.usuario_service import UsuarioService
 from src.model.enum.user_status_enum import UserStatusEnum
 
@@ -47,7 +47,7 @@ async def find_by_string(
 
 @router.get(
     "/usuarios/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

@@ -4,7 +4,7 @@ from typing import List
 from src.schemas import *
 from src.dto.rol_request import RolRequest
 from src.dto.rol_response import RolReponse
-from src.dto.pagination_response import PaginatedResponse
+from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.rol_service import RolService
 
 router = APIRouter(tags=["Roles"])
@@ -65,7 +65,7 @@ async def search_roles(
 
 @router.get(
     "/roles/paginated",
-    response_model=PaginatedResponse,
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
