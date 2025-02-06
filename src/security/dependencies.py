@@ -1,16 +1,15 @@
 from fastapi import HTTPException, status, Depends
 from fastapi.security import OAuth2PasswordBearer
 from typing import Annotated
-from src.service.auth_service import AuthService
+from src.service.imp.auth_service_imp import AuthServiceImp
 from src.repository.usuario_repository import UsuarioRepository
 from src.model.entity.usuario import Usuario
-from src.main import API_VERSION
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 
 async def get_current_user(
     token: Annotated[str, Depends(oauth2_scheme)],
-    auth_service: AuthService = Depends(),
+    auth_service: AuthServiceImp = Depends(),
     usuario_repo: UsuarioRepository = Depends()
 ) -> Usuario:
     username = auth_service.get_username_from_token(token)
