@@ -1,5 +1,4 @@
 from typing import Optional
-
 from sqlmodel import SQLModel, Field, Column, Text, TIMESTAMP, Relationship
 from src.model.enum.estado_derivacion_enum import EstadoDerivacionEnum
 from datetime import datetime

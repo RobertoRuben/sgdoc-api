@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from src.model.enum.genero_enum import GeneroEnum
@@ -18,7 +18,7 @@ class Trabajador(SQLModel, table=True):
 
     area_id: int = Field(foreign_key="areas.id", index=True)
 
-    area: Area | None = Relationship(back_populates="trabajadores")
+    area: Optional[Area] = Relationship(back_populates="trabajadores")
 
     usuarios: List["Usuario"] = Relationship(back_populates="trabajador")
 

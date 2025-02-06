@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, List
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from src.model.entity.centro_poblado import CentroPoblado
 
@@ -13,7 +13,7 @@ class Caserio(SQLModel, table=True):
 
     centro_poblado_id: int | None = Field(default= None, foreign_key="centros_poblados.id", index=True)
 
-    centro_poblado: CentroPoblado | None = Relationship(back_populates="caserios")
+    centro_poblado: Optional[CentroPoblado] = Relationship(back_populates="caserios")
 
-    documentos: list["Documento"] = Relationship(back_populates="caserio")
+    documentos: List["Documento"] = Relationship(back_populates="caserio")
 
