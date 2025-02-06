@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.dto.ambito_request import AmbitoRequest
-from src.dto.ambito_response import AmbitoResponse
+from src.dto.ambito_request_dto import AmbitoRequestDTO
+from src.dto.ambito_response_dto import AmbitoResponseDTO
 from src.dto.pagination_response import PaginatedResponse
 from src.schemas import (
     ErrorResponseSchema,
@@ -25,7 +25,7 @@ router = APIRouter(
 
 @router.post(
     "",
-    response_model=AmbitoResponse,
+    response_model=AmbitoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -35,13 +35,13 @@ router = APIRouter(
     },
     description="Crea un nuevo ambito documental"
 )
-async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Depends(get_ambito_service_imp)):
+async def add_ambito(ambito_request: AmbitoRequestDTO, service: AmbitoService = Depends(get_ambito_service_imp)):
     return await service.add_ambito(ambito_request)
 
 
 @router.get(
     "",
-    response_model=List[AmbitoResponse],
+    response_model=List[AmbitoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -73,7 +73,7 @@ async def get_paginated_ambitos(
 
 @router.get(
     "/search",
-    response_model=List[AmbitoResponse],
+    response_model=List[AmbitoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -90,7 +90,7 @@ async def search_ambitos(
 
 @router.put(
     "/{ambito_id}",
-    response_model=AmbitoResponse,
+    response_model=AmbitoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -101,7 +101,7 @@ async def search_ambitos(
     },
     description="Actualiza un ambito documental"
 )
-async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: AmbitoService = Depends(get_ambito_service_imp)):
+async def update_ambito(ambito_id: int, ambito_request: AmbitoRequestDTO, service: AmbitoService = Depends(get_ambito_service_imp)):
     return await service.update_ambito(ambito_id, ambito_request)
 
 
@@ -126,7 +126,7 @@ async def delete_ambito(ambito_id: int, service: AmbitoService = Depends(get_amb
 
 @router.get(
     "/{ambito_id}",
-    response_model=AmbitoResponse,
+    response_model=AmbitoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

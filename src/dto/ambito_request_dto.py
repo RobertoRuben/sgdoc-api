@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class AmbitoRequest(BaseModel):
+class AmbitoRequestDTO(BaseModel):
     nombre_ambito: str = Field(..., description="El nombre del ambito del documento es obligatorio")
 
     @field_validator("nombre_ambito")

@@ -3,8 +3,7 @@ from fastapi import Depends
 from src.exception import ConflictException, NotFoundException, InternalServerException
 from src.service import AmbitoService
 from src.model.entity.ambito import Ambito
-from src.dto.ambito_request import AmbitoRequest
-from src.dto.ambito_response import AmbitoResponse
+from src.dto import AmbitoResponseDTO, AmbitoRequestDTO
 from src.repository.ambito_repository import AmbitoRepository
 
 class AmbitoServiceImp(AmbitoService):
@@ -12,7 +11,7 @@ class AmbitoServiceImp(AmbitoService):
         self.ambito_repository = ambito_repository
 
 
-    async def add_ambito(self, ambito_request: AmbitoRequest) -> AmbitoResponse:
+    async def add_ambito(self, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
         try:
             exists = await self.ambito_repository.exists(ambito_request.nombre_ambito)
             if exists:
@@ -23,7 +22,7 @@ class AmbitoServiceImp(AmbitoService):
             )
             created_ambito = await self.ambito_repository.add_ambito(new_ambito)
 
-            return AmbitoResponse(
+            return AmbitoResponseDTO(
                 id=created_ambito.id,
                 nombre_ambito=created_ambito.nombre_ambito
             )
@@ -36,11 +35,11 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def get_all_ambitos(self) -> List[AmbitoResponse]:
+    async def get_all_ambitos(self) -> List[AmbitoResponseDTO]:
         try:
             ambitos = await self.ambito_repository.get_all_ambitos()
             return [
-                AmbitoResponse(
+                AmbitoResponseDTO(
                     id=ambito.id,
                     nombre_ambito=ambito.nombre_ambito
                 ) for ambito in ambitos
@@ -52,14 +51,14 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def update_ambito(self, ambito_id: int, ambito_request: AmbitoRequest) -> AmbitoResponse:
+    async def update_ambito(self, ambito_id: int, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
         try:
             ambito = await self.ambito_repository.get_ambito_by_id(ambito_id)
             if not ambito:
                 raise NotFoundException("Ámbito no encontrado")
 
             if ambito.nombre_ambito == ambito_request.nombre_ambito:
-                return AmbitoResponse(
+                return AmbitoResponseDTO(
                     id=ambito.id,
                     nombre_ambito=ambito.nombre_ambito
                 )
@@ -71,7 +70,7 @@ class AmbitoServiceImp(AmbitoService):
             ambito.nombre_ambito = ambito_request.nombre_ambito
             updated_ambito = await self.ambito_repository.update_ambito(ambito)
 
-            return AmbitoResponse(
+            return AmbitoResponseDTO(
                 id=updated_ambito.id,
                 nombre_ambito=updated_ambito.nombre_ambito
             )
@@ -100,11 +99,11 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def find_ambito(self, search_string: str) -> List[AmbitoResponse]:
+    async def find_ambito(self, search_string: str) -> List[AmbitoResponseDTO]:
         try:
             ambitos = await self.ambito_repository.find_by_string(search_string)
             return [
-                AmbitoResponse(
+                AmbitoResponseDTO(
                     id=ambito.id,
                     nombre_ambito=ambito.nombre_ambito
                 ) for ambito in ambitos
@@ -126,13 +125,13 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def get_ambito_by_id(self, ambito_id: int) -> AmbitoResponse:
+    async def get_ambito_by_id(self, ambito_id: int) -> AmbitoResponseDTO:
         try:
             ambito = await self.ambito_repository.get_ambito_by_id(ambito_id)
             if not ambito:
                 raise NotFoundException("Ámbito no encontrado")
 
-            return AmbitoResponse(
+            return AmbitoResponseDTO(
                 id=ambito.id,
                 nombre_ambito=ambito.nombre_ambito
             )
