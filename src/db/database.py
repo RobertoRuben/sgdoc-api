@@ -1,6 +1,7 @@
 from urllib.parse import quote_plus
 from sqlmodel import SQLModel, create_engine
-from sqlalchemy.ext.asyncio import AsyncSession, AsyncEngine
+from sqlalchemy.ext.asyncio import AsyncEngine
+from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.orm import sessionmaker
 from src.config.settings import settings
 from src.model.entity import *
