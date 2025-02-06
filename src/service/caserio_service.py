@@ -2,8 +2,8 @@ from typing import List, Optional, Dict, Any
 from fastapi import Depends
 from src.exception import ConflictException, NotFoundException
 from src.model.entity.caserio import Caserio
-from src.dto.caserio_request import CaserioRequest
-from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
+from src.dto.caserio_request_dto import CaserioRequestDTO
+from src.dto.caserio_response_dto import CaserioResponseDTO, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
 from src.repository.caserio_repository import CaserioRepository
 
 class CaserioService:
@@ -12,7 +12,7 @@ class CaserioService:
         self.caserio_repository = caserio_repository
 
 
-    def add_caserio(self, caserio_request: CaserioRequest) -> CaserioResponseWithCentroPobladoId:
+    def add_caserio(self, caserio_request: CaserioRequestDTO) -> CaserioResponseWithCentroPobladoId:
         if self.caserio_repository.exists(caserio_request.nombre_caserio):
             raise ConflictException("El caserio ya existe")
 
@@ -41,7 +41,7 @@ class CaserioService:
         ]
 
 
-    def update_caserio(self, caserio_id: int, caserio_request: CaserioRequest) -> CaserioResponseWithCentroPobladoId:
+    def update_caserio(self, caserio_id: int, caserio_request: CaserioRequestDTO) -> CaserioResponseWithCentroPobladoId:
         caserio = self.caserio_repository.get_caserio_by_id(caserio_id)
         if not caserio:
             raise NotFoundException("El caserio no existe")
@@ -88,14 +88,14 @@ class CaserioService:
         ]
 
 
-    def find_by_string(self, search_string: str) -> List[CaserioResponse]:
+    def find_by_string(self, search_string: str) -> List[CaserioResponseDTO]:
         caserios = self.caserio_repository.find_by_string(search_string)
 
         if not caserios:
             raise NotFoundException("No se encontraron caserios")
 
         return [
-            CaserioResponse(
+            CaserioResponseDTO(
                 id=caserio['id'],
                 nombre_caserio=caserio['nombre_caserio'],
                 centro_poblado_nombre=caserio['nombre_centro_poblado']

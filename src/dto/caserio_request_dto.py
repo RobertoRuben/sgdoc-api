@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class CaserioRequest(BaseModel):
+class CaserioRequestDTO(BaseModel):
     nombre_caserio: str = Field(..., description="El nombre del caserio es obligatorio")
     centro_poblado_id: int | None = Field(None, description="El id del centro poblado es opcional")
 

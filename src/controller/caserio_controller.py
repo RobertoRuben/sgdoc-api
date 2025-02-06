@@ -1,8 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.dto.caserio_request import CaserioRequest
-from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
+from src.dto.caserio_request_dto import CaserioRequestDTO
+from src.dto.caserio_response_dto import CaserioResponseDTO, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
 from src.dto.paginated_response import PaginatedResponseDTO
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.service.caserio_service import CaserioService
@@ -30,7 +30,7 @@ caserios_tag_metadata = {
     },
     description="Crea un nuevo caserio"
 )
-async def add_caserio(caserio_request: CaserioRequest, service: CaserioService = Depends()):
+async def add_caserio(caserio_request: CaserioRequestDTO, service: CaserioService = Depends()):
     return service.add_caserio(caserio_request)
 
 
@@ -67,7 +67,7 @@ async def get_caserios_names(service: CaserioService = Depends()):
 
 @router.get(
     "/caserios/search",
-    response_model=List[CaserioResponse],
+    response_model=List[CaserioResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -129,7 +129,7 @@ async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends()
     },
     description="Actualiza un caserio"
 )
-async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, service: CaserioService = Depends()):
+async def update_caserio(caserio_id: int, caserio_request: CaserioRequestDTO, service: CaserioService = Depends()):
     return service.update_caserio(caserio_id, caserio_request)
 
 
