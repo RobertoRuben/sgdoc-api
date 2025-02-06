@@ -79,7 +79,7 @@ class AmbitoService:
 
 
     def get_ambitos_by_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
-        return self.ambito_repository.get_all_pagination(page, page_size)
+        return self.ambito_repository.get_all_paginated(page, page_size)
 
 
     def get_ambitos_by_id(self, ambito_id: int) -> AmbitoResponse:

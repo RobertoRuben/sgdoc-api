@@ -20,10 +20,16 @@ class AmbitoRepository:
             return ambito
         except SQLAlchemyError as e:
             await self.session.rollback()
-            raise DatabaseException("Error al agregar el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al agregar el ambito",
+                error_details=str(e)
+            ) from e
         except Exception as e:
             await self.session.rollback()
-            raise DatabaseException("Error desconocido al agregar el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al agregar el ambito",
+                error_details=str(e)
+            ) from e
 
 
     async def get_all_ambitos(self) -> List[Ambito]:
@@ -32,9 +38,15 @@ class AmbitoRepository:
             ambitos = result.all()
             return list(ambitos)
         except SQLAlchemyError as e:
-            raise DatabaseException("Error al obtener los ambitos") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al obtener la lista de ambitos",
+                error_details=str(e)
+            ) from e
         except Exception as e:
-            raise DatabaseException("Error desconocido al obtener los ambitos") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al obtener la lista de ambitos",
+                error_details=str(e)
+            ) from e
 
 
     async def update_ambito(self, ambito: Ambito) -> Ambito:
@@ -45,10 +57,16 @@ class AmbitoRepository:
             return ambito
         except SQLAlchemyError as e:
             await self.session.rollback()
-            raise DatabaseException("Error al actualizar el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al actualizar el ambito",
+                error_details=str(e)
+            ) from e
         except Exception as e:
             await self.session.rollback()
-            raise DatabaseException("Error desconocido al actualizar el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al actualizar el ambito",
+                error_details=str(e)
+            ) from e
 
 
     async def delete_ambito_by_id(self, ambito_id: int) -> bool:
@@ -60,10 +78,16 @@ class AmbitoRepository:
 
         except SQLAlchemyError as e:
             await self.session.rollback()
-            raise DatabaseException("Error al eliminar el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al eliminar el ambito",
+                error_details=str(e)
+            ) from e
         except Exception as e:
             await self.session.rollback()
-            raise DatabaseException("Error desconocido al eliminar el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al eliminar el ambito",
+                error_details=str(e)
+            ) from e
 
 
     async def get_ambito_by_id(self, ambito_id: int) -> Optional[Ambito]:
@@ -72,9 +96,15 @@ class AmbitoRepository:
             return ambito
 
         except SQLAlchemyError as e:
-            raise DatabaseException("Error al obtener el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al obtener el ambito",
+                error_details=str(e)
+            ) from e
         except Exception as e:
-            raise DatabaseException("Error desconocido al obtener el ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al obtener el ambito",
+                error_details=str(e)
+            ) from e
 
 
     async def exists(self, nombre_ambito: str) -> bool:
@@ -86,9 +116,15 @@ class AmbitoRepository:
             return exists
 
         except SQLAlchemyError as e:
-            raise DatabaseException("Error al verificar la existencia del ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al verificar la existencia del ambito",
+                error_details=str(e)
+            ) from e
         except Exception as e:
-            raise DatabaseException("Error desconocido al verificar la existencia del ambito") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al verificar la existencia del ambito",
+                error_details=str(e)
+            ) from e
 
 
     async def find_by_string(self, search_string: str) ->List[Ambito]:
@@ -99,12 +135,18 @@ class AmbitoRepository:
             return list(ambitos)
 
         except SQLAlchemyError as e:
-            raise DatabaseException("Error al buscar ambitos por cadena") from e
+            raise DatabaseException(
+                detail="Ocurrio un error al buscar el ambito",
+                error_details=str(e)
+            ) from e
         except Exception as e:
-            raise DatabaseException("Error desconocido al buscar ambitos por cadena") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al buscar el ambito",
+                error_details=str(e)
+            ) from e
 
 
-    async def get_all_pagination(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+    async def get_all_paginated(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         try:
             offset = (page - 1) * page_size
 
@@ -130,9 +172,15 @@ class AmbitoRepository:
                 }
             }
         except SQLAlchemyError as e:
-            raise DatabaseException("Error al obtener los ambitos paginados") from e
+            raise DatabaseException(
+                detail="Ocurrio al obtener la lista de ambitos paginados",
+                error_details=str(e)
+            ) from e
         except Exception as e:
-            raise DatabaseException("Error desconocido al obtener los ambitos paginados") from e
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al obtener la lista de ambitos paginados",
+                error_details=str(e)
+            ) from e
 
 
 
