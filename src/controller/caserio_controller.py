@@ -9,7 +9,10 @@ from src.service.imp import CaserioServiceImp
 def get_ambito_service_imp(service: CaserioServiceImp = Depends()) -> CaserioService:
     return service
 
-router = APIRouter(prefix="/caserios", tags=["Caserios"])
+router = APIRouter(
+    prefix="/caserios",
+    tags=["Caserios"]
+)
 
 caserios_tag_metadata = {
     "name": "Caserios",

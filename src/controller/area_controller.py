@@ -10,7 +10,13 @@ from src.schemas import (
 from src.dto import  AreaResponseDTO, AreaRequestDTO, PaginatedResponseDTO
 from src.service.imp.area_service_imp import AreaServiceImpl
 
-router = APIRouter(prefix="/areas",tags=["Areas"])
+def get_area_service_imp(service: AreaServiceImpl = Depends()) -> AreaServiceImpl:
+    return service
+
+router = APIRouter(
+    prefix="/areas",
+    tags=["Areas"]
+)
 
 areas_tag_metadata = {
     "name": "Areas",
@@ -32,7 +38,7 @@ areas_tag_metadata = {
     },
     description="Crea una nueva área en la organización"
 )
-async def add_area(area_request: AreaRequestDTO, service: AreaServiceImpl = Depends()):
+async def add_area(area_request: AreaRequestDTO, service: AreaServiceImpl = Depends(get_area_service_imp)):
     return await service.add_area(area_request)
 
 
@@ -45,7 +51,7 @@ async def add_area(area_request: AreaRequestDTO, service: AreaServiceImpl = Depe
     },
     description="Obtiene todas las áreas"
 )
-async def get_areas(service: AreaServiceImpl = Depends()):
+async def get_areas(service: AreaServiceImpl = Depends(get_area_service_imp)):
     return await service.get_all_areas()
 
 
@@ -60,7 +66,7 @@ async def get_areas(service: AreaServiceImpl = Depends()):
 )
 async def search_areas(
     search_string: str = Query(..., description="Cadena de búsqueda para encontrar áreas"),
-    service: AreaServiceImpl = Depends()
+    service: AreaServiceImpl = Depends(get_area_service_imp)
 ):
     return await service.find_area(search_string)
 
@@ -77,7 +83,7 @@ async def search_areas(
 async def get_paginated_areas(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: AreaServiceImpl = Depends()
+    service: AreaServiceImpl = Depends(get_area_service_imp)
 ):
     return await service.get_all_areas_paginated(page, page_size)
 
@@ -92,7 +98,7 @@ async def get_paginated_areas(
     },
     description="Obtiene un área por su ID"
 )
-async def get_area_by_id(area_id: int, service: AreaServiceImpl = Depends()):
+async def get_area_by_id(area_id: int, service: AreaServiceImpl = Depends(get_area_service_imp)):
     return await service.get_area_by_id(area_id)
 
 
@@ -108,7 +114,7 @@ async def get_area_by_id(area_id: int, service: AreaServiceImpl = Depends()):
     },
     description="Actualiza un área"
 )
-async def update_area(area_id: int, area_request: AreaRequestDTO, service: AreaServiceImpl = Depends()):
+async def update_area(area_id: int, area_request: AreaRequestDTO, service: AreaServiceImpl = Depends(get_area_service_imp)):
     return await service.update_area(area_id, area_request)
 
 
@@ -122,7 +128,7 @@ async def update_area(area_id: int, area_request: AreaRequestDTO, service: AreaS
     },
     description="Elimina un área"
 )
-async def delete_area_by_id(area_id: int, service: AreaServiceImpl = Depends()):
+async def delete_area_by_id(area_id: int, service: AreaServiceImpl = Depends(get_area_service_imp)):
     await service.delete_area_by_id(area_id)
     return JSONResponse(
         content={"message": "Se eliminó el área correctamente"},
