@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from src.dto.ambito_request_dto import AmbitoRequestDTO
-from src.dto.ambito_response_dto import AmbitoResponseDTO
+from src.dto import AmbitoRequestDTO, AmbitoResponseDTO
 
 class AmbitoService(ABC):
 

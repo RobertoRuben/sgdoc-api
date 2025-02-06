@@ -2,9 +2,9 @@ from typing import List, Dict, Any
 from fastapi import Depends
 from src.exception import ConflictException, NotFoundException, InternalServerException
 from src.service import AmbitoService
-from src.model.entity.ambito import Ambito
+from src.model.entity import Ambito
 from src.dto import AmbitoResponseDTO, AmbitoRequestDTO
-from src.repository.ambito_repository import AmbitoRepository
+from src.repository import AmbitoRepository
 
 class AmbitoServiceImp(AmbitoService):
     def __init__(self, ambito_repository: AmbitoRepository = Depends()):
