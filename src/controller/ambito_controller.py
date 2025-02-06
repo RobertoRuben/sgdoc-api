@@ -10,7 +10,12 @@ from src.schemas import (
     NotAuthenticatedResponseSchema,
     DeleteSuccessfulResponseSchema
 )
-from src.service.ambito_service import AmbitoService
+from src.service.imp import AmbitoServiceImp
+from src.service import AmbitoService
+
+def get_ambito_service_imp(service: AmbitoServiceImp = Depends()) -> AmbitoService:
+    return service
+
 
 router = APIRouter(
     prefix="/ambitos",
@@ -30,7 +35,7 @@ router = APIRouter(
     },
     description="Crea un nuevo ambito documental"
 )
-async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Depends()):
+async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Depends(get_ambito_service_imp)):
     return await service.add_ambito(ambito_request)
 
 
@@ -44,12 +49,12 @@ async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Dep
     },
     description="Obtiene todos los ambitos documentales"
 )
-async def get_ambitos(service: AmbitoService = Depends()):
+async def get_ambitos(service: AmbitoService = Depends(get_ambito_service_imp)):
     return await service.get_all_ambitos()
 
 
 @router.get(
-    "/paginated",  # Equivale a GET "/ambitos/paginated"
+    "/paginated",
     response_model=PaginatedResponse,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -61,7 +66,7 @@ async def get_ambitos(service: AmbitoService = Depends()):
 async def get_paginated_ambitos(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: AmbitoService = Depends()
+    service: AmbitoService = Depends(get_ambito_service_imp)
 ):
     return await service.get_ambitos_paginated(page, page_size)
 
@@ -78,7 +83,7 @@ async def get_paginated_ambitos(
 )
 async def search_ambitos(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar ambitos documentales"),
-    service: AmbitoService = Depends()
+    service: AmbitoService = Depends(get_ambito_service_imp)
 ):
     return await service.find_ambito(search_string)
 
@@ -96,7 +101,7 @@ async def search_ambitos(
     },
     description="Actualiza un ambito documental"
 )
-async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: AmbitoService = Depends()):
+async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: AmbitoService = Depends(get_ambito_service_imp)):
     return await service.update_ambito(ambito_id, ambito_request)
 
 
@@ -111,7 +116,7 @@ async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: 
     },
     description="Elimina un ambito documental"
 )
-async def delete_ambito(ambito_id: int, service: AmbitoService = Depends()):
+async def delete_ambito(ambito_id: int, service: AmbitoService = Depends(get_ambito_service_imp)):
     await service.delete_ambito(ambito_id)
     return JSONResponse(
         content={"message": "Se eliminó el ambito documental correctamente"},
@@ -130,5 +135,5 @@ async def delete_ambito(ambito_id: int, service: AmbitoService = Depends()):
     },
     description="Obtiene un ambito documental por su ID"
 )
-async def get_ambito_by_id(ambito_id: int, service: AmbitoService = Depends()):
+async def get_ambito_by_id(ambito_id: int, service: AmbitoService = Depends(get_ambito_service_imp)):
     return await service.get_ambito_by_id(ambito_id)
