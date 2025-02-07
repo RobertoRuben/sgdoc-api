@@ -1,13 +1,15 @@
 from typing import List
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.service.detalle_derivacion_service import DetalleDerivacionService
-from src.dto.detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
-from src.dto.detalle_derivacion_response_dto import DetalleDerivacionResponseDTO
-from src.dto.detalle_derivacion_details_response import DetalleDerivacionDetailsResponse
+from src.schemas import *
+from src.dto import DetalleDerivacionRequestDTO, DetalleDerivacionResponseDTO
+from src.service import DetalleDerivacionService
+from src.service.imp import DetalleDerivacionServiceImp
 
-router = APIRouter(tags=["Detalle Derivaciones"])
+router = APIRouter(
+    prefix="detalles-derivacion",
+    tags=["Detalle Derivaciones"]
+)
 
 detalle_derivaciones_tag_metadata={
     "name": "Detalle Derivaciones",
@@ -16,8 +18,12 @@ detalle_derivaciones_tag_metadata={
                    " ofrece funcionalidades de paginación y conteo de registros.",
 }
 
+
+def get_detalle_derivacion_imp(service: DetalleDerivacionServiceImp = Depends()) -> DetalleDerivacionService:
+    return service
+
 @router.post(
-    "/detalle-derivaciones",
+    "",
     response_model=DetalleDerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -28,13 +34,16 @@ detalle_derivaciones_tag_metadata={
     },
     description="Crea un nuevo detalle de derivación"
 )
-async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRequestDTO, service: DetalleDerivacionService = Depends()):
-    return service.add(detalle_derivacion_request)
+async def add_detalle_derivacion(
+    detalle_derivacion_request: DetalleDerivacionRequestDTO,
+    service: DetalleDerivacionService = Depends(get_detalle_derivacion_imp)
+):
+    return await service.add(detalle_derivacion_request)
 
 
 @router.get(
-    "/detalle-derivaciones/{derivacion_id}",
-    response_model=List[DetalleDerivacionDetailsResponse],
+    "/{derivacion_id}",
+    response_model=List[DetalleDerivacionResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -42,13 +51,16 @@ async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRe
     },
     description="Obtiene todos los detalles de derivación de una derivación"
 )
-async def get_all_detalle_derivacion_by_id(derivacion_id: int, service: DetalleDerivacionService = Depends()):
-    return service.get_paginated_by_id(derivacion_id)
+async def get_all_detalle_derivacion_by_id(
+    derivacion_id: int,
+    service: DetalleDerivacionService = Depends(get_detalle_derivacion_imp)
+):
+    return await service.get_paginated_by_id(derivacion_id)
 
 
 @router.put(
-    "/detalle-derivaciones/{detalle_derivacion_id}",
-    response_model=DetalleDerivacionDetailsResponse,
+    "/{detalle_derivacion_id}",
+    response_model=DetalleDerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -59,12 +71,16 @@ async def get_all_detalle_derivacion_by_id(derivacion_id: int, service: DetalleD
     },
     description="Actualiza un detalle de derivación"
 )
-async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequestDTO, service: DetalleDerivacionService = Depends()):
-    return service.update(detalle_derivacion_id, detalle_derivacion_request)
+async def update_detalle_derivacion(
+    detalle_derivacion_id: int,
+    detalle_derivacion_request: DetalleDerivacionRequestDTO,
+    service: DetalleDerivacionService = Depends(get_detalle_derivacion_imp)
+):
+    return await service.update(detalle_derivacion_id, detalle_derivacion_request)
 
 
 @router.delete(
-    "/detalle-derivaciones/{detalle_derivacion_id}",
+    "/{detalle_derivacion_id}",
     response_model=DeleteSuccessfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -74,6 +90,12 @@ async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivaci
     },
     description="Elimina un detalle de derivación"
 )
-async def delete_detalle_derivacion(detalle_derivacion_id: int, service: DetalleDerivacionService = Depends()):
-    service.delete_by_id(detalle_derivacion_id)
-    return JSONResponse(content={"message": "Se eliminó el detalle de derivación correctamente"}, status_code=200)
+async def delete_detalle_derivacion(
+    detalle_derivacion_id: int,
+    service: DetalleDerivacionService = Depends(get_detalle_derivacion_imp)
+):
+    await service.delete_by_id(detalle_derivacion_id)
+    return JSONResponse(
+        content={"message": "Se eliminó el detalle de derivación correctamente"},
+        status_code=200
+    )
