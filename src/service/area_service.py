@@ -5,29 +5,29 @@ from src.dto.area_response_dto import AreaResponseDTO
 
 class AreaService(ABC):
     @abstractmethod
-    async def add_area(self, area_request: AreaRequestDTO) -> AreaResponseDTO:
+    async def add(self, area_request: AreaRequestDTO) -> AreaResponseDTO:
         pass
 
     @abstractmethod
-    async def get_all_areas(self) -> List[AreaResponseDTO]:
+    async def get_all(self) -> List[AreaResponseDTO]:
         pass
 
     @abstractmethod
-    async def update_area(self, area_id: int, area_request: AreaRequestDTO) -> AreaResponseDTO:
+    async def update(self, area_id: int, area_request: AreaRequestDTO) -> AreaResponseDTO:
         pass
 
     @abstractmethod
-    async def delete_area_by_id(self, area_id: int) -> None:
+    async def delete(self, area_id: int) -> None:
         pass
 
     @abstractmethod
-    async def find_area(self, search_string: str) -> List[AreaResponseDTO]:
+    async def find(self, search_string: str) -> List[AreaResponseDTO]:
         pass
 
     @abstractmethod
-    async def get_all_areas_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
         pass
 
     @abstractmethod
-    async def get_area_by_id(self, area_id: int) -> AreaResponseDTO:
+    async def get_by_id(self, area_id: int) -> AreaResponseDTO:
         pass

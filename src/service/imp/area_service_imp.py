@@ -10,7 +10,7 @@ class AreaServiceImpl(AreaService):
     def __init__(self, area_repository: AreaRepository = Depends()):
         self.area_repository = area_repository
 
-    async def add_area(self, area_request: AreaRequestDTO) -> AreaResponseDTO:
+    async def add(self, area_request: AreaRequestDTO) -> AreaResponseDTO:
         try:
             exists = await self.area_repository.exists(area_request.nombre_area)
             if exists:
@@ -32,7 +32,7 @@ class AreaServiceImpl(AreaService):
             ) from e
 
 
-    async def get_all_areas(self) -> List[AreaResponseDTO]:
+    async def get_all(self) -> List[AreaResponseDTO]:
         try:
             areas = await self.area_repository.get_all_areas()
             return [
@@ -48,7 +48,7 @@ class AreaServiceImpl(AreaService):
             ) from e
 
 
-    async def update_area(self, area_id: int, area_request: AreaRequestDTO) -> AreaResponseDTO:
+    async def update(self, area_id: int, area_request: AreaRequestDTO) -> AreaResponseDTO:
         try:
             area = await self.area_repository.get_area_by_id(area_id)
             if not area:
@@ -80,7 +80,7 @@ class AreaServiceImpl(AreaService):
             ) from e
 
 
-    async def delete_area_by_id(self, area_id: int) -> None:
+    async def delete(self, area_id: int) -> None:
         try:
             area = await self.area_repository.get_area_by_id(area_id)
             if not area:
@@ -96,7 +96,7 @@ class AreaServiceImpl(AreaService):
             ) from e
 
 
-    async def find_area(self, search_string: str) -> List[AreaResponseDTO]:
+    async def find(self, search_string: str) -> List[AreaResponseDTO]:
         try:
             areas = await self.area_repository.find_by_string(search_string)
             if not areas:
@@ -114,7 +114,7 @@ class AreaServiceImpl(AreaService):
             ) from e
 
 
-    async def get_all_areas_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
         try:
             return await self.area_repository.get_all_pagination(page, page_size)
         except Exception as e:
@@ -124,7 +124,7 @@ class AreaServiceImpl(AreaService):
             ) from e
 
 
-    async def get_area_by_id(self, area_id: int) -> AreaResponseDTO:
+    async def get_by_id(self, area_id: int) -> AreaResponseDTO:
         try:
             area = await self.area_repository.get_area_by_id(area_id)
             if not area:

@@ -35,7 +35,7 @@ areas_tag_metadata = {
     description="Crea una nueva área en la organización"
 )
 async def add_area(area_request: AreaRequestDTO, service: AreaService = Depends(get_area_service_imp)):
-    return await service.add_area(area_request)
+    return await service.add(area_request)
 
 
 @router.get(
@@ -48,7 +48,7 @@ async def add_area(area_request: AreaRequestDTO, service: AreaService = Depends(
     description="Obtiene todas las áreas"
 )
 async def get_areas(service: AreaService = Depends(get_area_service_imp)):
-    return await service.get_all_areas()
+    return await service.get_all()
 
 
 @router.get(
@@ -64,7 +64,7 @@ async def search_areas(
     search_string: str = Query(..., description="Cadena de búsqueda para encontrar áreas"),
     service: AreaService = Depends(get_area_service_imp)
 ):
-    return await service.find_area(search_string)
+    return await service.find(search_string)
 
 
 @router.get(
@@ -81,7 +81,7 @@ async def get_paginated_areas(
     page_size: int = Query(10, description="Número de registros por página"),
     service: AreaService = Depends(get_area_service_imp)
 ):
-    return await service.get_all_areas_paginated(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
@@ -95,7 +95,7 @@ async def get_paginated_areas(
     description="Obtiene un área por su ID"
 )
 async def get_area_by_id(area_id: int, service: AreaService = Depends(get_area_service_imp)):
-    return await service.get_area_by_id(area_id)
+    return await service.get_by_id(area_id)
 
 
 @router.put(
@@ -111,7 +111,7 @@ async def get_area_by_id(area_id: int, service: AreaService = Depends(get_area_s
     description="Actualiza un área"
 )
 async def update_area(area_id: int, area_request: AreaRequestDTO, service: AreaService = Depends(get_area_service_imp)):
-    return await service.update_area(area_id, area_request)
+    return await service.update(area_id, area_request)
 
 
 @router.delete(
@@ -125,7 +125,7 @@ async def update_area(area_id: int, area_request: AreaRequestDTO, service: AreaS
     description="Elimina un área"
 )
 async def delete_area_by_id(area_id: int, service: AreaService = Depends(get_area_service_imp)):
-    await service.delete_area_by_id(area_id)
+    await service.delete(area_id)
     return JSONResponse(
         content={"message": "Se eliminó el área correctamente"},
         status_code=200
