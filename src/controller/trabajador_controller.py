@@ -7,7 +7,7 @@ from src.service import TrabajadorService
 from src.service.imp import TrabajadorServiceImp
 
 router = APIRouter(
-    prefix="trabajadores",
+    prefix="/trabajadores",
     tags=["Trabajadores"]
 )
 

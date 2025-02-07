@@ -7,7 +7,7 @@ from src.service import DetalleDerivacionService
 from src.service.imp import DetalleDerivacionServiceImp
 
 router = APIRouter(
-    prefix="detalles-derivacion",
+    prefix="/detalles-derivacion",
     tags=["Detalle Derivaciones"]
 )
 

@@ -15,7 +15,7 @@ from src.service.documento_service import DocumentoService
 from src.service.imp import DocumentoServiceImp
 
 router = APIRouter(
-    prefix="documentos",
+    prefix="/documentos",
     tags=["Documentos"]
 )
 
