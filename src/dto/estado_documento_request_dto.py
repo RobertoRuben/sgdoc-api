@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field,field_validator
 from src.model.enum.estado_documento_enum import EstadoDocumentoEnum
 
-class EstadoDocumentoRequest(BaseModel):
+class EstadoDocumentoRequestDTO(BaseModel):
     estado: EstadoDocumentoEnum
     comentario: str | None = Field(None, description="Comentario del estado del documento")
     documento_id: int = Field(..., description="Id del documento al que pertenece el estado")

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class EstadoDocumentoResponse(BaseModel):
+class EstadoDocumentoResponseDTO(BaseModel):
     id: int
     estado: str
     fecha: datetime

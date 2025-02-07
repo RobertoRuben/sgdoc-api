@@ -2,8 +2,8 @@ from typing import Dict, Any, List
 from fastapi import Depends
 from src.exception import NotFoundException
 from src.model.entity.estado_documento import EstadoDocumento
-from src.dto.estado_documento_request import EstadoDocumentoRequest
-from src.dto.estado_documento_response import EstadoDocumentoResponse
+from src.dto.estado_documento_request_dto import EstadoDocumentoRequestDTO
+from src.dto.estado_documento_response_dto import EstadoDocumentoResponseDTO
 from src.repository.estado_documento_repository import EstadoDocumentoRepository
 from src.repository.documento_repository import DocumentoRepository
 
@@ -12,7 +12,7 @@ class EstadoDocumentoService:
         self.estado_documento_repository = estado_documento_repository
         self.documento_repository = documento_repository
 
-    def add_estado_documento(self, estado_documento_request: EstadoDocumentoRequest) -> EstadoDocumentoResponse:
+    def add_estado_documento(self, estado_documento_request: EstadoDocumentoRequestDTO) -> EstadoDocumentoResponseDTO:
         if not self.documento_repository.exists_by_id(estado_documento_request.documento_id):
             raise NotFoundException("Documento no encontrado")
 
@@ -24,7 +24,7 @@ class EstadoDocumentoService:
 
         created_estado_documento = self.estado_documento_repository.add_estado_documento(estado_documento)
 
-        return EstadoDocumentoResponse(
+        return EstadoDocumentoResponseDTO(
             id=created_estado_documento.id,
             estado=created_estado_documento.estado,
             comentario=created_estado_documento.comentario,
@@ -35,7 +35,7 @@ class EstadoDocumentoService:
         return self.estado_documento_repository.get_all_estado_documento(page, page_size)
 
 
-    def update_estado_documento(self, estado_documento_id: int, estado_documento_request: EstadoDocumentoRequest) -> EstadoDocumentoResponse:
+    def update_estado_documento(self, estado_documento_id: int, estado_documento_request: EstadoDocumentoRequestDTO) -> EstadoDocumentoResponseDTO:
         estado_documento = self.estado_documento_repository.get_estado_documento_by_id(estado_documento_id)
 
         if not self.documento_repository.exists_by_id(estado_documento_request.documento_id):
@@ -47,7 +47,7 @@ class EstadoDocumentoService:
 
         updated_estado_documento = self.estado_documento_repository.update_estado_documento(estado_documento)
 
-        return EstadoDocumentoResponse(
+        return EstadoDocumentoResponseDTO(
             id=updated_estado_documento.id,
             estado=updated_estado_documento.estado,
             comentario=updated_estado_documento.comentario,
