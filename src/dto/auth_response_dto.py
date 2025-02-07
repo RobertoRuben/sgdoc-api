@@ -5,5 +5,5 @@ class AuthResponseDTO(BaseModel):
     token_type: str
     refresh_token: str | None = None
     rol_name: str | None = None
-    user_id: str | None = None
-    area_id: str | None = None
+    user_id: int | None = None
+    area_id: int | None = None

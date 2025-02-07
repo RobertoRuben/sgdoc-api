@@ -30,7 +30,6 @@ class DerivacionRepository:
                 error_details=str(e)
             ) from e
 
-
     async def get_paginated(
             self,
             page: int = 1,
@@ -49,15 +48,16 @@ class DerivacionRepository:
                     :documento_id_filtro
                 )
             """)
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {
-                    "page": page,
-                    "page_size": page_size,
-                    "fecha_filtro": fecha_filtro,
-                    "estado_filtro": estado_filtro,
-                    "documento_id_filtro": documento_id_filtro
-                })
-                derivaciones = result.scalar()
+
+            result = await self.session.execute(query, {
+                "page": page,
+                "page_size": page_size,
+                "fecha_filtro": fecha_filtro,
+                "estado_filtro": estado_filtro,
+                "documento_id_filtro": documento_id_filtro
+            })
+
+            derivaciones = result.scalar()
 
             return derivaciones if derivaciones else {
                 "data": [],
