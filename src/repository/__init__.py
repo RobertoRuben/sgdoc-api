@@ -6,6 +6,8 @@ from .usuario_repository import UsuarioRepository
 from .centro_poblado_repository import CentroPobladoRepository
 from .comunicacion_area_repository import ComunicacionAreaRepository
 from .derivacion_repository import DerivacionRepository
+from .detalle_derivacion_repository import DetalleDerivacionRepository
 
 __all__ = ["AmbitoRepository", "AreaRepository", "CaserioRepository", "CategoriaDocumentoRepository",
-           "UsuarioRepository", "CentroPobladoRepository", "ComunicacionAreaRepository", "DerivacionRepository"]
+           "UsuarioRepository", "CentroPobladoRepository", "ComunicacionAreaRepository", "DerivacionRepository",
+           "DetalleDerivacionRepository"]

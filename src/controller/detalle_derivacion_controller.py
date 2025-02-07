@@ -29,7 +29,7 @@ detalle_derivaciones_tag_metadata={
     description="Crea un nuevo detalle de derivación"
 )
 async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRequestDTO, service: DetalleDerivacionService = Depends()):
-    return service.add_detalle_derivacion(detalle_derivacion_request)
+    return service.add(detalle_derivacion_request)
 
 
 @router.get(
@@ -43,7 +43,7 @@ async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRe
     description="Obtiene todos los detalles de derivación de una derivación"
 )
 async def get_all_detalle_derivacion_by_id(derivacion_id: int, service: DetalleDerivacionService = Depends()):
-    return service.get_all_detalle_derivacion_by_id(derivacion_id)
+    return service.get_paginated_by_id(derivacion_id)
 
 
 @router.put(
@@ -60,7 +60,7 @@ async def get_all_detalle_derivacion_by_id(derivacion_id: int, service: DetalleD
     description="Actualiza un detalle de derivación"
 )
 async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequestDTO, service: DetalleDerivacionService = Depends()):
-    return service.update_detalle_derivacion(detalle_derivacion_id, detalle_derivacion_request)
+    return service.update(detalle_derivacion_id, detalle_derivacion_request)
 
 
 @router.delete(
@@ -75,5 +75,5 @@ async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivaci
     description="Elimina un detalle de derivación"
 )
 async def delete_detalle_derivacion(detalle_derivacion_id: int, service: DetalleDerivacionService = Depends()):
-    service.delete_detalle_derivacion_by_id(detalle_derivacion_id)
+    service.delete_by_id(detalle_derivacion_id)
     return JSONResponse(content={"message": "Se eliminó el detalle de derivación correctamente"}, status_code=200)
