@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, Field, field_validator
 
-class DocumentoUpdateRequest(BaseModel):
+class DocumentoUpdateRequestDTO(BaseModel):
     documento_bytes: Optional[bytes] = Field(None, description="El documento debe ser un archivo")
     nombre: str = Field(..., description="El nombre del documento no puede estar vacío")
     folios: int = Field(..., description="El número de folios debe ser mayor a cero")

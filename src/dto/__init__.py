@@ -14,6 +14,12 @@ from .derivacion_request_dto import DerivacionRequestDTO
 from .derivacion_response_dto import DerivacionResponseDTO
 from .detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
 from .detalle_derivacion_response_dto import DetalleDerivacionResponseDTO
+from .documento_request_dto import DocumentoRequestDTO
+from .documento_update_request_dto import DocumentoUpdateRequestDTO
+from .documento_response_dto import (DocumentoResponseDTO, DocumentosIngresadosResponseDTO, TotalDocumentosNoDerivadosResponseDTO,
+    TotalDocumentosPorCaserioResponseDTO, TotalDocumentosRecibidosResponseDTO, DocumentosNoConfirmadosResponseDTO)
+from .remitente_request import RemitenteRequest
+from .remitente_response import RemitenteResponse
 from .auth_request_dto import AuthRequestDTO
 from .auth_response_dto import AuthResponseDTO
 from .authenticated_user_response_dto import AuthenticatedUserResponseDTO
@@ -26,4 +32,8 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO",
            "CentroPobladoRequestDTO", "CentroPobladoResponseDTO", "ComunicacionAreaRequestDTO",
            "ComunicacionAreaResponseDTO", "ComunicacionDestinoResponseDTO", "DerivacionRequestDTO",
-           "DerivacionResponseDTO", "DetalleDerivacionRequestDTO", "DetalleDerivacionResponseDTO"]
+           "DerivacionResponseDTO", "DetalleDerivacionRequestDTO", "DetalleDerivacionResponseDTO",
+           "DocumentoRequestDTO", "DocumentoResponseDTO", "DocumentosIngresadosResponseDTO",
+           "TotalDocumentosNoDerivadosResponseDTO", "TotalDocumentosPorCaserioResponseDTO",
+           "TotalDocumentosRecibidosResponseDTO", "DocumentosNoConfirmadosResponseDTO", "DocumentoUpdateRequestDTO",
+           "RemitenteRequest", "RemitenteResponse"]

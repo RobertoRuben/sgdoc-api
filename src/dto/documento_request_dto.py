@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator, Field
 
-class DocumentoRequest(BaseModel):
+class DocumentoRequestDTO(BaseModel):
     documento_bytes: bytes = Field(..., description="El documento debe ser un archivo")
     nombre: str = Field(..., description="El nombre del documento no puede estar vacío")
     folios: int = Field(..., description="El número de folios debe ser mayor a cero")

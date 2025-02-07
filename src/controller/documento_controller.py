@@ -6,13 +6,13 @@ from starlette.responses import StreamingResponse
 from src.exception import InternalServerException
 from src.schemas import *
 from src.exception import  BadRequestException
-from src.dto.documento_request import DocumentoRequest
-from src.dto.documento_response import DocumentoResponse, DocumentosNoConfirmadosResponseDTO
-from src.dto.documento_update_request import DocumentoUpdateRequest
+from src.dto.documento_request_dto import DocumentoRequestDTO
+from src.dto.documento_response_dto import DocumentoResponseDTO, DocumentosNoConfirmadosResponseDTO
+from src.dto.documento_update_request_dto import DocumentoUpdateRequestDTO
 from src.dto.paginated_response import PaginatedResponseDTO
 from src.dto.remitente_request import RemitenteRequest
 from src.model.enum.genero_enum import GeneroEnum
-from src.service.documento_service import DocumentoService
+from src.service.imp.documento_service_imp import DocumentoServiceImp
 
 router = APIRouter(tags=["Documentos"])
 documentos_tag_metadata = {
@@ -24,7 +24,7 @@ documentos_tag_metadata = {
 
 @router.post(
     "/documentos",
-    response_model=DocumentoResponse,
+    response_model=DocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -48,7 +48,7 @@ async def create_documento(
     categoria_id: int = Form(..., ge=1, description="El id de la categoría debe ser mayor o igual a 1"),
     caserio_id: Optional[int] = Form(None, ge=1, description="El id del caserío debe ser mayor o igual a 1 si se proporciona"),
     centro_poblado_id: Optional[int] = Form(None, ge=1, description="El id del centro poblado debe ser mayor o igual a 1 si se proporciona"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
     try:
         if documento_file.content_type != "application/pdf":
@@ -64,7 +64,7 @@ async def create_documento(
             genero=genero
         )
 
-        documento_request = DocumentoRequest(
+        documento_request = DocumentoRequestDTO(
             documento_bytes=documento_bytes,
             folios=folios,
             nombre=nombre,
@@ -74,7 +74,7 @@ async def create_documento(
             caserio_id=caserio_id,
             centro_poblado_id=centro_poblado_id
         )
-        return documento_service.add_documento(remitente_request, documento_request)
+        return documento_service.add(remitente_request, documento_request)
     except Exception as e:
         raise InternalServerException("Ocurrió un error al crear el documento") from e
 
@@ -89,8 +89,8 @@ async def create_documento(
     response_model=PaginatedResponseDTO,
     description="Obtiene todos los documentos"
 )
-async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_service: DocumentoService = Depends()):
-    return documento_service.get_all_documents(p_page, p_page_size)
+async def get_all_documents(p_page: int = 1, p_page_size: int = 10, documento_service: DocumentoServiceImp = Depends()):
+    return documento_service.get_all(p_page, p_page_size)
 
 
 @router.get(
@@ -112,9 +112,9 @@ async def search_entered_documents(
     p_id_ambito: Optional[int] = Query(None, description="ID del ámbito"),
     p_nombre_categoria: Optional[str] = Query(None, description="Nombre de la categoría"),
     p_fecha_ingreso: Optional[date] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
-    return documento_service.search_entered_documents(
+    return documento_service.find(
             p_page=p_page,
             p_page_size=p_page_size,
             p_dni=p_dni,
@@ -146,9 +146,9 @@ async def get_sent_documents_by_area_id(
     p_fecha_ingreso: Optional[date] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
     p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
-    return documento_service.get_sent_documents_by_area_id(
+    return documento_service.get_paginatend_send_by_area_origen_id(
         p_area_origen_id=p_area_origen_id,
         p_search_document=p_search_document,
         p_id_caserio=p_id_caserio,
@@ -182,9 +182,9 @@ async def get_received_documents_by_area_id(
     p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
     p_recepcionada: Optional[bool] = Query(None, description="Filtrar por confirmación (recepcionada)"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
-    return documento_service.get_received_documents_by_area_id(
+    return documento_service.get_paginated_receive_by_area_destino_id(
         p_area_destino_id=p_area_destino_id,
         p_search_document=p_search_document,
         p_id_caserio=p_id_caserio,
@@ -218,9 +218,9 @@ async def get_rejected_documents_by_area_id(
     p_fecha_ingreso: Optional[str] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
     p_page: int = Query(1, ge=1, description="Número de página para la paginación"),
     p_page_size: int = Query(10, ge=1, le=100, description="Cantidad de elementos por página"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
-    return documento_service.get_rejected_documents_by_area_id(
+    return documento_service.get_paginated_reject_by_area_destino_id(
         p_area_destino_id=p_area_destino_id,
         p_search_document=p_search_document,
         p_id_caserio=p_id_caserio,
@@ -243,8 +243,8 @@ async def get_rejected_documents_by_area_id(
     },
     description="Obtiene los documentos con fecha actual"
 )
-async def get_documents_by_current_date(page: int = 1, page_size: int = 10, documento_service: DocumentoService = Depends()):
-    return documento_service.get_documentos_by_current_date(page, page_size)
+async def get_documents_by_current_date(page: int = 1, page_size: int = 10, documento_service: DocumentoServiceImp = Depends()):
+    return documento_service.get_paginted_by_current_date(page, page_size)
 
 
 @router.get(
@@ -259,14 +259,14 @@ async def get_documents_by_current_date(page: int = 1, page_size: int = 10, docu
 )
 async def get_documentos_no_confirmados(
     p_area_destino_id: int = Query(..., ge=1, description="ID del área de destino"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
-    return documento_service.get_documentos_no_confirmados(p_area_destino_id)
+    return documento_service.get_unconfirmed_documents(p_area_destino_id)
 
 
 @router.get(
     "/documentos/{documento_id}",
-    response_model=DocumentoResponse,
+    response_model=DocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -274,13 +274,13 @@ async def get_documentos_no_confirmados(
     },
     description="Obtiene un documento por su ID"
 )
-async def get_documento_by_id(documento_id: int, documento_service: DocumentoService = Depends()):
-    return documento_service.get_document_by_id(documento_id)
+async def get_documento_by_id(documento_id: int, documento_service: DocumentoServiceImp = Depends()):
+    return documento_service.get_by_id(documento_id)
 
 
 @router.put(
     "/documentos/{documento_id}",
-    response_model=DocumentoResponse,
+    response_model=DocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -301,7 +301,7 @@ async def update_documento(
     categoria_id: int = Form(..., ge=1, description="El id de la categoría debe ser mayor o igual a 1"),
     caserio_id: Optional[int] = Form(None, ge=1, description="El id del caserío debe ser mayor o igual a 1 si se proporciona"),
     centro_poblado_id: Optional[int] = Form(None, ge=1, description="El id del centro poblado debe ser mayor o igual a 1 si se proporciona"),
-    documento_service: DocumentoService = Depends()
+    documento_service: DocumentoServiceImp = Depends()
 ):
     try:
         documento_bytes = None
@@ -310,7 +310,7 @@ async def update_documento(
                 raise HTTPException(status_code=400, detail="El archivo debe ser de tipo PDF")
             documento_bytes = await documento_file.read()
 
-        documento_request = DocumentoUpdateRequest(
+        documento_request = DocumentoUpdateRequestDTO(
             documento_bytes=documento_bytes,
             folios=folios,
             nombre=nombre,
@@ -321,7 +321,7 @@ async def update_documento(
             centro_poblado_id=centro_poblado_id
         )
 
-        return documento_service.update_documento(documento_id, documento_request)
+        return documento_service.update(documento_id, documento_request)
 
     except Exception as e:
         raise InternalServerException("Ocurrió un error al actualizar el documento") from e
@@ -338,8 +338,8 @@ async def update_documento(
     },
     description="Elimina un documento por su ID"
 )
-async def delete_documento(documento_id: int, documento_service: DocumentoService = Depends()):
-    documento_service.delete_document(documento_id)
+async def delete_documento(documento_id: int, documento_service: DocumentoServiceImp = Depends()):
+    documento_service.delete(documento_id)
     return {"message": "Documento eliminado correctamente"}
 
 
@@ -353,9 +353,9 @@ async def delete_documento(documento_id: int, documento_service: DocumentoServic
     },
     description="Descarga el documento por su ID"
 )
-async def descargar_documento(documento_id: int, documento_service: DocumentoService = Depends()):
+async def descargar_documento(documento_id: int, documento_service: DocumentoServiceImp = Depends()):
     try:
-        documento_bytes, nombre = documento_service.descargar_documento(documento_id)
+        documento_bytes, nombre = documento_service.download_by_id(documento_id)
 
         file_like = BytesIO(documento_bytes)
 
