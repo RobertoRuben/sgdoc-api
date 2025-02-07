@@ -6,7 +6,7 @@ from src.dto.usuario_response_dto import UsuarioResponseDTO
 from src.dto.usuario_request_dto import UsuarioRequestDTO
 from src.dto.usuario_details_response import UsuarioDetailsResponse
 from src.dto.paginated_response import PaginatedResponseDTO
-from src.service.usuario_service import UsuarioService
+from src.service.imp.usuario_service_imp import UsuarioServiceImp
 from src.model.enum.user_status_enum import UserStatusEnum
 
 router = APIRouter(tags=["Usuarios"])
@@ -29,8 +29,8 @@ usuarios_metadata = {
     },
     description="Crea un nuevo usuario"
 )
-async def add_usuario(usuario_request: UsuarioRequestDTO, service: UsuarioService = Depends()):
-    return service.add_usuario(usuario_request)
+async def add_usuario(usuario_request: UsuarioRequestDTO, service: UsuarioServiceImp = Depends()):
+    return service.add(usuario_request)
 
 
 @router.get(
@@ -40,9 +40,9 @@ async def add_usuario(usuario_request: UsuarioRequestDTO, service: UsuarioServic
 )
 async def find_by_string(
     search_string: str = Query(..., description="Nombre del usuario a buscar"),
-    service: UsuarioService = Depends()
+    service: UsuarioServiceImp = Depends()
 ):
-    return service.find_by_string(search_string)
+    return service.find(search_string)
 
 
 @router.get(
@@ -61,10 +61,10 @@ async def get_paginated_usuarios(
     is_active: UserStatusEnum = Query(
         ...,description="Filtrar usuarios por estado activo (true) o inactivo (false)"
     ),
-    service: UsuarioService = Depends()
+    service: UsuarioServiceImp = Depends()
 ):
     is_active_bool = is_active == UserStatusEnum.true
-    return service.get_all_users_by_pagination(page, page_size, is_active_bool)
+    return service.get_paginated(page, page_size, is_active_bool)
 
 
 @router.put(
@@ -83,9 +83,9 @@ async def get_paginated_usuarios(
 async def update_usuario(
     usuario_id: int,
     usuario_request: UsuarioRequestDTO,
-    service: UsuarioService = Depends()
+    service: UsuarioServiceImp = Depends()
 ):
-    return service.update_user(usuario_id, usuario_request)
+    return service.update(usuario_id, usuario_request)
 
 
 @router.get(
@@ -98,8 +98,8 @@ async def update_usuario(
     },
     description="Obtiene un usuario por ID"
 )
-async def get_usuario(usuario_id: int, service: UsuarioService = Depends()):
-    return service.get_usuario_by_id(usuario_id)
+async def get_usuario(usuario_id: int, service: UsuarioServiceImp = Depends()):
+    return service.get_by_id(usuario_id)
 
 
 @router.patch(
@@ -117,9 +117,9 @@ async def get_usuario(usuario_id: int, service: UsuarioService = Depends()):
 async def update_usuario_password(
     usuario_id: int,
     contrasena: str = Query(..., description="Nueva contraseña del usuario"),
-    service: UsuarioService = Depends()
+    service: UsuarioServiceImp = Depends()
 ):
-    service.update_usuario_password(usuario_id, contrasena)
+    service.update_password(usuario_id, contrasena)
     return JSONResponse(status_code=200, content={"message": "Contraseña actualizada correctamente"})
 
 
@@ -135,8 +135,8 @@ async def update_usuario_password(
     },
     description="Elimina un usuario"
 )
-async def delete_usuario(usuario_id: int, service: UsuarioService = Depends()):
-    service.delete_user(usuario_id)
+async def delete_usuario(usuario_id: int, service: UsuarioServiceImp = Depends()):
+    service.delete_by_id(usuario_id)
     return JSONResponse(status_code=200, content={"message": "Usuario eliminado correctamente"})
 
 
@@ -158,10 +158,10 @@ async def update_usuario_status(
         ...,
         description="Estado deseado del usuario: 'true' para activar, 'false' para desactivar"
     ),
-    service: UsuarioService = Depends()
+    service: UsuarioServiceImp = Depends()
 ):
     is_active = user_status.value.lower() == "true"
-    service.update_user_status(usuario_id, is_active)
+    service.update_status(usuario_id, is_active)
     estado = "activado" if is_active else "desactivado"
     return JSONResponse(status_code=200, content={"message": f"Usuario {estado} correctamente"})
 
