@@ -1,152 +1,195 @@
 from typing import List, Optional, Dict, Any
 from sqlalchemy.exc import SQLAlchemyError
-from sqlmodel import Session, select, func, or_, Text
+from sqlmodel import select, func, or_, Text
+from sqlmodel.ext.asyncio.session import AsyncSession
+from fastapi import Depends
 from src.exception import DatabaseException
-from src.db.database import engine
-from src.model.entity.remitente import Remitente
+from src.db.database import get_async_session
+from src.model.entity import Remitente
 
 class RemitenteRepository:
-
-    @staticmethod
-    def add_remitentes(remitente: Remitente) -> Remitente:
-        with Session(engine) as session:
-            try:
-                session.add(remitente)
-                session.commit()
-                session.refresh(remitente)
-                return remitente
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al registrar el remitente en la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al registrar el remitente en la base") from e
+    def __init__(self, session: AsyncSession = Depends(get_async_session)):
+        self.session = session
 
 
-    @staticmethod
-    def get_all() -> List[Remitente]:
-        with Session(engine) as session:
-            try:
-                remitentes = session.exec(select(Remitente)).all()
-                return list(remitentes)
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al obtener los remitentes de la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al obtener los remitentes de la base") from e
+    async def add_remitentes(self, remitente: Remitente) -> Remitente:
+        try:
+            self.session.add(remitente)
+            await self.session.commit()
+            await self.session.refresh(remitente)
+            return remitente
+        except SQLAlchemyError as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                "Ocurrio un error al registrar el remitente en la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                "Ocurrio un error desconocido al registrar el remitente en la base",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def update_remitente(remitente: Remitente) -> Remitente:
-        with Session(engine) as session:
-            try:
-                session.add(remitente)
-                session.commit()
-                session.refresh(remitente)
-                return remitente
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al actualizar el remitente en la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al actualizar el remitente en la base") from e
+    async def get_all(self) -> List[Remitente]:
+        try:
+            result = await self.session.exec(select(Remitente))
+            remitentes = result.all()
+            return list(remitentes)
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                "Ocurrio un error al obtener los remitentes de la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                "Ocurrio un error desconocido al obtener los remitentes de la base",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def delete_by_id(remitente_id: int) -> None:
-        with Session(engine) as session:
-            try:
-                remitente = session.get(Remitente, remitente_id)
-                if remitente:
-                    session.delete(remitente)
-                    session.commit()
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al eliminar el remitente de la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al eliminar el remitente de la base") from e
+    async def update_remitente(self, remitente: Remitente) -> Remitente:
+        try:
+            self.session.add(remitente)
+            await self.session.commit()
+            await self.session.refresh(remitente)
+            return remitente
+        except SQLAlchemyError as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                "Ocurrio un error al actualizar el remitente en la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                "Ocurrio un error desconocido al actualizar el remitente en la base",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def get_by_id(remitente_id: int) -> Optional[Remitente]:
-        with Session(engine) as session:
-            try:
-                remitente = session.get(Remitente, remitente_id)
-                return remitente
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al obtener el remitente de la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al obtener el remitente de la base") from e
+    async def delete_by_id(self, remitente_id: int) -> None:
+        try:
+            remitente = await self.session.get(Remitente, remitente_id)
+            if remitente:
+                await self.session.delete(remitente)
+                await self.session.commit()
+        except SQLAlchemyError as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                "Ocurrio un error al eliminar el remitente de la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                "Ocurrio un error desconocido al eliminar el remitente de la base",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def exists(dni: int) -> bool:
-        with Session(engine) as session:
-            try:
-                exists = session.exec(select(Remitente).where(Remitente.dni == dni)).first() is not None
-                return exists
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al verificar la existencia del remitente en la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al verificar la existencia del remitente en la base") from e
+    async def get_by_id(self, remitente_id: int) -> Optional[Remitente]:
+        try:
+            remitente = await self.session.get(Remitente, remitente_id)
+            return remitente
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                "Ocurrio un error al obtener el remitente",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                "Ocurrio un error desconocido al obtener el remitente",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def find_by_string(search_string: str) -> List[Remitente]:
-        with Session(engine) as session:
-            try:
-                search_filter = or_(
-                    Remitente.nombres.contains(search_string),
-                    Remitente.apellido_paterno.contains(search_string),
-                    func.cast(Remitente.dni, Text).contains(search_string)
-                )
-                remitentes = session.exec(select(Remitente).where(search_filter)).all()
-                return list(remitentes)
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al buscar los remitentes en la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al buscar los remitentes en la base") from e
+    async def exists(self, dni: int) -> bool:
+        try:
+            result = await self.session.exec(select(Remitente).where(Remitente.dni == dni))
+            return result.first() is not None
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                "Ocurrio un error al verificar la existencia del remitente en la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                "Ocurrio un error desconocido al verificar la existencia del remitente en la base",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def get_all_pagination(page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+    async def find_by_string(self, search_string: str) -> List[Remitente]:
+        try:
+            search_filter = or_(
+                Remitente.nombres.contains(search_string),
+                Remitente.apellido_paterno.contains(search_string),
+                func.cast(Remitente.dni, Text).contains(search_string)
+            )
+            result = await self.session.exec(select(Remitente).where(search_filter))
+            remitentes = result.all()
+            return list(remitentes)
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                "Ocurrio un error al buscar los remitentes en la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                "Ocurrio un error desconocido al buscar los remitentes en la base",
+                error_details=str(e)
+            ) from e
+
+
+    async def get_all_pagination(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         offset = (page - 1) * page_size
-        with Session(engine) as session:
-            try:
-                remitentes = session.exec(
-                    select(Remitente)
-                    .order_by(Remitente.id)
-                    .offset(offset)
-                    .limit(page_size)
-                ).all()
-                total_items = session.exec(select(func.count()).select_from(Remitente)).first()
-                total_pages = (total_items + page_size - 1) // page_size
+        try:
+            result = await self.session.exec(
+                select(Remitente)
+                .order_by(Remitente.id)
+                .offset(offset)
+                .limit(page_size)
+            )
+            remitentes = result.all()
+            total_result = await self.session.exec(select(func.count()).select_from(Remitente))
+            total_items = total_result.first() or 0
+            total_pages = (total_items + page_size - 1) // page_size
 
-                return {
-                    "data": remitentes,
-                    "pagination": {
-                        "current_page": page,
-                        "page_size": page_size,
-                        "total_items": total_items,
-                        "total_pages": total_pages
-                    }
+            return {
+                "data": remitentes,
+                "pagination": {
+                    "current_page": page,
+                    "page_size": page_size,
+                    "total_items": total_items,
+                    "total_pages": total_pages
                 }
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al obtener los remitentes de la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al obtener los remitentes de la base") from e
+            }
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                "Ocurrio un error al obtener los remitentes de la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                "Ocurrio un error desconocido al obtener los remitentes de la base",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def get_by_dni(dni: int) -> Remitente | None:
-        with Session(engine) as session:
-            try:
-                remitente = session.exec(select(Remitente).where(Remitente.dni == dni)).first()
-                return remitente
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al obtener el remitente de la base") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al obtener el remitente de la base") from e
-
-
-
-
-
-
-
-
-
+    async def get_by_dni(self, dni: int) -> Optional[Remitente]:
+        try:
+            result = await self.session.exec(select(Remitente).where(Remitente.dni == dni))
+            remitente = result.first()
+            return remitente
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                "Ocurrio un error al obtener el remitente de la base",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                "Ocurrio un error desconocido al obtener el remitente de la base",
+                error_details=str(e)
+            ) from e
