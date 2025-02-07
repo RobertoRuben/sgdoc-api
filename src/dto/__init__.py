@@ -20,6 +20,8 @@ from .documento_response_dto import (DocumentoResponseDTO, DocumentosIngresadosR
     TotalDocumentosPorCaserioResponseDTO, TotalDocumentosRecibidosResponseDTO, DocumentosNoConfirmadosResponseDTO)
 from .remitente_request import RemitenteRequest
 from .remitente_response import RemitenteResponse
+from .usuario_request_dto import UsuarioRequestDTO
+from .usuario_response_dto import UsuarioResponseDTO
 from .auth_request_dto import AuthRequestDTO
 from .auth_response_dto import AuthResponseDTO
 from .authenticated_user_response_dto import AuthenticatedUserResponseDTO
@@ -36,4 +38,4 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "DocumentoRequestDTO", "DocumentoResponseDTO", "DocumentosIngresadosResponseDTO",
            "TotalDocumentosNoDerivadosResponseDTO", "TotalDocumentosPorCaserioResponseDTO",
            "TotalDocumentosRecibidosResponseDTO", "DocumentosNoConfirmadosResponseDTO", "DocumentoUpdateRequestDTO",
-           "RemitenteRequest", "RemitenteResponse"]
+           "RemitenteRequest", "RemitenteResponse", "UsuarioRequestDTO", "UsuarioResponseDTO"]

@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class UsuarioResponse(BaseModel):
+class UsuarioResponseDTO(BaseModel):
     id: int
     nombre_usuario: str
     fecha_creacion: datetime

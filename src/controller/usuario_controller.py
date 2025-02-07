@@ -2,8 +2,8 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import *
-from src.dto.usuario_response import UsuarioResponse
-from src.dto.usuario_request import UsuarioRequest
+from src.dto.usuario_response_dto import UsuarioResponseDTO
+from src.dto.usuario_request_dto import UsuarioRequestDTO
 from src.dto.usuario_details_response import UsuarioDetailsResponse
 from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.usuario_service import UsuarioService
@@ -19,7 +19,7 @@ usuarios_metadata = {
 
 @router.post(
     "/usuarios",
-    response_model=UsuarioResponse,
+    response_model=UsuarioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -29,7 +29,7 @@ usuarios_metadata = {
     },
     description="Crea un nuevo usuario"
 )
-async def add_usuario(usuario_request: UsuarioRequest, service: UsuarioService = Depends()):
+async def add_usuario(usuario_request: UsuarioRequestDTO, service: UsuarioService = Depends()):
     return service.add_usuario(usuario_request)
 
 
@@ -69,7 +69,7 @@ async def get_paginated_usuarios(
 
 @router.put(
     "/usuarios/{usuario_id}",
-    response_model=UsuarioResponse,
+    response_model=UsuarioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -82,7 +82,7 @@ async def get_paginated_usuarios(
 )
 async def update_usuario(
     usuario_id: int,
-    usuario_request: UsuarioRequest,
+    usuario_request: UsuarioRequestDTO,
     service: UsuarioService = Depends()
 ):
     return service.update_user(usuario_id, usuario_request)
@@ -90,7 +90,7 @@ async def update_usuario(
 
 @router.get(
     "/usuarios/{usuario_id}",
-    response_model=UsuarioResponse,
+    response_model=UsuarioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

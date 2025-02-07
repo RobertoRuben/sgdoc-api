@@ -5,8 +5,8 @@ from src.security.argon2_hasher import Argon2PasswordHasher
 from src.dto.usuario_details_response import UsuarioDetailsResponse
 from src.repository.usuario_repository import UsuarioRepository
 from src.model.entity.usuario import Usuario
-from src.dto.usuario_request import UsuarioRequest
-from src.dto.usuario_response import UsuarioResponse
+from src.dto.usuario_request_dto import UsuarioRequestDTO
+from src.dto.usuario_response_dto import UsuarioResponseDTO
 
 class UsuarioService:
 
@@ -14,7 +14,7 @@ class UsuarioService:
         self.usuario_repository = usuario_repository
         self.argon_2_security = argon_2_security
 
-    def add_usuario(self, usuario_request: UsuarioRequest) -> UsuarioResponse:
+    def add_usuario(self, usuario_request: UsuarioRequestDTO) -> UsuarioResponseDTO:
 
         if self.usuario_repository.exists_by_trabajador_id(usuario_request.trabajador_id):
             raise ConflictException("El trabajador ya tiene un usuario asociado")
@@ -32,7 +32,7 @@ class UsuarioService:
         )
         created_usuario = self.usuario_repository.add_usuario(new_usuario)
 
-        return UsuarioResponse(
+        return UsuarioResponseDTO(
             id=created_usuario.id,
             nombre_usuario=created_usuario.nombre_usuario,
             fecha_creacion=created_usuario.fecha_creacion,
@@ -48,13 +48,13 @@ class UsuarioService:
         return users_data
 
 
-    def update_user(self, usuario_id, usuario_request: UsuarioRequest) -> UsuarioResponse:
+    def update_user(self, usuario_id, usuario_request: UsuarioRequestDTO) -> UsuarioResponseDTO:
         usuario = self.usuario_repository.get_by_id(usuario_id)
         if not usuario:
             raise NotFoundException("Usuario no encontrado")
 
         if usuario.nombre_usuario == usuario_request.nombre_usuario and usuario.trabajador_id == usuario_request.trabajador_id:
-            return UsuarioResponse(
+            return UsuarioResponseDTO(
                 id=usuario.id,
                 nombre_usuario=usuario.nombre_usuario,
                 fecha_creacion=usuario.fecha_creacion,
@@ -79,7 +79,7 @@ class UsuarioService:
 
         updated_usuario = self.usuario_repository.update_user(usuario)
 
-        return UsuarioResponse(
+        return UsuarioResponseDTO(
             id=updated_usuario.id,
             nombre_usuario=updated_usuario.nombre_usuario,
             fecha_creacion=updated_usuario.fecha_creacion,
@@ -129,12 +129,12 @@ class UsuarioService:
         ]
 
 
-    def get_usuario_by_id(self, usuario_id: int) -> UsuarioResponse:
+    def get_usuario_by_id(self, usuario_id: int) -> UsuarioResponseDTO:
         usuario = self.usuario_repository.get_by_id(usuario_id)
         if not usuario:
             raise NotFoundException("Usuario no encontrado")
 
-        return UsuarioResponse(
+        return UsuarioResponseDTO(
             id=usuario.id,
             nombre_usuario=usuario.nombre_usuario,
             fecha_creacion=usuario.fecha_creacion,

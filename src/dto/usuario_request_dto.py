@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class UsuarioRequest(BaseModel):
+class UsuarioRequestDTO(BaseModel):
     nombre_usuario: str = Field(..., description="El nombre de usuario es obligatorio")
     contrasena: str = Field(..., description="La contraseña es obligatoria")
     rol_id: int = Field(..., description="El rol es obligatorio")
