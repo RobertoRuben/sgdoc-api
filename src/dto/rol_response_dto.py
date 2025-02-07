@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class RolReponse(BaseModel):
+class RolReponseDTO(BaseModel):
     id: int
     nombre_rol: str
 

@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from typing import List
 from src.schemas import *
-from src.dto.rol_request import RolRequest
-from src.dto.rol_response import RolReponse
+from src.dto.rol_request_dto import RolRequest
+from src.dto.rol_response_dto import RolReponseDTO
 from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.rol_service import RolService
 
@@ -18,7 +18,7 @@ roles_tag_metadata={
 
 @router.post(
     "/roles",
-    response_model=RolReponse,
+    response_model=RolReponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -34,7 +34,7 @@ async def add_rol(rol_request: RolRequest, service: RolService = Depends()):
 
 @router.get(
     "/roles",
-    response_model=List[RolReponse],
+    response_model=List[RolReponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -48,7 +48,7 @@ async def get_roles(rol_service: RolService = Depends()):
 
 @router.get(
     "/roles/search",
-    response_model=List[RolReponse],
+    response_model=List[RolReponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -83,7 +83,7 @@ async def get_paginated_roles(
 
 @router.get(
     "/roles/{rol_id}",
-    response_model=RolReponse,
+    response_model=RolReponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -97,7 +97,7 @@ async def get_rol_by_id(rol_id: int, rol_service: RolService = Depends()):
 
 @router.put(
     "/roles/{rol_id}",
-    response_model=RolReponse,
+    response_model=RolReponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},

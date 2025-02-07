@@ -2,8 +2,8 @@ from typing import List,  Dict, Any
 from fastapi import Depends
 from src.exception import ConflictException, NotFoundException
 from src.model.entity.rol import Rol
-from src.dto.rol_request import RolRequest
-from src.dto.rol_response import RolReponse
+from src.dto.rol_request_dto import RolRequest
+from src.dto.rol_response_dto import RolReponseDTO
 from src.repository.rol_repository import RolRepository
 
 class RolService:
@@ -12,7 +12,7 @@ class RolService:
         self.rol_repository = rol_repository
 
 
-    def add_rol(self, rol_request: RolRequest) -> RolReponse:
+    def add_rol(self, rol_request: RolRequest) -> RolReponseDTO:
         if self.rol_repository.exists(rol_request.nombre_rol):
             raise ConflictException("El rol ya existe en la base de datos")
 
@@ -20,31 +20,31 @@ class RolService:
 
         created_rol = self.rol_repository.add_rol(new_rol)
 
-        return RolReponse(
+        return RolReponseDTO(
             id=created_rol.id,
             nombre_rol=created_rol.nombre_rol
         )
 
 
-    def get_roles(self) -> List[RolReponse]:
+    def get_roles(self) -> List[RolReponseDTO]:
         roles = self.rol_repository.get_all()
 
         return [
-            RolReponse(
+            RolReponseDTO(
                 id=rol.id,
                 nombre_rol=rol.nombre_rol
             ) for rol in roles
         ]
 
 
-    def update_rol(self, rol_id: int, rol_request: RolRequest) -> RolReponse:
+    def update_rol(self, rol_id: int, rol_request: RolRequest) -> RolReponseDTO:
         rol = self.rol_repository.get_by_id(rol_id)
 
         if not rol:
             raise NotFoundException("Rol no encontrado")
 
         if rol.nombre_rol == rol_request.nombre_rol:
-            return RolReponse(
+            return RolReponseDTO(
                 id=rol.id,
                 nombre_rol=rol.nombre_rol
             )
@@ -56,7 +56,7 @@ class RolService:
 
         rol = self.rol_repository.update_rol(rol)
 
-        return RolReponse(
+        return RolReponseDTO(
             id=rol.id,
             nombre_rol=rol.nombre_rol
         )
@@ -70,14 +70,14 @@ class RolService:
         self.rol_repository.delete_by_id(rol_id)
 
 
-    def find_rol_by_string(self, search_string: str) -> List[RolReponse]:
+    def find_rol_by_string(self, search_string: str) -> List[RolReponseDTO]:
         roles = self.rol_repository.find_by_string(search_string)
 
         if not roles:
             raise NotFoundException("No se encontraron roles")
 
         return [
-            RolReponse(
+            RolReponseDTO(
                 id=rol.id,
                 nombre_rol=rol.nombre_rol
             ) for rol in roles
@@ -88,12 +88,12 @@ class RolService:
         return self.rol_repository.get_all_pagination(page, page_size)
 
 
-    def get_rol_id(self, rol_id: int) -> RolReponse:
+    def get_rol_id(self, rol_id: int) -> RolReponseDTO:
         rol = self.rol_repository.get_by_id(rol_id)
         if not rol:
             raise NotFoundException("Rol no encontrado")
 
-        return RolReponse(
+        return RolReponseDTO(
             id=rol.id,
             nombre_rol=rol.nombre_rol
         )
