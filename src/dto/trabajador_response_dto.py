@@ -8,3 +8,4 @@ class TrabajadorResponseDTO(BaseModel):
     apellido_materno: str | None = None
     genero: str | None = None
     area_id: int | None = None
+    nombre_area: str | None = None

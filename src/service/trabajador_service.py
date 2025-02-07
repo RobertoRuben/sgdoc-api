@@ -1,145 +1,33 @@
+from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
-from fastapi import Depends
-from src.exception import NotFoundException, ConflictException
-from src.dto.trabajador_response_dto import TrabajadorResponseDTO
-from src.dto.trabajador_request_dto import TrabajadorRequestDTO
-from src.dto.trabajador_simple_response import TrabajadorSimpleReponse
-from src.dto.trabajador_detail_response import TrabajadorDetailResponse
-from src.model.entity.trabajador import Trabajador
-from src.repository.trabajador_repository import TrabajadorRepository
+from src.dto import TrabajadorRequestDTO, TrabajadorResponseDTO
 
-class TrabajadorService:
+class TrabajadorService(ABC):
 
-    def __init__(self, trabajador_repository: TrabajadorRepository = Depends()):
-        self.trabajador_repository = trabajador_repository
+    @abstractmethod
+    async def add(self, trabajador_request: TrabajadorRequestDTO) -> TrabajadorResponseDTO:
+        pass
 
+    @abstractmethod
+    async def get_all_ids_and_names(self) -> List[TrabajadorResponseDTO]:
+        pass
 
-    def add_trabajador(self, trabajador_request: TrabajadorRequestDTO) -> TrabajadorResponseDTO:
-        if self.trabajador_repository.exists_trabajador_by_dni(trabajador_request.dni):
-            raise ConflictException("El trabajador ya existe en la base de datos")
+    @abstractmethod
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+        pass
 
-        new_trabajador = Trabajador(
-            dni=trabajador_request.dni,
-            nombres=trabajador_request.nombres,
-            apellido_paterno=trabajador_request.apellido_paterno,
-            apellido_materno=trabajador_request.apellido_materno,
-            genero=trabajador_request.genero,
-            area_id=trabajador_request.area_id,
-        )
+    @abstractmethod
+    async def update(self, trabajador_id: int, trabajador_request: TrabajadorRequestDTO) -> TrabajadorResponseDTO:
+        pass
 
-        created_trabajador = self.trabajador_repository.add_trabajador(new_trabajador)
+    @abstractmethod
+    async def delete_by_id(self, trabajador_id: int) -> None:
+        pass
 
-        return TrabajadorResponseDTO(
-            id=created_trabajador.id,
-            dni=created_trabajador.dni,
-            nombres=created_trabajador.nombres,
-            apellido_paterno=created_trabajador.apellido_paterno,
-            apellido_materno=created_trabajador.apellido_materno,
-            genero=created_trabajador.genero,
-            area_id=created_trabajador.area_id
-        )
+    @abstractmethod
+    async def find(self, search_string: str) -> List[TrabajadorResponseDTO]:
+        pass
 
-
-    def get_all_id_and_trabajador_name(self) -> List[TrabajadorSimpleReponse]:
-        trabajadores = self.trabajador_repository.get_all_id_and_name()
-        return [
-            TrabajadorSimpleReponse(
-                id=trabajador["id"],
-                nombres=trabajador["nombres"]
-            )
-            for trabajador in trabajadores
-        ]
-
-
-    def get_all_trabajadores_by_pagination(self, page:int, page_size:int) -> Dict[str, Any]:
-        trabajadores_data = self.trabajador_repository.get_trabajadores_with_area_pagination(page, page_size)
-        return trabajadores_data
-
-
-    def update_trabajador(self, trabajador_id: int, trabajador_request: TrabajadorRequestDTO) -> TrabajadorResponseDTO:
-        trabajador = self.trabajador_repository.get_by_id(trabajador_id)
-
-        if not trabajador:
-            raise NotFoundException("Trabajador no encontrado")
-
-        if trabajador.dni == trabajador_request.dni:
-            return TrabajadorResponseDTO(
-                id=trabajador.id,
-                dni=trabajador.dni,
-                nombres=trabajador.nombres,
-                apellido_paterno=trabajador.apellido_paterno,
-                apellido_materno=trabajador.apellido_materno,
-                genero=trabajador.genero,
-                area_id=trabajador.area_id
-            )
-
-        if self.trabajador_repository.exists_trabajador_by_dni(trabajador_request.dni):
-            raise NotFoundException("El trabajador ya existe en la base de datos")
-
-        trabajador.dni = trabajador_request.dni
-        trabajador.nombres = trabajador_request.nombres
-        trabajador.apellido_paterno = trabajador_request.apellido_paterno
-        trabajador.apellido_materno = trabajador_request.apellido_materno
-        trabajador.genero = trabajador_request.genero
-        trabajador.area_id = trabajador_request.area_id
-
-        updated_trabajador = self.trabajador_repository.update_trabajador(trabajador)
-
-        return TrabajadorResponseDTO(
-            id=updated_trabajador.id,
-            dni=updated_trabajador.dni,
-            nombres=updated_trabajador.nombres,
-            apellido_paterno=updated_trabajador.apellido_paterno,
-            apellido_materno=updated_trabajador.apellido_materno,
-            genero=updated_trabajador.genero,
-            area_id=updated_trabajador.area_id
-        )
-
-
-    def delete_trabajador(self, trabajador_id: int) -> None:
-        trabajador = self.trabajador_repository.get_by_id(trabajador_id)
-
-        if not trabajador:
-            raise NotFoundException("Trabajador no encontrado")
-
-        self.trabajador_repository.delete_by_id(trabajador_id)
-
-
-    def find_by_string(self, search_string: str) -> List[TrabajadorDetailResponse]:
-        trabajadores = self.trabajador_repository.find_by_string(search_string)
-
-        if not trabajadores:
-            raise NotFoundException("No se encontraron trabajadores")
-
-        return [
-            TrabajadorDetailResponse(
-                id=trabajador['id'],
-                dni=trabajador['dni'],
-                nombres=trabajador['nombres'],
-                apellido_paterno=trabajador['apellido_paterno'],
-                apellido_materno=trabajador['apellido_materno'],
-                genero=trabajador['genero'],
-                nombre_area=trabajador['nombre_area']
-            ) for trabajador in trabajadores
-        ]
-
-
-    def get_trabajador_by_id(self, trabajador_id: int) -> Optional[TrabajadorResponseDTO]:
-        trabajador = self.trabajador_repository.get_by_id(trabajador_id)
-
-        if not trabajador:
-            raise NotFoundException("Trabajador no encontrado")
-
-        return TrabajadorResponseDTO(
-            id=trabajador.id,
-            dni=trabajador.dni,
-            nombres=trabajador.nombres,
-            apellido_paterno=trabajador.apellido_paterno,
-            apellido_materno=trabajador.apellido_materno,
-            genero=trabajador.genero,
-            area_id=trabajador.area_id
-        )
-
-
-
-
+    @abstractmethod
+    async def get_by_id(self, trabajador_id: int) -> Optional[TrabajadorResponseDTO]:
+        pass

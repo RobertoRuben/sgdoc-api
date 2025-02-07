@@ -31,7 +31,7 @@ trabajadores_tag_metadata={
     description="Crea un nuevo trabajador"
 )
 async def add_trabajador(trabajador_request: TrabajadorRequestDTO, service: TrabajadorServiceImpl = Depends()):
-    return service.add_trabajador(trabajador_request)
+    return service.add(trabajador_request)
 
 
 @router.get(
@@ -45,7 +45,7 @@ async def add_trabajador(trabajador_request: TrabajadorRequestDTO, service: Trab
     description="Obtiene el id y nombres concatenados de los trabajadores"
 )
 async def get_all_trabajadores(service: TrabajadorServiceImpl = Depends()):
-    return service.get_all_id_and_trabajador_name()
+    return service.get_all_ids_and_names()
 
 
 @router.get(
@@ -62,7 +62,7 @@ async def find_by_string(
     search_string: str = Query(..., description="Nombre del trabajador a buscar"),
     service: TrabajadorServiceImpl = Depends()
 ):
-    return service.find_by_string(search_string)
+    return service.find(search_string)
 
 
 @router.get(
@@ -80,7 +80,7 @@ async def get_paginated_trabajadores(
     page_size: int = Query(10, description="Número de registros por página"),
     service: TrabajadorServiceImpl = Depends()
 ):
-    return service.get_all_trabajadores_by_pagination(page, page_size)
+    return service.get_paginated(page, page_size)
 
 
 @router.get(
@@ -94,7 +94,7 @@ async def get_paginated_trabajadores(
     description="Obtiene un trabajador por id"
 )
 async def get_trabajador_by_id(trabajador_id: int, service: TrabajadorServiceImpl = Depends()):
-    return service.get_trabajador_by_id(trabajador_id)
+    return service.get_by_id(trabajador_id)
 
 
 @router.put(
@@ -111,7 +111,7 @@ async def get_trabajador_by_id(trabajador_id: int, service: TrabajadorServiceImp
     description="Actualiza un trabajador"
 )
 async def update_trabajador(trabajador_id: int, trabajador_request: TrabajadorRequestDTO, service: TrabajadorServiceImpl = Depends()):
-    return service.update_trabajador(trabajador_id, trabajador_request)
+    return service.update(trabajador_id, trabajador_request)
 
 
 @router.delete(
@@ -126,7 +126,7 @@ async def update_trabajador(trabajador_id: int, trabajador_request: TrabajadorRe
     description="Elimina un trabajador"
 )
 async def delete_trabajador(trabajador_id: int, service: TrabajadorServiceImpl = Depends()):
-    service.delete_trabajador(trabajador_id)
+    service.delete_by_id(trabajador_id)
     return JSONResponse(status_code=200, content={"message": "Trabajador eliminado correctamente"})
 
 
