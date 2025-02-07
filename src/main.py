@@ -1,5 +1,4 @@
-from fastapi import FastAPI, Request, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request, Depends
 from contextlib import asynccontextmanager
 from src.exception.handlers import register_exception_handlers
 from src.db.database import init_db
@@ -21,21 +20,12 @@ from src.controller.detalle_derivacion_controller import router as detalle_deriv
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
 from src.controller.dashboard_mesa_partes_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
 from src.controller.notificacion_controller import router as notificacion_router, notificaciones_tag_metadata
+from src.middleware import configure_cors, ip_restriction_middleware
 from src.websocket.notificaciones_ws import router as notificaciones_ws_router
 import logging
 logging.basicConfig(level=logging.INFO)
 
 API_VERSION = "/api/v1"
-
-allowed_subnets = [
-    "127.0.0.1",
-    "192.168.1.",
-    "192.168.2.",
-    "172.23.32.",
-    "localhost",
-    "172.25.208.",
-    "172.27.32."
-]
 
 tags_metadata = [
     remitentes_tag_metadata,
@@ -70,25 +60,13 @@ app = FastAPI(
     lifespan=lifespan
 )
 
-register_exception_handlers(app)
-
 @app.middleware("http")
-async def ip_restriction_middleware(request: Request, call_next):
-    client_ip = request.client.host
-    logging.info(f"Client IP: {client_ip}")
-    if not any(client_ip.startswith(subnet) for subnet in allowed_subnets):
-        logging.warning(f"Access denied for IP: {client_ip}")
-        raise HTTPException(status_code=403, detail="Access forbidden: your IP address is not allowed")
-    response = await call_next(request)
-    return response
+async def add_ip_restriction(request: Request, call_next):
+    return await ip_restriction_middleware(request, call_next)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
+configure_cors(app)
+
+register_exception_handlers(app)
 
 app.include_router(auth_router, prefix=API_VERSION)
 app.include_router(remitente_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
