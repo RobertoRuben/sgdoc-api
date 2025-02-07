@@ -1,6 +1,5 @@
 from typing import List
 from fastapi import Depends
-
 from src.exception import NotFoundException
 from src.dto.notificacion_request_dto import NotificacionRequestDTO
 from src.dto.notificacion_response_dto import NotificacionResponseDTO
