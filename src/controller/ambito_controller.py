@@ -1,15 +1,8 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.dto.ambito_request_dto import AmbitoRequestDTO
-from src.dto.ambito_response_dto import AmbitoResponseDTO
-from src.dto.paginated_response import PaginatedResponseDTO
-from src.schemas import (
-    ErrorResponseSchema,
-    ValidationErrorResponseSchema,
-    NotAuthenticatedResponseSchema,
-    DeleteSuccessfulResponseSchema
-)
+from src.dto import AmbitoRequestDTO, AmbitoResponseDTO, PaginatedResponseDTO
+from src.schemas import *
 from src.service.imp import AmbitoServiceImp
 from src.service import AmbitoService
 
@@ -123,7 +116,7 @@ async def update_ambito(ambito_id: int, ambito_request: AmbitoRequestDTO, servic
     },
     description="Elimina un ambito documental"
 )
-async def delete_ambito(ambito_id: int, service: AmbitoService = Depends(get_ambito_service_imp)):
+async def delete_ambito_by_id(ambito_id: int, service: AmbitoService = Depends(get_ambito_service_imp)):
     await service.delete_ambito(ambito_id)
     return JSONResponse(
         content={"message": "Se eliminó el ambito documental correctamente"},
