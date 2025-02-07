@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    DB_ECHO_LOG: bool = False
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_HOST: str
