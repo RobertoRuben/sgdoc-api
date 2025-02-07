@@ -1,6 +1,6 @@
 from pydantic import BaseModel, field_validator, Field
 
-class CentroPobladoRequest(BaseModel):
+class CentroPobladoRequestDTO(BaseModel):
     nombre_centro_poblado: str = Field(..., description="El nombre del centro poblado es obligatorio")
 
     @field_validator("nombre_centro_poblado")

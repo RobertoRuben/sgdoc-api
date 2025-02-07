@@ -6,6 +6,8 @@ from .caserio_request_dto import CaserioRequestDTO
 from .caserio_response_dto import CaserioResponseDTO
 from .categoria_documento_request_dto import CategoriaDocumentoRequestDTO
 from .categoria_documento_response_dto import CategoriaDocumentoResponseDTO
+from .centro_poblado_request_dto import CentroPobladoRequestDTO
+from .centro_poblado_response_dto import CentroPobladoResponseDTO
 from .auth_request_dto import AuthRequestDTO
 from .auth_response_dto import AuthResponseDTO
 from .authenticated_user_response_dto import AuthenticatedUserResponseDTO
@@ -15,4 +17,5 @@ from .paginated_response import PaginatedResponseDTO
 
 __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaResponseDTO", "PaginatedResponseDTO",
            "CaserioRequestDTO", "CaserioResponseDTO", "CategoriaDocumentoResponseDTO", "CategoriaDocumentoRequestDTO",
-           "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO"]
+           "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO",
+           "CentroPobladoRequestDTO", "CentroPobladoResponseDTO"]

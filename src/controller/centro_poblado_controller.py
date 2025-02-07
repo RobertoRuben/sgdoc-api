@@ -2,8 +2,8 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.dto.centro_poblado_response import CentroPobladoResponse
-from src.dto.centro_poblado_request import CentroPobladoRequest
+from src.dto.centro_poblado_response_dto import CentroPobladoResponseDTO
+from src.dto.centro_poblado_request_dto import CentroPobladoRequestDTO
 from src.dto.paginated_response import PaginatedResponseDTO
 from src.service.centro_poblado_service import CentroPobladoService
 
@@ -18,7 +18,7 @@ centros_poblados_tag_metadata={
 
 @router.post(
     "/centros-poblados",
-    response_model=CentroPobladoResponse,
+    response_model=CentroPobladoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -28,13 +28,13 @@ centros_poblados_tag_metadata={
     },
     description="Crea un nuevo centro poblado"
 )
-async def add_centro_poblado(centro_poblado_request: CentroPobladoRequest, service: CentroPobladoService = Depends()):
+async def add_centro_poblado(centro_poblado_request: CentroPobladoRequestDTO, service: CentroPobladoService = Depends()):
     return service.add_centro_poblado(centro_poblado_request)
 
 
 @router.get(
     "/centros-poblados",
-    response_model=List[CentroPobladoResponse],
+    response_model=List[CentroPobladoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -48,7 +48,7 @@ async def get_centros_poblados(service: CentroPobladoService = Depends()):
 
 @router.get(
     "/centros-poblados/search",
-    response_model=List[CentroPobladoResponse],
+    response_model=List[CentroPobladoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -84,7 +84,7 @@ async def get_paginated_centros_poblados(
 
 @router.get(
     "/centros-poblados/{centro_poblado_id}",
-    response_model=CentroPobladoResponse,
+    response_model=CentroPobladoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -98,7 +98,7 @@ async def get_centro_poblado_by_id(centro_poblado_id: int, service: CentroPoblad
 
 @router.put(
     "/centros-poblados/{centro_poblado_id}",
-    response_model=CentroPobladoResponse,
+    response_model=CentroPobladoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -109,7 +109,7 @@ async def get_centro_poblado_by_id(centro_poblado_id: int, service: CentroPoblad
     },
     description="Actualiza un centro poblado"
 )
-async def update_centro_poblado(centro_poblado_id: int, centro_poblado_request: CentroPobladoRequest, service: CentroPobladoService = Depends()):
+async def update_centro_poblado(centro_poblado_id: int, centro_poblado_request: CentroPobladoRequestDTO, service: CentroPobladoService = Depends()):
     return service.update_centro_poblado(centro_poblado_id, centro_poblado_request)
 
 
