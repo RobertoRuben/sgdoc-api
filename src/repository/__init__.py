@@ -10,7 +10,9 @@ from .detalle_derivacion_repository import DetalleDerivacionRepository
 from .documento_repository import DocumentoRepository
 from .remitente_repository import RemitenteRepository
 from .trabajador_repository import TrabajadorRepository
+from .rol_repository import RolRepository
 
 __all__ = ["AmbitoRepository", "AreaRepository", "CaserioRepository", "CategoriaDocumentoRepository",
            "UsuarioRepository", "CentroPobladoRepository", "ComunicacionAreaRepository", "DerivacionRepository",
-           "DetalleDerivacionRepository", "DocumentoRepository", "RemitenteRepository", "TrabajadorRepository"]
+           "DetalleDerivacionRepository", "DocumentoRepository", "RemitenteRepository", "TrabajadorRepository",
+           "RolRepository"]

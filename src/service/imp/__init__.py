@@ -9,8 +9,9 @@ from .detalle_derivacion_service_imp import DetalleDerivacionServiceImp
 from .documento_service_imp import DocumentoServiceImp
 from .usuario_service_imp import UsuarioServiceImp
 from .trabajador_service_imp import TrabajadorServiceImp
+from .rol_service_imp import RolServiceImp
 from .auth_service_imp import AuthServiceImp
 
 __all__ = ["AmbitoServiceImp", "AreaServiceImpl", "CaserioServiceImp", "CategoriaDocumentoServiceImp", "AuthServiceImp",
            "CentroPobladoServiceImp", "ComunicacionAreaServiceImp", "DerivacionServiceImp", "DetalleDerivacionServiceImp",
-           "DocumentoServiceImp", "UsuarioServiceImp", "TrabajadorServiceImp"]
+           "DocumentoServiceImp", "UsuarioServiceImp", "TrabajadorServiceImp", "RolServiceImp"]
