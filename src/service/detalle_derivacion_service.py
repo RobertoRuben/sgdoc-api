@@ -1,9 +1,9 @@
 from typing import List
 from fastapi import HTTPException, Depends
 from src.exception import ConflictException, NotFoundException
-from src.dto.detalle_derivacion_request import DetalleDerivacionRequest
+from src.dto.detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
 from src.dto.detalle_derivacion_details_response import DetalleDerivacionDetailsResponse
-from src.dto.detalle_derivacion_response import DetalleDerivacionResponse
+from src.dto.detalle_derivacion_response_dto import DetalleDerivacionResponseDTO
 from src.model.enum.estado_derivacion_enum import EstadoDerivacionEnum
 from src.model.entity.detalle_derivacion import DetalleDerivacion
 from src.repository.derivacion_repository import DerivacionRepository
@@ -20,7 +20,7 @@ class DetalleDerivacionService:
         self.usuario_repository = usuario_repository
         self.detalle_derivacion_repository = detalle_derivacion_repository
 
-    def add_detalle_derivacion(self, derivacion_request: DetalleDerivacionRequest) -> DetalleDerivacionResponse:
+    def add_detalle_derivacion(self, derivacion_request: DetalleDerivacionRequestDTO) -> DetalleDerivacionResponseDTO:
         if not self.derivacion_repository.exists_by_id(derivacion_request.derivacion_id):
             raise NotFoundException("No existe una derivación con ese ID")
 
@@ -40,7 +40,7 @@ class DetalleDerivacionService:
 
         created_detalle_derivacion = self.detalle_derivacion_repository.add_detalle_derivacion(new_detalle_derivacion)
 
-        return DetalleDerivacionResponse(
+        return DetalleDerivacionResponseDTO(
             id=created_detalle_derivacion.id,
             estado=created_detalle_derivacion.estado,
             comentario=created_detalle_derivacion.comentario,
@@ -68,7 +68,7 @@ class DetalleDerivacionService:
         ]
 
 
-    def update_detalle_derivacion(self, detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequest) -> DetalleDerivacionDetailsResponse:
+    def update_detalle_derivacion(self, detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequestDTO) -> DetalleDerivacionDetailsResponse:
 
         if not self.derivacion_repository.exists_by_id(detalle_derivacion_request.derivacion_id):
             raise NotFoundException("No existe una derivación con ese ID")

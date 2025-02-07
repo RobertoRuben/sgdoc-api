@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.service.detalle_derivacion_service import DetalleDerivacionService
-from src.dto.detalle_derivacion_request import DetalleDerivacionRequest
-from src.dto.detalle_derivacion_response import DetalleDerivacionResponse
+from src.dto.detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
+from src.dto.detalle_derivacion_response_dto import DetalleDerivacionResponseDTO
 from src.dto.detalle_derivacion_details_response import DetalleDerivacionDetailsResponse
 
 router = APIRouter(tags=["Detalle Derivaciones"])
@@ -18,7 +18,7 @@ detalle_derivaciones_tag_metadata={
 
 @router.post(
     "/detalle-derivaciones",
-    response_model=DetalleDerivacionResponse,
+    response_model=DetalleDerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -28,7 +28,7 @@ detalle_derivaciones_tag_metadata={
     },
     description="Crea un nuevo detalle de derivación"
 )
-async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRequest, service: DetalleDerivacionService = Depends()):
+async def add_detalle_derivacion(detalle_derivacion_request: DetalleDerivacionRequestDTO, service: DetalleDerivacionService = Depends()):
     return service.add_detalle_derivacion(detalle_derivacion_request)
 
 
@@ -59,7 +59,7 @@ async def get_all_detalle_derivacion_by_id(derivacion_id: int, service: DetalleD
     },
     description="Actualiza un detalle de derivación"
 )
-async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequest, service: DetalleDerivacionService = Depends()):
+async def update_detalle_derivacion(detalle_derivacion_id: int, detalle_derivacion_request: DetalleDerivacionRequestDTO, service: DetalleDerivacionService = Depends()):
     return service.update_detalle_derivacion(detalle_derivacion_id, detalle_derivacion_request)
 
 

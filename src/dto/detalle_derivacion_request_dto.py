@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
-from src.model.enum.estado_derivacion_enum import EstadoDerivacionEnum
+from src.model.enum import EstadoDerivacionEnum
 
-class DetalleDerivacionRequest(BaseModel):
+class DetalleDerivacionRequestDTO(BaseModel):
     estado: EstadoDerivacionEnum
     comentario: str | None = Field(None, description="Comentario del detalle de derivación")
     usuario_id: int | None = Field(None, description="Id del usuario que recibe la derivación")

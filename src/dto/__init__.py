@@ -12,6 +12,8 @@ from .comunicacion_area_request_dto import ComunicacionAreaRequestDTO
 from .comunicacion_area_response_dto import ComunicacionAreaResponseDTO, ComunicacionDestinoResponseDTO
 from .derivacion_request_dto import DerivacionRequestDTO
 from .derivacion_response_dto import DerivacionResponseDTO
+from .detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
+from .detalle_derivacion_response_dto import DetalleDerivacionResponseDTO
 from .auth_request_dto import AuthRequestDTO
 from .auth_response_dto import AuthResponseDTO
 from .authenticated_user_response_dto import AuthenticatedUserResponseDTO
@@ -24,4 +26,4 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO",
            "CentroPobladoRequestDTO", "CentroPobladoResponseDTO", "ComunicacionAreaRequestDTO",
            "ComunicacionAreaResponseDTO", "ComunicacionDestinoResponseDTO", "DerivacionRequestDTO",
-           "DerivacionResponseDTO"]
+           "DerivacionResponseDTO", "DetalleDerivacionRequestDTO", "DetalleDerivacionResponseDTO"]
