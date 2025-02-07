@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict
-from src.dto.area_request_dto import AreaRequestDTO
-from src.dto.area_response_dto import AreaResponseDTO
+from src.dto import AreaRequestDTO, AreaResponseDTO
 
 class AreaService(ABC):
     @abstractmethod
