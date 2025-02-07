@@ -2,7 +2,7 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import *
-from src.service.remitente_service import RemitenteService
+from src.service.imp.remitente_service_imp import RemitenteServiceImp
 from src.dto.remitente_request_dto import RemitenteRequestDTO
 from src.dto.remitente_response_dto import RemitenteResponseDTO
 from src.dto.paginated_response import PaginatedResponseDTO
@@ -28,8 +28,8 @@ remitentes_tag_metadata={
     },
     description="Crea un nuevo remitente"
 )
-async def add_remitente(remitente_request: RemitenteRequestDTO, service: RemitenteService = Depends()):
-    return service.add_remitente(remitente_request)
+async def add_remitente(remitente_request: RemitenteRequestDTO, service: RemitenteServiceImp = Depends()):
+    return service.add(remitente_request)
 
 
 @router.get(
@@ -42,8 +42,8 @@ async def add_remitente(remitente_request: RemitenteRequestDTO, service: Remiten
     },
     description="Obtiene todos los remitentes"
 )
-async def get_remitentes(remitente_service: RemitenteService = Depends()):
-    return remitente_service.get_remitentes()
+async def get_remitentes(remitente_service: RemitenteServiceImp = Depends()):
+    return remitente_service.get_all()
 
 
 @router.get(
@@ -58,9 +58,9 @@ async def get_remitentes(remitente_service: RemitenteService = Depends()):
 )
 async def search_remitentes(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar remitentes"),
-    remitente_service: RemitenteService = Depends()
+    remitente_service: RemitenteServiceImp = Depends()
 ):
-    return remitente_service.find_remitentes_by_string(search_string)
+    return remitente_service.find(search_string)
 
 
 @router.get(
@@ -73,8 +73,8 @@ async def search_remitentes(
     },
     description="Obtiene la lista de remitentes paginada"
 )
-async def get_remitentes(page: int = 1, page_size: int = 10, remitente_service: RemitenteService = Depends()):
-    return remitente_service.get_remitentes_with_pagination(page, page_size)
+async def get_remitentes(page: int = 1, page_size: int = 10, remitente_service: RemitenteServiceImp = Depends()):
+    return remitente_service.get_paginated(page, page_size)
 
 
 @router.get(
@@ -87,8 +87,8 @@ async def get_remitentes(page: int = 1, page_size: int = 10, remitente_service: 
     },
     description="Obtiene un remitente por ID"
 )
-async def get_remitente_by_id(remitente_id: int, remitente_service: RemitenteService = Depends()):
-    return remitente_service.get_remitente_by_id(remitente_id)
+async def get_remitente_by_id(remitente_id: int, remitente_service: RemitenteServiceImp = Depends()):
+    return remitente_service.get_by_id(remitente_id)
 
 
 @router.put(
@@ -104,8 +104,8 @@ async def get_remitente_by_id(remitente_id: int, remitente_service: RemitenteSer
     },
     description="Actualiza un remitente"
 )
-async def update_remitente(remitente_id: int, remitente_request: RemitenteRequestDTO, remitente_service: RemitenteService = Depends()):
-    return remitente_service.update_remitente(remitente_id, remitente_request)
+async def update_remitente(remitente_id: int, remitente_request: RemitenteRequestDTO, remitente_service: RemitenteServiceImp = Depends()):
+    return remitente_service.update(remitente_id, remitente_request)
 
 
 @router.delete(
@@ -119,8 +119,8 @@ async def update_remitente(remitente_id: int, remitente_request: RemitenteReques
     },
     description="Elimina un remitente"
 )
-async def delete_remitente(remitente_id: int, remitente_service: RemitenteService = Depends()):
-    remitente_service.delete_remitente(remitente_id)
+async def delete_remitente(remitente_id: int, remitente_service: RemitenteServiceImp = Depends()):
+    remitente_service.delete_by_id(remitente_id)
     return JSONResponse(content={"message": "Se eliminó el remitente correctamente"}, status_code=200)
 
 
