@@ -36,7 +36,7 @@ caserios_tag_metadata = {
     description="Crea un nuevo caserio"
 )
 async def add_caserio(caserio_request: CaserioRequestDTO, service: CaserioService = Depends(get_ambito_service_imp)):
-    return await service.add_caserio(caserio_request)
+    return await service.add(caserio_request)
 
 
 @router.get(
@@ -53,7 +53,7 @@ async def get_caserios_by_centro_poblado_id(
     centro_poblado_id: int | None = Query(None, description="ID del centro poblado para filtrar caserios"),
     service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return await service.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
+    return await service.get_all_by_centro_poblado_id(centro_poblado_id)
 
 
 @router.get(
@@ -67,7 +67,7 @@ async def get_caserios_by_centro_poblado_id(
     description="Obtiene los nombres de todos los caserios"
 )
 async def get_caserios_names(service: CaserioService = Depends(get_ambito_service_imp)):
-    return await service.get_caserios_names()
+    return await service.get_names()
 
 
 @router.get(
@@ -85,7 +85,7 @@ async def search_caserios(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar caserios"),
     service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return await service.find_caserio(search_string)
+    return await service.find(search_string)
 
 
 @router.get(
@@ -103,7 +103,7 @@ async def get_paginated_caserios(
     page_size: int = Query(10, description="Número de registros por página"),
     service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return await service.get_all_caserios_paginated(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
@@ -118,7 +118,7 @@ async def get_paginated_caserios(
     description="Obtiene un caserio por su ID"
 )
 async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends(get_ambito_service_imp)):
-    return await service.get_caserio_by_id(caserio_id)
+    return await service.get_by_id(caserio_id)
 
 
 @router.put(
@@ -139,7 +139,7 @@ async def update_caserio(
     caserio_request: CaserioRequestDTO,
     service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return await service.update_caserio(caserio_id, caserio_request)
+    return await service.update(caserio_id, caserio_request)
 
 
 @router.delete(
@@ -154,7 +154,7 @@ async def update_caserio(
     description="Elimina un caserio"
 )
 async def delete_caserio_by_id(caserio_id: int, service: CaserioService = Depends(get_ambito_service_imp)):
-    await service.delete_caserio_by_id(caserio_id)
+    await service.delete_by_id(caserio_id)
     return JSONResponse(
         content={"message": "Se eliminó el caserio correctamente"},
         status_code=200

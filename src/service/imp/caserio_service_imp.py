@@ -11,7 +11,7 @@ class CaserioServiceImp(CaserioService):
         self.caserio_repository = caserio_repository
 
 
-    async def add_caserio(self, caserio_request: CaserioRequestDTO) -> CaserioResponseDTO:
+    async def add(self, caserio_request: CaserioRequestDTO) -> CaserioResponseDTO:
         try:
             exists = await self.caserio_repository.exists(caserio_request.nombre_caserio)
             if exists:
@@ -38,7 +38,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def get_caserios_names(self) -> List[CaserioResponseDTO]:
+    async def get_names(self) -> List[CaserioResponseDTO]:
         try:
             caserios = await self.caserio_repository.get_caserios_names()
             return [
@@ -54,7 +54,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def update_caserio(self, caserio_id: int, caserio_request: CaserioRequestDTO) -> CaserioResponseDTO:
+    async def update(self, caserio_id: int, caserio_request: CaserioRequestDTO) -> CaserioResponseDTO:
         try:
             caserio = await self.caserio_repository.get_caserio_by_id(caserio_id)
             if not caserio:
@@ -90,7 +90,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def delete_caserio_by_id(self, caserio_id: int) -> None:
+    async def delete_by_id(self, caserio_id: int) -> None:
         try:
             caserio = await self.caserio_repository.get_caserio_by_id(caserio_id)
             if not caserio:
@@ -106,7 +106,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def get_all_caserios_by_centro_poblado_id(self, centro_poblado_id: Optional[int]) -> List[CaserioResponseDTO]:
+    async def get_all_by_centro_poblado_id(self, centro_poblado_id: Optional[int]) -> List[CaserioResponseDTO]:
         try:
             caserios = await self.caserio_repository.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
             return [
@@ -123,7 +123,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def find_caserio(self, search_string: str) -> List[CaserioResponseDTO]:
+    async def find(self, search_string: str) -> List[CaserioResponseDTO]:
         try:
             caserios = await self.caserio_repository.find_by_string(search_string)
             if not caserios:
@@ -144,7 +144,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def get_all_caserios_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
         try:
             return await self.caserio_repository.get_all_paginated(page, page_size)
         except Exception as e:
@@ -154,7 +154,7 @@ class CaserioServiceImp(CaserioService):
             ) from e
 
 
-    async def get_caserio_by_id(self, caserio_id: int) -> Optional[CaserioResponseDTO]:
+    async def get_by_id(self, caserio_id: int) -> Optional[CaserioResponseDTO]:
         try:
             caserio = await self.caserio_repository.get_caserio_by_id(caserio_id)
             if not caserio:
