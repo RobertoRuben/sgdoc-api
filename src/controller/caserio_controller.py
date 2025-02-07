@@ -35,7 +35,7 @@ caserios_tag_metadata = {
     },
     description="Crea un nuevo caserio"
 )
-async def add_caserio(caserio_request: CaserioRequestDTO, service: CaserioServiceImp = Depends(get_ambito_service_imp)):
+async def add_caserio(caserio_request: CaserioRequestDTO, service: CaserioService = Depends(get_ambito_service_imp)):
     return await service.add_caserio(caserio_request)
 
 
@@ -51,7 +51,7 @@ async def add_caserio(caserio_request: CaserioRequestDTO, service: CaserioServic
 )
 async def get_caserios_by_centro_poblado_id(
     centro_poblado_id: int | None = Query(None, description="ID del centro poblado para filtrar caserios"),
-    service: CaserioServiceImp = Depends(get_ambito_service_imp)
+    service: CaserioService = Depends(get_ambito_service_imp)
 ):
     return await service.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
 
@@ -66,7 +66,7 @@ async def get_caserios_by_centro_poblado_id(
     },
     description="Obtiene los nombres de todos los caserios"
 )
-async def get_caserios_names(service: CaserioServiceImp = Depends(get_ambito_service_imp)):
+async def get_caserios_names(service: CaserioService = Depends(get_ambito_service_imp)):
     return await service.get_caserios_names()
 
 
@@ -83,7 +83,7 @@ async def get_caserios_names(service: CaserioServiceImp = Depends(get_ambito_ser
 )
 async def search_caserios(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar caserios"),
-    service: CaserioServiceImp = Depends(get_ambito_service_imp)
+    service: CaserioService = Depends(get_ambito_service_imp)
 ):
     return await service.find_caserio(search_string)
 
@@ -101,7 +101,7 @@ async def search_caserios(
 async def get_paginated_caserios(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: CaserioServiceImp = Depends(get_ambito_service_imp)
+    service: CaserioService = Depends(get_ambito_service_imp)
 ):
     return await service.get_all_caserios_paginated(page, page_size)
 
@@ -117,7 +117,7 @@ async def get_paginated_caserios(
     },
     description="Obtiene un caserio por su ID"
 )
-async def get_caserio_by_id(caserio_id: int, service: CaserioServiceImp = Depends(get_ambito_service_imp)):
+async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends(get_ambito_service_imp)):
     return await service.get_caserio_by_id(caserio_id)
 
 
@@ -134,7 +134,11 @@ async def get_caserio_by_id(caserio_id: int, service: CaserioServiceImp = Depend
     },
     description="Actualiza un caserio"
 )
-async def update_caserio(caserio_id: int, caserio_request: CaserioRequestDTO, service: CaserioServiceImp = Depends(get_ambito_service_imp)):
+async def update_caserio(
+    caserio_id: int,
+    caserio_request: CaserioRequestDTO,
+    service: CaserioService = Depends(get_ambito_service_imp)
+):
     return await service.update_caserio(caserio_id, caserio_request)
 
 
@@ -149,7 +153,7 @@ async def update_caserio(caserio_id: int, caserio_request: CaserioRequestDTO, se
     },
     description="Elimina un caserio"
 )
-async def delete_caserio_by_id(caserio_id: int, service: CaserioServiceImp = Depends(get_ambito_service_imp)):
+async def delete_caserio_by_id(caserio_id: int, service: CaserioService = Depends(get_ambito_service_imp)):
     await service.delete_caserio_by_id(caserio_id)
     return JSONResponse(
         content={"message": "Se eliminó el caserio correctamente"},
