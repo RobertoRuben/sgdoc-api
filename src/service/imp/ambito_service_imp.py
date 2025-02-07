@@ -11,7 +11,7 @@ class AmbitoServiceImp(AmbitoService):
         self.ambito_repository = ambito_repository
 
 
-    async def add_ambito(self, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
+    async def add(self, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
         try:
             exists = await self.ambito_repository.exists(ambito_request.nombre_ambito)
             if exists:
@@ -35,7 +35,7 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def get_all_ambitos(self) -> List[AmbitoResponseDTO]:
+    async def get_all(self) -> List[AmbitoResponseDTO]:
         try:
             ambitos = await self.ambito_repository.get_all_ambitos()
             return [
@@ -51,7 +51,7 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def update_ambito(self, ambito_id: int, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
+    async def update(self, ambito_id: int, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
         try:
             ambito = await self.ambito_repository.get_ambito_by_id(ambito_id)
             if not ambito:
@@ -83,7 +83,7 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def delete_ambito(self, ambito_id: int) -> None:
+    async def delete_by_id(self, ambito_id: int) -> None:
         try:
             ambito = await self.ambito_repository.get_ambito_by_id(ambito_id)
             if not ambito:
@@ -99,7 +99,7 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def find_ambito(self, search_string: str) -> List[AmbitoResponseDTO]:
+    async def find(self, search_string: str) -> List[AmbitoResponseDTO]:
         try:
             ambitos = await self.ambito_repository.find_by_string(search_string)
             return [
@@ -115,7 +115,7 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def get_ambitos_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
         try:
             return await self.ambito_repository.get_all_paginated(page, page_size)
         except Exception as e:
@@ -125,7 +125,7 @@ class AmbitoServiceImp(AmbitoService):
             ) from e
 
 
-    async def get_ambito_by_id(self, ambito_id: int) -> AmbitoResponseDTO:
+    async def get_by_id(self, ambito_id: int) -> AmbitoResponseDTO:
         try:
             ambito = await self.ambito_repository.get_ambito_by_id(ambito_id)
             if not ambito:
