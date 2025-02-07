@@ -88,7 +88,7 @@ class CentroPobladoService:
 
 
     def get_all_centros_poblados_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
-        return self.centro_poblado_repository.get_all_pagination(page, page_size)
+        return self.centro_poblado_repository.get_all_paginated(page, page_size)
 
 
     def get_centro_poblado_by_id(self, centro_poblado_id: int) -> CentroPobladoResponse:
