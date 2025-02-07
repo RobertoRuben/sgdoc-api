@@ -11,8 +11,9 @@ from .documento_repository import DocumentoRepository
 from .remitente_repository import RemitenteRepository
 from .trabajador_repository import TrabajadorRepository
 from .rol_repository import RolRepository
+from .notificacion_repository import NotificacionRepository
 
 __all__ = ["AmbitoRepository", "AreaRepository", "CaserioRepository", "CategoriaDocumentoRepository",
            "UsuarioRepository", "CentroPobladoRepository", "ComunicacionAreaRepository", "DerivacionRepository",
            "DetalleDerivacionRepository", "DocumentoRepository", "RemitenteRepository", "TrabajadorRepository",
-           "RolRepository"]
+           "RolRepository", "NotificacionRepository"]

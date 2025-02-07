@@ -11,8 +11,9 @@ from .trabajador_service import TrabajadorService
 from .rol_service import RolService
 from .usuario_service import UsuarioService
 from .remitente_service import RemitenteService
+from .notification_service import NotificacionService
 from .auth_service import AuthService
 
 __all__ = ["AmbitoService", "AreaService", "CaserioService", "CategoriaDocumentoService", "AuthService",
            "CentroPobladoService", "ComunicacionAreaService", "DerivacionService", "DetalleDerivacionService",
-           "DocumentoService", "UsuarioService", "TrabajadorService", "RolService", "RemitenteService"]
+           "DocumentoService", "UsuarioService", "TrabajadorService", "RolService", "RemitenteService", "NotificacionService"]
