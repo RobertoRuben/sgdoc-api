@@ -10,11 +10,11 @@ class ComunicacionAreaServiceImp(ComunicacionAreaService):
         self.comunicacion_area_repository = comunicacion_area_repository
 
 
-    async def get_all(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
+    async def get_paginated(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         return await self.comunicacion_area_repository.get_all_paginated(page, page_size)
 
 
-    async def get_areas_destino_by_area_origen_id(self, area_origen_id: int) -> List[ComunicacionDestinoResponseDTO]:
+    async def get_paginated_destinos_by_area_origen_id(self, area_origen_id: int) -> List[ComunicacionDestinoResponseDTO]:
         areas_destinos = await self.comunicacion_area_repository.get_areas_destino_by_area_origen_id(area_origen_id)
         return [
             ComunicacionDestinoResponseDTO(

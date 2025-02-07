@@ -34,7 +34,7 @@ async def get_paginated_comunicaciones_area(
     page_size: int = 10,
     service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
 ):
-    return await service.get_all(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
@@ -51,4 +51,4 @@ async def get_paginated_areas_destino_by_area_origen_id(
     area_origen_id: int,
     service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
 ):
-    return await service.get_areas_destino_by_area_origen_id(area_origen_id)
+    return await service.get_paginated_destinos_by_area_origen_id(area_origen_id)
