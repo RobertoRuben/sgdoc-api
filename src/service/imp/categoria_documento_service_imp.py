@@ -11,7 +11,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
         self.categoria_repository = categoria_repository
 
 
-    async def add_categoria_documento(self, categoria_request: CategoriaDocumentoRequestDTO) -> CategoriaDocumentoResponseDTO:
+    async def add(self, categoria_request: CategoriaDocumentoRequestDTO) -> CategoriaDocumentoResponseDTO:
         try:
             exists = await self.categoria_repository.exists(categoria_request.nombre_categoria)
             if exists:
@@ -36,7 +36,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
             ) from e
 
 
-    async def get_all_categorias_documento(self) -> List[CategoriaDocumentoResponseDTO]:
+    async def get_all(self) -> List[CategoriaDocumentoResponseDTO]:
         try:
             categorias = await self.categoria_repository.get_all_categorias()
             return [
@@ -53,7 +53,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
             ) from e
 
 
-    async def update_categoria_documento(self, categoria_id: int, categoria_request: CategoriaDocumentoRequestDTO) -> CategoriaDocumentoResponseDTO:
+    async def update(self, categoria_id: int, categoria_request: CategoriaDocumentoRequestDTO) -> CategoriaDocumentoResponseDTO:
         try:
             categoria = await self.categoria_repository.get_by_id(categoria_id)
             if not categoria:
@@ -86,7 +86,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
             ) from e
 
 
-    async def delete_categoria_documento_by_id(self, categoria_id: int) -> None:
+    async def delete_by_id(self, categoria_id: int) -> None:
         try:
             categoria = await self.categoria_repository.get_by_id(categoria_id)
             if not categoria:
@@ -102,7 +102,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
             ) from e
 
 
-    async def find_categoria_documento(self, nombre_categoria: str) -> List[CategoriaDocumentoResponseDTO]:
+    async def find(self, nombre_categoria: str) -> List[CategoriaDocumentoResponseDTO]:
         try:
             categorias = await self.categoria_repository.find_by_string(nombre_categoria)
             return [
@@ -119,7 +119,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
             ) from e
 
 
-    async def get_categorias_documento_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
         try:
             return await self.categoria_repository.get_all_pagination(page, page_size)
         except Exception as e:
@@ -129,7 +129,7 @@ class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
             ) from e
 
 
-    async def get_categoria_documento_by_id(self, categoria_id: int) -> CategoriaDocumentoResponseDTO:
+    async def get_by_id(self, categoria_id: int) -> CategoriaDocumentoResponseDTO:
         try:
             categoria = await self.categoria_repository.get_by_id(categoria_id)
             if not categoria:
