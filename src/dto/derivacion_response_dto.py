@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class DerivacionResponse(BaseModel):
+class DerivacionResponseDTO(BaseModel):
     id: int
     fecha: datetime
     area_origen_id: int

@@ -10,6 +10,8 @@ from .centro_poblado_request_dto import CentroPobladoRequestDTO
 from .centro_poblado_response_dto import CentroPobladoResponseDTO
 from .comunicacion_area_request_dto import ComunicacionAreaRequestDTO
 from .comunicacion_area_response_dto import ComunicacionAreaResponseDTO, ComunicacionDestinoResponseDTO
+from .derivacion_request_dto import DerivacionRequestDTO
+from .derivacion_response_dto import DerivacionResponseDTO
 from .auth_request_dto import AuthRequestDTO
 from .auth_response_dto import AuthResponseDTO
 from .authenticated_user_response_dto import AuthenticatedUserResponseDTO
@@ -21,4 +23,5 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "CaserioRequestDTO", "CaserioResponseDTO", "CategoriaDocumentoResponseDTO", "CategoriaDocumentoRequestDTO",
            "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO",
            "CentroPobladoRequestDTO", "CentroPobladoResponseDTO", "ComunicacionAreaRequestDTO",
-           "ComunicacionAreaResponseDTO", "ComunicacionDestinoResponseDTO"]
+           "ComunicacionAreaResponseDTO", "ComunicacionDestinoResponseDTO", "DerivacionRequestDTO",
+           "DerivacionResponseDTO"]

@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
-class DerivacionRequest(BaseModel):
+class DerivacionRequestDTO(BaseModel):
     usuario_id: int = Field(..., description="Id del usuario que realiza la derivacion")
     area_origen_id: int = Field(..., description="Id del area destino")
     area_destino_id: int = Field(..., description="Id del area destino")

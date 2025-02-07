@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
 from src.dto.paginated_response import PaginatedResponseDTO
-from src.dto.derivacion_request import DerivacionRequest
-from src.dto.derivacion_response import DerivacionResponse
+from src.dto.derivacion_request_dto import DerivacionRequestDTO
+from src.dto.derivacion_response_dto import DerivacionResponseDTO
 from src.service.derivacion_service import DerivacionService
 
 router = APIRouter(tags=["Derivaciones"])
@@ -45,7 +45,7 @@ async def get_derivaciones(
 
 @router.post(
     "/derivaciones",
-    response_model=DerivacionResponse,
+    response_model=DerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -55,13 +55,13 @@ async def get_derivaciones(
     },
     description="Crea una nueva derivación"
 )
-async def add_derivacion(derivacion_request: DerivacionRequest, service: DerivacionService = Depends()):
+async def add_derivacion(derivacion_request: DerivacionRequestDTO, service: DerivacionService = Depends()):
     return service.add_derivacion(derivacion_request)
 
 
 @router.put(
     "/derivaciones/{derivacion_id}",
-    response_model=DerivacionResponse,
+    response_model=DerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -71,7 +71,7 @@ async def add_derivacion(derivacion_request: DerivacionRequest, service: Derivac
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
     description="Actualiza una derivación")
-async def update_derivacion(derivacion_id: int, derivacion_request: DerivacionRequest, service: DerivacionService = Depends()):
+async def update_derivacion(derivacion_id: int, derivacion_request: DerivacionRequestDTO, service: DerivacionService = Depends()):
     return service.update_derivacion(derivacion_id, derivacion_request)
 
 

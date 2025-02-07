@@ -2,8 +2,8 @@ from typing import Dict, Any
 from fastapi import Depends
 from src.model.entity.derivacion import Derivacion
 from src.exception import NotFoundException
-from src.dto.derivacion_request import DerivacionRequest
-from src.dto.derivacion_response import DerivacionResponse
+from src.dto.derivacion_request_dto import DerivacionRequestDTO
+from src.dto.derivacion_response_dto import DerivacionResponseDTO
 from src.repository.derivacion_repository import DerivacionRepository
 from src.repository.documento_repository import DocumentoRepository
 from src.repository.area_repository import AreaRepository
@@ -18,7 +18,7 @@ class DerivacionService:
         self.documento_repository = documento_repository
         self.area_repository = area_repository
 
-    def add_derivacion(self, derivacion_request: DerivacionRequest) -> DerivacionResponse:
+    def add_derivacion(self, derivacion_request: DerivacionRequestDTO) -> DerivacionResponseDTO:
 
         if not self.area_repository.exists_by_id(derivacion_request.area_origen_id):
             raise NotFoundException("No existe un area de origen con ese ID")
@@ -38,7 +38,7 @@ class DerivacionService:
 
         created_derivacion = self.derivacion_repository.add(new_derivacion)
 
-        return DerivacionResponse(
+        return DerivacionResponseDTO(
             id=created_derivacion.id,
             fecha=created_derivacion.fecha,
             area_origen_id=created_derivacion.area_origen_id,
@@ -59,7 +59,7 @@ class DerivacionService:
         return self.derivacion_repository.get_paginated(page, page_size, fecha_filtro, estado_filtro, documento_id_filtro)
 
 
-    def update_derivacion(self, derivacion_id: int, derivacion_request: DerivacionRequest) -> DerivacionResponse:
+    def update_derivacion(self, derivacion_id: int, derivacion_request: DerivacionRequestDTO) -> DerivacionResponseDTO:
         derivacion = self.derivacion_repository.get_by_id(derivacion_id)
 
         if not derivacion:
@@ -80,7 +80,7 @@ class DerivacionService:
 
         derivacion = self.derivacion_repository.update(derivacion)
 
-        return DerivacionResponse(
+        return DerivacionResponseDTO(
             id=derivacion.id,
             fecha=derivacion.fecha,
             area_origen_id=derivacion.area_origen_id,
