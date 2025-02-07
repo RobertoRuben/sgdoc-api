@@ -3,7 +3,7 @@ from fastapi import Depends, APIRouter
 from src.websocket.manager import manager
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema
 from src.dto import NotificacionRequestDTO, NotificacionResponseDTO
-from src.service import NotificacionService
+from src.service import NotificationService
 from src.service.imp import NotificacionServiceImp
 
 router = APIRouter(
@@ -17,7 +17,7 @@ notificaciones_tag_metadata = {
                    " creación, recuperación, actualización, eliminación y búsqueda de registros de notificaciones.",
 }
 
-def get_notificaction_service_imp(service: NotificacionServiceImp = Depends()) -> NotificacionService:
+def get_notificaction_service_imp(service: NotificacionServiceImp = Depends()) -> NotificationService:
     return service
 
 @router.post(
@@ -34,7 +34,7 @@ def get_notificaction_service_imp(service: NotificacionServiceImp = Depends()) -
 )
 async def add_notificacion(
     notificacion_request: NotificacionRequestDTO,
-    service: NotificacionService = Depends(get_notificaction_service_imp)
+    service: NotificationService = Depends(get_notificaction_service_imp)
 ):
     result = await service.add_notificacion(notificacion_request)
 
@@ -66,7 +66,7 @@ async def add_notificacion(
 )
 async def get_notificaciones_by_area_id(
     area_id: int,
-    service: NotificacionService = Depends(get_notificaction_service_imp)
+    service: NotificationService = Depends(get_notificaction_service_imp)
 ):
     return await service.get_all_notificaciones_by_area_id(area_id)
 
@@ -85,6 +85,6 @@ async def get_notificaciones_by_area_id(
 )
 async def mark_notification_as_read(
     notificacion_id: int,
-    service: NotificacionService = Depends(get_notificaction_service_imp)
+    service: NotificationService = Depends(get_notificaction_service_imp)
 ):
     return await service.mark_notification_as_read(notificacion_id)

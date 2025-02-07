@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from src.dto import NotificacionRequestDTO, NotificacionResponseDTO
 
-class NotificacionService(ABC):
+class NotificationService(ABC):
     @abstractmethod
     async def add_notificacion(self, notificacion_request: NotificacionRequestDTO) -> NotificacionResponseDTO:
         pass

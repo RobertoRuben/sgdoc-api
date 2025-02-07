@@ -4,10 +4,10 @@ from src.exception import NotFoundException, ConflictException, InternalServerEx
 from src.repository import NotificacionRepository, AreaRepository
 from src.model.entity.notifcacion import Notificacion
 from src.dto import NotificacionRequestDTO, NotificacionResponseDTO
-from src.service import NotificacionService
+from src.service import NotificationService
 
 
-class NotificacionServiceImp(NotificacionService):
+class NotificacionServiceImp(NotificationService):
     def __init__(
         self,
         notificacion_repository: NotificacionRepository = Depends(),
