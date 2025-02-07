@@ -3,11 +3,11 @@ from fastapi import Depends
 from src.exception import ConflictException, NotFoundException, InternalServerException
 from src.model.entity import Categoria
 from src.dto import CategoriaDocumentoRequestDTO, CategoriaDocumentoResponseDTO
-from src.repository import CategoriaRepository
+from src.repository import CategoriaDocumentoRepository
 from src.service import CategoriaDocumentoService
 
 class CategoriaDocumentoServiceImp(CategoriaDocumentoService):
-    def __init__(self, categoria_repository: CategoriaRepository = Depends()):
+    def __init__(self, categoria_repository: CategoriaDocumentoRepository = Depends()):
         self.categoria_repository = categoria_repository
 
 
