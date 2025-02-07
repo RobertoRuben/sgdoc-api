@@ -56,7 +56,7 @@ class DerivacionService:
             estado_filtro: str = None,
             documento_id_filtro: int = None
     ) -> Dict[str, Any]:
-        return self.derivacion_repository.get_all(page, page_size, fecha_filtro, estado_filtro, documento_id_filtro)
+        return self.derivacion_repository.get_paginated(page, page_size, fecha_filtro, estado_filtro, documento_id_filtro)
 
 
     def update_derivacion(self, derivacion_id: int, derivacion_request: DerivacionRequest) -> DerivacionResponse:
