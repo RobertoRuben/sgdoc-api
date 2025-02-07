@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, field_validator
 from src.model.enum.genero_enum import GeneroEnum
 
-class TrabajadorRequest(BaseModel):
+class TrabajadorRequestDTO(BaseModel):
     dni:int = Field(..., ge=10000000, le=99999999, description="El dni es obligatorio")
     nombres:str = Field(..., description="El nombre es obligatorio")
     apellido_paterno:str = Field(..., description="El apellido paterno es obligatorio")

@@ -1,8 +1,8 @@
 from typing import List, Dict, Any, Optional
 from fastapi import Depends
 from src.exception import NotFoundException, ConflictException
-from src.dto.trabajador_response import TrabajadorResponse
-from src.dto.trabajador_request import TrabajadorRequest
+from src.dto.trabajador_response_dto import TrabajadorResponseDTO
+from src.dto.trabajador_request_dto import TrabajadorRequestDTO
 from src.dto.trabajador_simple_response import TrabajadorSimpleReponse
 from src.dto.trabajador_detail_response import TrabajadorDetailResponse
 from src.model.entity.trabajador import Trabajador
@@ -14,7 +14,7 @@ class TrabajadorService:
         self.trabajador_repository = trabajador_repository
 
 
-    def add_trabajador(self, trabajador_request: TrabajadorRequest) -> TrabajadorResponse:
+    def add_trabajador(self, trabajador_request: TrabajadorRequestDTO) -> TrabajadorResponseDTO:
         if self.trabajador_repository.exists_trabajador_by_dni(trabajador_request.dni):
             raise ConflictException("El trabajador ya existe en la base de datos")
 
@@ -29,7 +29,7 @@ class TrabajadorService:
 
         created_trabajador = self.trabajador_repository.add_trabajador(new_trabajador)
 
-        return TrabajadorResponse(
+        return TrabajadorResponseDTO(
             id=created_trabajador.id,
             dni=created_trabajador.dni,
             nombres=created_trabajador.nombres,
@@ -56,14 +56,14 @@ class TrabajadorService:
         return trabajadores_data
 
 
-    def update_trabajador(self, trabajador_id: int, trabajador_request: TrabajadorRequest) -> TrabajadorResponse:
+    def update_trabajador(self, trabajador_id: int, trabajador_request: TrabajadorRequestDTO) -> TrabajadorResponseDTO:
         trabajador = self.trabajador_repository.get_by_id(trabajador_id)
 
         if not trabajador:
             raise NotFoundException("Trabajador no encontrado")
 
         if trabajador.dni == trabajador_request.dni:
-            return TrabajadorResponse(
+            return TrabajadorResponseDTO(
                 id=trabajador.id,
                 dni=trabajador.dni,
                 nombres=trabajador.nombres,
@@ -85,7 +85,7 @@ class TrabajadorService:
 
         updated_trabajador = self.trabajador_repository.update_trabajador(trabajador)
 
-        return TrabajadorResponse(
+        return TrabajadorResponseDTO(
             id=updated_trabajador.id,
             dni=updated_trabajador.dni,
             nombres=updated_trabajador.nombres,
@@ -124,13 +124,13 @@ class TrabajadorService:
         ]
 
 
-    def get_trabajador_by_id(self, trabajador_id: int) -> Optional[TrabajadorResponse]:
+    def get_trabajador_by_id(self, trabajador_id: int) -> Optional[TrabajadorResponseDTO]:
         trabajador = self.trabajador_repository.get_by_id(trabajador_id)
 
         if not trabajador:
             raise NotFoundException("Trabajador no encontrado")
 
-        return TrabajadorResponse(
+        return TrabajadorResponseDTO(
             id=trabajador.id,
             dni=trabajador.dni,
             nombres=trabajador.nombres,
