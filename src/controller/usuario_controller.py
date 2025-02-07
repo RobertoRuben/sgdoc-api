@@ -2,14 +2,16 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import *
-from src.dto.usuario_response_dto import UsuarioResponseDTO
-from src.dto.usuario_request_dto import UsuarioRequestDTO
-from src.dto.usuario_details_response import UsuarioDetailsResponse
-from src.dto.paginated_response import PaginatedResponseDTO
-from src.service.imp.usuario_service_imp import UsuarioServiceImp
-from src.model.enum.user_status_enum import UserStatusEnum
+from src.model.enum import UserStatusEnum
+from src.dto import UsuarioRequestDTO, UsuarioResponseDTO, PaginatedResponseDTO
+from src.service import UsuarioService
+from src.service.imp import UsuarioServiceImp
 
-router = APIRouter(tags=["Usuarios"])
+router = APIRouter(
+    prefix="/usuarios",
+    tags=["Usuarios"]
+)
+
 usuarios_metadata = {
     "name": "Usuarios",
     "description": "Esta sección proporciona los endpoints para gestionar la entidad de Usuario, incluyendo la"
@@ -17,8 +19,11 @@ usuarios_metadata = {
                    " ofrece funcionalidades de paginación y conteo de registros.",
 }
 
+def get_user_service_imp(service: UsuarioServiceImp = Depends()) -> UsuarioService:
+    return service
+
 @router.post(
-    "/usuarios",
+    "",
     response_model=UsuarioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -29,24 +34,24 @@ usuarios_metadata = {
     },
     description="Crea un nuevo usuario"
 )
-async def add_usuario(usuario_request: UsuarioRequestDTO, service: UsuarioServiceImp = Depends()):
-    return service.add(usuario_request)
+async def add_usuario(usuario_request: UsuarioRequestDTO, service: UsuarioService = Depends(get_user_service_imp)):
+    return await service.add(usuario_request)
 
 
 @router.get(
-    "/usuarios/search",
-    response_model=List[UsuarioDetailsResponse],
+    "/search",
+    response_model=List[UsuarioResponseDTO],
     description="Busca usuarios por nombre de usuario"
 )
-async def find_by_string(
+async def search_usuario(
     search_string: str = Query(..., description="Nombre del usuario a buscar"),
-    service: UsuarioServiceImp = Depends()
+    service: UsuarioService = Depends(get_user_service_imp)
 ):
-    return service.find(search_string)
+    return await service.find(search_string)
 
 
 @router.get(
-    "/usuarios/paginated",
+    "/paginated",
     response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -61,14 +66,14 @@ async def get_paginated_usuarios(
     is_active: UserStatusEnum = Query(
         ...,description="Filtrar usuarios por estado activo (true) o inactivo (false)"
     ),
-    service: UsuarioServiceImp = Depends()
+    service: UsuarioService = Depends(get_user_service_imp)
 ):
     is_active_bool = is_active == UserStatusEnum.true
-    return service.get_paginated(page, page_size, is_active_bool)
+    return await service.get_paginated(page, page_size, is_active_bool)
 
 
 @router.put(
-    "/usuarios/{usuario_id}",
+    "/{usuario_id}",
     response_model=UsuarioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -83,13 +88,13 @@ async def get_paginated_usuarios(
 async def update_usuario(
     usuario_id: int,
     usuario_request: UsuarioRequestDTO,
-    service: UsuarioServiceImp = Depends()
+    service: UsuarioService = Depends(get_user_service_imp)
 ):
-    return service.update(usuario_id, usuario_request)
+    return await service.update(usuario_id, usuario_request)
 
 
 @router.get(
-    "/usuarios/{usuario_id}",
+    "/{usuario_id}",
     response_model=UsuarioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -98,12 +103,12 @@ async def update_usuario(
     },
     description="Obtiene un usuario por ID"
 )
-async def get_usuario(usuario_id: int, service: UsuarioServiceImp = Depends()):
-    return service.get_by_id(usuario_id)
+async def get_usuario_by_id(usuario_id: int, service: UsuarioService = Depends(get_user_service_imp)):
+    return await service.get_by_id(usuario_id)
 
 
 @router.patch(
-    "/usuarios/{usuario_id}/password",
+    "/{usuario_id}/update-password",
     response_model=PatchSuccesfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -117,15 +122,15 @@ async def get_usuario(usuario_id: int, service: UsuarioServiceImp = Depends()):
 async def update_usuario_password(
     usuario_id: int,
     contrasena: str = Query(..., description="Nueva contraseña del usuario"),
-    service: UsuarioServiceImp = Depends()
+    service: UsuarioService = Depends(get_user_service_imp)
 ):
-    service.update_password(usuario_id, contrasena)
+    await service.update_password(usuario_id, contrasena)
     return JSONResponse(status_code=200, content={"message": "Contraseña actualizada correctamente"})
 
 
 
 @router.delete(
-    "/usuarios/{usuario_id}",
+    "/{usuario_id}",
     response_model=DeleteSuccessfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -135,13 +140,13 @@ async def update_usuario_password(
     },
     description="Elimina un usuario"
 )
-async def delete_usuario(usuario_id: int, service: UsuarioServiceImp = Depends()):
-    service.delete_by_id(usuario_id)
+async def delete_usuario_by_id(usuario_id: int, service: UsuarioService = Depends(get_user_service_imp)):
+    await service.delete_by_id(usuario_id)
     return JSONResponse(status_code=200, content={"message": "Usuario eliminado correctamente"})
 
 
 @router.patch(
-    "/usuarios/{usuario_id}/status",
+    "/{usuario_id}/update-status",
     response_model=PatchSuccesfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -158,10 +163,10 @@ async def update_usuario_status(
         ...,
         description="Estado deseado del usuario: 'true' para activar, 'false' para desactivar"
     ),
-    service: UsuarioServiceImp = Depends()
+    service: UsuarioService = Depends(get_user_service_imp)
 ):
     is_active = user_status.value.lower() == "true"
-    service.update_status(usuario_id, is_active)
+    await service.update_status(usuario_id, is_active)
     estado = "activado" if is_active else "desactivado"
     return JSONResponse(status_code=200, content={"message": f"Usuario {estado} correctamente"})
 
