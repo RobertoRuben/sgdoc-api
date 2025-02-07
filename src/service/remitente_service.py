@@ -2,8 +2,8 @@ from typing import List, Dict, Any
 from fastapi import Depends
 from src.exception import ConflictException, NotFoundException
 from src.model.entity.remitente import Remitente
-from src.dto.remitente_request import RemitenteRequest
-from src.dto.remitente_response import RemitenteResponse
+from src.dto.remitente_request_dto import RemitenteRequestDTO
+from src.dto.remitente_response_dto import RemitenteResponseDTO
 from src.repository.remitente_repository import RemitenteRepository
 
 
@@ -12,7 +12,7 @@ class RemitenteService:
     def __init__(self, remitente_repository: RemitenteRepository = Depends()):
         self.remitente_repository = remitente_repository
 
-    def add_remitente(self, remitente_request: RemitenteRequest) -> RemitenteResponse:
+    def add_remitente(self, remitente_request: RemitenteRequestDTO) -> RemitenteResponseDTO:
         if self.remitente_repository.exists(remitente_request.dni):
             raise ConflictException("El DNI ya existe en la base de datos")
 
@@ -26,7 +26,7 @@ class RemitenteService:
 
         created_remitente = self.remitente_repository.add_remitentes(new_remitente)
 
-        return RemitenteResponse(
+        return RemitenteResponseDTO(
             id=created_remitente.id,
             dni=created_remitente.dni,
             nombres=created_remitente.nombres,
@@ -36,11 +36,11 @@ class RemitenteService:
         )
 
 
-    def get_remitentes(self) -> List[RemitenteResponse]:
+    def get_remitentes(self) -> List[RemitenteResponseDTO]:
         remitentes = self.remitente_repository.get_all()
 
         return [
-            RemitenteResponse(
+            RemitenteResponseDTO(
                 id=remitente.id,
                 dni=remitente.dni,
                 nombres=remitente.nombres,
@@ -51,14 +51,14 @@ class RemitenteService:
         ]
 
 
-    def update_remitente(self, remitente_id: int, remitente_request: RemitenteRequest) -> RemitenteResponse:
+    def update_remitente(self, remitente_id: int, remitente_request: RemitenteRequestDTO) -> RemitenteResponseDTO:
         remitente = self.remitente_repository.get_by_id(remitente_id)
 
         if not remitente:
             raise NotFoundException("Remitente no encontrado")
 
         if remitente.dni == remitente_request.dni:
-            return RemitenteResponse(
+            return RemitenteResponseDTO(
                 id=remitente.id,
                 dni=remitente.dni,
                 nombres=remitente.nombres,
@@ -78,7 +78,7 @@ class RemitenteService:
 
         updated_remitente = self.remitente_repository.update_remitente(remitente)
 
-        return RemitenteResponse(
+        return RemitenteResponseDTO(
             id=updated_remitente.id,
             dni=updated_remitente.dni,
             nombres=updated_remitente.nombres,
@@ -96,14 +96,14 @@ class RemitenteService:
         self.remitente_repository.delete_by_id(remitente_id)
 
 
-    def find_remitentes_by_string(self, search_string: str) -> List[RemitenteResponse]:
+    def find_remitentes_by_string(self, search_string: str) -> List[RemitenteResponseDTO]:
         remitentes = self.remitente_repository.find_by_string(search_string)
 
         if not remitentes:
             raise NotFoundException("No se encontraron remitentes con la cadena de búsqueda")
 
         return [
-            RemitenteResponse(
+            RemitenteResponseDTO(
                 id=remitente.id,
                 dni=remitente.dni,
                 nombres=remitente.nombres,
@@ -114,13 +114,13 @@ class RemitenteService:
         ]
 
 
-    def get_remitente_by_id(self, remitente_id: int) -> RemitenteResponse:
+    def get_remitente_by_id(self, remitente_id: int) -> RemitenteResponseDTO:
         remitente = self.remitente_repository.get_by_id(remitente_id)
 
         if not remitente:
             raise NotFoundException("Remitente no encontrado")
 
-        return RemitenteResponse(
+        return RemitenteResponseDTO(
             id=remitente.id,
             dni=remitente.dni,
             nombres=remitente.nombres,

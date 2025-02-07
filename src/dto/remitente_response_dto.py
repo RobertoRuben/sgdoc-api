@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class RemitenteResponse(BaseModel):
+class RemitenteResponseDTO(BaseModel):
     id: int
     dni: int
     nombres: str

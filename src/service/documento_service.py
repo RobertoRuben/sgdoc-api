@@ -4,13 +4,13 @@ from typing import Optional, Dict, Any, Tuple
 from src.dto.documento_request_dto import DocumentoRequestDTO
 from src.dto.documento_response_dto import DocumentoResponseDTO, DocumentosNoConfirmadosResponseDTO
 from src.dto.documento_update_request_dto import DocumentoUpdateRequestDTO
-from src.dto.remitente_request import RemitenteRequest
+from src.dto.remitente_request_dto import RemitenteRequestDTO
 from src.model.entity.documento import Documento
 
 class DocumentoService(ABC):
 
     @abstractmethod
-    async def add(self, remitente_request: RemitenteRequest, documento_request: DocumentoRequestDTO) -> DocumentoResponseDTO:
+    async def add(self, remitente_request: RemitenteRequestDTO, documento_request: DocumentoRequestDTO) -> DocumentoResponseDTO:
         pass
 
     @abstractmethod

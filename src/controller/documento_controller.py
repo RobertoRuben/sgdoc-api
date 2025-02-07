@@ -8,8 +8,8 @@ from src.exception import InternalServerException
 from src.schemas import *
 from src.exception import  BadRequestException
 from src.dto import (DocumentoRequestDTO, DocumentoResponseDTO, DocumentosNoConfirmadosResponseDTO,
-    DocumentoUpdateRequestDTO, PaginatedResponseDTO, RemitenteRequest
-)
+                     DocumentoUpdateRequestDTO, PaginatedResponseDTO, RemitenteRequestDTO
+                     )
 from src.model.enum import GeneroEnum
 from src.service.documento_service import DocumentoService
 from src.service.imp import DocumentoServiceImp
@@ -62,7 +62,7 @@ async def add_documento(
 
     documento_bytes = await documento_file.read()
 
-    remitente_request = RemitenteRequest(
+    remitente_request = RemitenteRequestDTO(
         dni=dni,
         nombres=nombres,
         apellido_paterno=apellido_paterno,

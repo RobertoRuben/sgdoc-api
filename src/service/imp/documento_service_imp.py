@@ -3,7 +3,7 @@ from typing import Optional, Dict, Any, Tuple
 from fastapi import Depends
 from src.exception import NotFoundException, ConflictException, InternalServerException
 from src.model.entity import Documento, Remitente
-from src.dto import DocumentoRequestDTO, DocumentoUpdateRequestDTO, DocumentoResponseDTO, RemitenteRequest, DocumentosNoConfirmadosResponseDTO
+from src.dto import DocumentoRequestDTO, DocumentoUpdateRequestDTO, DocumentoResponseDTO, RemitenteRequestDTO, DocumentosNoConfirmadosResponseDTO
 from src.repository import DocumentoRepository, RemitenteRepository
 from src.service import DocumentoService
 
@@ -17,7 +17,7 @@ class DocumentoServiceImp(DocumentoService):
         self.remitente_repository = remitente_repository
 
 
-    async def add(self, remitente_request: RemitenteRequest, documento_request: DocumentoRequestDTO) -> DocumentoResponseDTO:
+    async def add(self, remitente_request: RemitenteRequestDTO, documento_request: DocumentoRequestDTO) -> DocumentoResponseDTO:
         try:
             if await self.documento_repository.exists_by_name(documento_request.nombre):
                 raise ConflictException("Ya existe un documento con el nombre proporcionado")

@@ -3,8 +3,8 @@ from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import *
 from src.service.remitente_service import RemitenteService
-from src.dto.remitente_request import RemitenteRequest
-from src.dto.remitente_response import RemitenteResponse
+from src.dto.remitente_request_dto import RemitenteRequestDTO
+from src.dto.remitente_response_dto import RemitenteResponseDTO
 from src.dto.paginated_response import PaginatedResponseDTO
 
 router = APIRouter(tags=["Remitentes"])
@@ -18,7 +18,7 @@ remitentes_tag_metadata={
 
 @router.post(
     "/remitentes",
-    response_model=RemitenteResponse,
+    response_model=RemitenteResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -28,13 +28,13 @@ remitentes_tag_metadata={
     },
     description="Crea un nuevo remitente"
 )
-async def add_remitente(remitente_request: RemitenteRequest, service: RemitenteService = Depends()):
+async def add_remitente(remitente_request: RemitenteRequestDTO, service: RemitenteService = Depends()):
     return service.add_remitente(remitente_request)
 
 
 @router.get(
     "/remitentes",
-    response_model=List[RemitenteResponse],
+    response_model=List[RemitenteResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -48,7 +48,7 @@ async def get_remitentes(remitente_service: RemitenteService = Depends()):
 
 @router.get(
     "/remitentes/search",
-    response_model=List[RemitenteResponse],
+    response_model=List[RemitenteResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -79,7 +79,7 @@ async def get_remitentes(page: int = 1, page_size: int = 10, remitente_service: 
 
 @router.get(
     "/remitentes/{remitente_id}",
-    response_model=RemitenteResponse,
+    response_model=RemitenteResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -93,7 +93,7 @@ async def get_remitente_by_id(remitente_id: int, remitente_service: RemitenteSer
 
 @router.put(
     "/remitentes/{remitente_id}",
-    response_model=RemitenteResponse,
+    response_model=RemitenteResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -104,7 +104,7 @@ async def get_remitente_by_id(remitente_id: int, remitente_service: RemitenteSer
     },
     description="Actualiza un remitente"
 )
-async def update_remitente(remitente_id: int, remitente_request: RemitenteRequest, remitente_service: RemitenteService = Depends()):
+async def update_remitente(remitente_id: int, remitente_request: RemitenteRequestDTO, remitente_service: RemitenteService = Depends()):
     return remitente_service.update_remitente(remitente_id, remitente_request)
 
 
