@@ -24,6 +24,8 @@ from .usuario_request_dto import UsuarioRequestDTO
 from .usuario_response_dto import UsuarioResponseDTO
 from .trabajador_request_dto import TrabajadorRequestDTO
 from .trabajador_response_dto import TrabajadorResponseDTO
+from .notificacion_request_dto import NotificacionRequestDTO
+from .notificacion_response_dto import NotificacionResponseDTO
 from .rol_request_dto import RolRequestDTO
 from .rol_response_dto import RolReponseDTO
 from .auth_request_dto import AuthRequestDTO
@@ -43,4 +45,4 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "TotalDocumentosNoDerivadosResponseDTO", "TotalDocumentosPorCaserioResponseDTO",
            "TotalDocumentosRecibidosResponseDTO", "DocumentosNoConfirmadosResponseDTO", "DocumentoUpdateRequestDTO",
            "RemitenteRequestDTO", "RemitenteResponseDTO", "UsuarioRequestDTO", "UsuarioResponseDTO", "TrabajadorRequestDTO",
-           "TrabajadorResponseDTO", "RolRequestDTO", "RolReponseDTO"]
+           "TrabajadorResponseDTO", "RolRequestDTO", "RolReponseDTO", "NotificacionRequestDTO", "NotificacionResponseDTO"]
