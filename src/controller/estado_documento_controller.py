@@ -5,7 +5,7 @@ from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema, Del
 from src.dto.paginated_response import PaginatedResponseDTO
 from src.dto.estado_documento_request_dto import EstadoDocumentoRequestDTO
 from src.dto.estado_documento_response_dto import EstadoDocumentoResponseDTO
-from src.service.estado_documento_service import EstadoDocumentoService
+from src.service.imp.estado_documento_service_imp import EstadoDocumentoServiceImp
 
 router = APIRouter(tags=["Estados de Documento"])
 
@@ -27,8 +27,8 @@ estado_documento_tag_metadata={
     },
     description="Crea un nuevo estado de documento"
 )
-async def add_estado_documento(estado_documento_request: EstadoDocumentoRequestDTO, service: EstadoDocumentoService = Depends()):
-    return service.add_estado_documento(estado_documento_request)
+async def add_estado_documento(estado_documento_request: EstadoDocumentoRequestDTO, service: EstadoDocumentoServiceImp = Depends()):
+    return service.add(estado_documento_request)
 
 
 @router.get(
@@ -44,9 +44,9 @@ async def add_estado_documento(estado_documento_request: EstadoDocumentoRequestD
 async def get_all_estado_documento(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: EstadoDocumentoService = Depends()
+    service: EstadoDocumentoServiceImp = Depends()
 ):
-    return service.get_all_estado_documento(page, page_size)
+    return service.get_all(page, page_size)
 
 
 @router.put(
@@ -62,8 +62,8 @@ async def get_all_estado_documento(
     },
     description="Actualiza un estado de documento"
 )
-async def update_estado_documento(estado_documento_id: int, estado_documento_request: EstadoDocumentoRequestDTO, service: EstadoDocumentoService = Depends()):
-    return service.update_estado_documento(estado_documento_id, estado_documento_request)
+async def update_estado_documento(estado_documento_id: int, estado_documento_request: EstadoDocumentoRequestDTO, service: EstadoDocumentoServiceImp = Depends()):
+    return service.update(estado_documento_id, estado_documento_request)
 
 
 @router.delete(
@@ -77,8 +77,8 @@ async def update_estado_documento(estado_documento_id: int, estado_documento_req
     },
     description="Elimina un estado de documento"
 )
-async def delete_estado_documento(estado_documento_id: int, service: EstadoDocumentoService = Depends()):
-    service.delete_documento(estado_documento_id)
+async def delete_estado_documento(estado_documento_id: int, service: EstadoDocumentoServiceImp = Depends()):
+    service.delete_by_id(estado_documento_id)
     return JSONResponse(content={"message": "Se eliminó el estado de documento correctamente"}, status_code=200)
 
 
@@ -92,5 +92,5 @@ async def delete_estado_documento(estado_documento_id: int, service: EstadoDocum
     response_model=List[EstadoDocumentoResponseDTO],
     description="Obtiene todos los estados de documento por ID de documento"
 )
-async def get_all_by_documento_id(documento_id: int, service: EstadoDocumentoService = Depends()):
-    return service.get_all_by_id(documento_id)
+async def get_all_by_documento_id(documento_id: int, service: EstadoDocumentoServiceImp = Depends()):
+    return service.get_all_by_documento_id(documento_id)

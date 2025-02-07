@@ -13,9 +13,10 @@ from .rol_service_imp import RolServiceImp
 from .remitente_service_imp import RemitenteServiceImp
 from .notificacion_service_imp import NotificacionServiceImp
 from .dashboard_mesa_partes_imp import DashboardMesaPartesServiceImp
+from .estado_documento_service_imp import EstadoDocumentoServiceImp
 from .auth_service_imp import AuthServiceImp
 
 __all__ = ["AmbitoServiceImp", "AreaServiceImpl", "CaserioServiceImp", "CategoriaDocumentoServiceImp", "AuthServiceImp",
            "CentroPobladoServiceImp", "ComunicacionAreaServiceImp", "DerivacionServiceImp", "DetalleDerivacionServiceImp",
            "DocumentoServiceImp", "UsuarioServiceImp", "TrabajadorServiceImp", "RolServiceImp", "RemitenteServiceImp",
-           "NotificacionServiceImp", "DashboardMesaPartesServiceImp"]
+           "NotificacionServiceImp", "DashboardMesaPartesServiceImp", "EstadoDocumentoServiceImp"]
