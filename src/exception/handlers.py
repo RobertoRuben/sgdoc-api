@@ -1,7 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
-from src.exception.http_exceptions import HTTPException
+from .app_exception import AppException
+import logging
+
+logger = logging.getLogger(__name__)
 
 def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(RequestValidationError)
@@ -21,17 +24,20 @@ def register_exception_handlers(app: FastAPI) -> None:
             }
         )
 
-    @app.exception_handler(HTTPException)
-    async def http_exception_handler(request: Request, exc: HTTPException):
+    @app.exception_handler(AppException)
+    async def app_exception_handler(request: Request, exc: AppException):
         return JSONResponse(
             status_code=exc.status_code,
-            content={"error": exc.detail},
-            headers=exc.headers
+            content=exc.detail,
         )
 
     @app.exception_handler(Exception)
-    async def global_exception_handler(request: Request, exc: Exception):
+    async def general_exception_handler(request: Request, exc: Exception):
+        logger.error(f"Error no manejado: {str(exc)}", exc_info=True)
         return JSONResponse(
-            status_code=500,
-            content={"error": "Error interno del servidor"}
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "error": "Error interno del servidor",
+                "details": "Por favor contacte al soporte técnico"
+            },
         )
