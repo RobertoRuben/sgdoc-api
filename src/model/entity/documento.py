@@ -1,20 +1,9 @@
-from typing import TYPE_CHECKING, List
-from sqlmodel import SQLModel, Field, Relationship, Column, TIMESTAMP, Text
-from src.model.entity.remitente import Remitente
-from src.model.entity.categoria import Categoria
-from src.model.entity.ambito import Ambito
-from src.model.entity.caserio import Caserio
-from src.model.entity.centro_poblado import CentroPoblado
+from typing import TYPE_CHECKING, List, Optional
 from datetime import datetime
+from sqlmodel import SQLModel, Field, Relationship, Column, TIMESTAMP, Text
 
 if TYPE_CHECKING:
-    from src.model.entity.remitente import Remitente
-    from src.model.entity.categoria import Categoria
-    from src.model.entity.ambito import Ambito
-    from src.model.entity.caserio import Caserio
-    from src.model.entity.centro_poblado import CentroPoblado
-    from src.model.entity.estado_documento import EstadoDocumento
-
+    from src.model.entity import Remitente, Categoria, Ambito, Caserio, CentroPoblado, Derivacion, EstadoDocumento
 
 class Documento(SQLModel, table=True):
     __tablename__ = "documentos"
@@ -24,21 +13,21 @@ class Documento(SQLModel, table=True):
     folios: int = Field(ge=1)
     nombre: str = Field(sa_column=Column(Text, unique=True))
     asunto: str = Field(sa_column=Column(Text))
-
     remitente_id: int = Field(foreign_key="remitentes.id")
-    remitente: Remitente | None = Relationship(back_populates="documentos")
-
     categoria_id: int = Field(foreign_key="categorias.id")
-    categoria: Categoria | None = Relationship(back_populates="documentos")
-
     ambito_id: int = Field(foreign_key="ambitos.id")
-    ambito: Ambito | None = Relationship(back_populates="documentos")
-
     caserio_id: int | None = Field(default=None, foreign_key="caserios.id")
-    caserio: Caserio | None = Relationship(back_populates="documentos")
-
     centro_poblado_id: int | None = Field(default=None, foreign_key="centros_poblados.id")
-    centro_poblado: CentroPoblado | None = Relationship(back_populates="documentos")
+
+    remitente: Optional[Remitente] = Relationship(back_populates="documentos")
+
+    categoria: Optional[Categoria] = Relationship(back_populates="documentos")
+
+    ambito: Optional[Ambito] = Relationship(back_populates="documentos")
+
+    caserio: Optional[Caserio] = Relationship(back_populates="documentos")
+
+    centro_poblado: Optional[CentroPoblado] = Relationship(back_populates="documentos")
 
     derivaciones: List["Derivacion"] = Relationship(back_populates="documento", cascade_delete=True)
 

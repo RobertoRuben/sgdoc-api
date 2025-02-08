@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING
 from sqlmodel import SQLModel, Field, Relationship, UniqueConstraint
 
 if TYPE_CHECKING:
-    from src.model.entity.area import Area
+    from src.model.entity import Area
 
 class ComunicacionArea(SQLModel, table=True):
     __tablename__ = "comunicacion_areas"
@@ -21,6 +21,7 @@ class ComunicacionArea(SQLModel, table=True):
             "overlaps": "comunicaciones_destino"
         }
     )
+
     area_destino: "Area" = Relationship(
         back_populates="comunicaciones_destino",
         sa_relationship_kwargs={

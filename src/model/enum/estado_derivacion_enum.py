@@ -7,4 +7,5 @@ class EstadoDerivacionEnum(Enum):
     finalizada = "Finalizada"
     rechazada = "Rechazada"
     reasignada = "Reasignada"
+    enviada = "Enviada"
     archivado = "Archivado"

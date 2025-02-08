@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, List
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 
 if TYPE_CHECKING:
-    from src.model.entity.usuario import Usuario
+    from src.model.entity import Usuario
 
 class Rol(SQLModel, table=True):
     __tablename__ = "roles"

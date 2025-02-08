@@ -1,14 +1,11 @@
-from sqlmodel import SQLModel, Field, Column, Text, Relationship
 from typing import List, TYPE_CHECKING
+from sqlmodel import SQLModel, Field, Column, Text, Relationship
 
 if TYPE_CHECKING:
-    from src.model.entity.comunicacion_area import ComunicacionArea
-    from src.model.entity.trabajador import Trabajador
-    from src.model.entity.derivacion import Derivacion
+    from src.model.entity import ComunicacionArea, Derivacion, Trabajador
 
 class Area(SQLModel, table=True):
     __tablename__ = "areas"
-
     id: int | None = Field(default=None, primary_key=True)
     nombre_area: str = Field(sa_column=Column(Text, unique=True))
 
@@ -19,6 +16,7 @@ class Area(SQLModel, table=True):
             "overlaps": "comunicaciones_destino"
         }
     )
+
     comunicaciones_destino: List["ComunicacionArea"] = Relationship(
         back_populates="area_destino",
         sa_relationship_kwargs={
@@ -34,6 +32,7 @@ class Area(SQLModel, table=True):
             "overlaps": "derivaciones_destino"
         }
     )
+
     derivaciones_destino: List["Derivacion"] = Relationship(
         back_populates="area_destino",
         sa_relationship_kwargs={

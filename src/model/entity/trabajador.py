@@ -1,11 +1,9 @@
-from typing import TYPE_CHECKING, List
-
+from typing import TYPE_CHECKING, List, Optional
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
-from src.model.enum.genero_enum import GeneroEnum
-from src.model.entity.area import Area
+from src.model.enum import GeneroEnum
 
 if TYPE_CHECKING:
-    from src.model.entity.usuario import Usuario
+    from src.model.entity import Usuario, Area
 
 class Trabajador(SQLModel, table=True):
     __tablename__ = "trabajadores"
@@ -15,10 +13,9 @@ class Trabajador(SQLModel, table=True):
     apellido_paterno: str = Field(sa_column=Column(Text, index=True))
     apellido_materno: str = Field(sa_column=Column(Text))
     genero: GeneroEnum
-
     area_id: int = Field(foreign_key="areas.id", index=True)
 
-    area: Area | None = Relationship(back_populates="trabajadores")
+    area: Optional[Area] = Relationship(back_populates="trabajadores")
 
     usuarios: List["Usuario"] = Relationship(back_populates="trabajador")
 

@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING, List
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
-from src.model.enum.genero_enum import GeneroEnum
+from src.model.enum import GeneroEnum
 
 if TYPE_CHECKING:
-    from src.model.entity.documento import Documento
+    from src.model.entity import Documento
 
 class Remitente(SQLModel, table=True):
     __tablename__ = "remitentes"
