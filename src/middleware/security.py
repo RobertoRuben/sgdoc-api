@@ -1,5 +1,6 @@
-from fastapi import Request, HTTPException
+from fastapi import Request
 import logging
+from src.exception import ForbiddenException
 
 logging.basicConfig(level=logging.INFO)
 
@@ -20,6 +21,6 @@ async def ip_restriction_middleware(request: Request, call_next):
 
     if not any(client_ip.startswith(subnet) for subnet in allowed_subnets):
         logging.warning(f"Access denied for IP: {client_ip}")
-        raise HTTPException(status_code=403, detail="Access forbidden: your IP address is not allowed")
+        raise ForbiddenException(detail="Access forbidden: your IP address is not allowed")
 
     return await call_next(request)

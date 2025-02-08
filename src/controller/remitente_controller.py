@@ -121,7 +121,7 @@ async def update_remitente(
     remitente_request: RemitenteRequestDTO,
     service: RemitenteService = Depends(get_remitentes_imp)
 ):
-    return service.update(remitente_id, remitente_request)
+    return await service.update(remitente_id, remitente_request)
 
 
 @router.delete(
