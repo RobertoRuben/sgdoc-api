@@ -57,7 +57,21 @@ app = FastAPI(
     version="0.1.0",
     openapi_tags=tags_metadata,
     debug=True,
-    lifespan=lifespan
+    lifespan=lifespan,
+    contact={
+        "name": "Equipo de Desarrollo SGDOC",
+        "email": "soporte@sgdoc.com",
+        "url": "https://sgdoc.com/contacto",
+    },
+    license_info={
+        "name": "Licencia Comercial Propietaria",
+        "url": "https://sgdoc.com/terminos-de-licencia",
+    },
+    servers=[
+        {"url": "http://192.168.1.35:8000", "description": "Producción"},
+        {"url": "http://localhost:8000", "description": "Desarrollo"},
+    ],
+    terms_of_service="https://sgdoc.com/terminos-de-servicio",
 )
 
 @app.middleware("http")
