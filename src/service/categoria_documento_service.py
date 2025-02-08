@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from src.dto.categoria_documento_request_dto import CategoriaDocumentoRequestDTO
-from src.dto.categoria_documento_response_dto import CategoriaDocumentoResponseDTO
+from src.dto import CategoriaDocumentoRequestDTO, CategoriaDocumentoResponseDTO
 
 class CategoriaDocumentoService(ABC):
     @abstractmethod

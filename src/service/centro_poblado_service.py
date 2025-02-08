@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from src.dto.centro_poblado_request_dto import CentroPobladoRequestDTO
-from src.dto.centro_poblado_response_dto import CentroPobladoResponseDTO
+from src.dto import CentroPobladoRequestDTO, CentroPobladoResponseDTO
 
 class CentroPobladoService(ABC):
     @abstractmethod

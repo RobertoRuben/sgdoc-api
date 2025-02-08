@@ -1,11 +1,14 @@
 from abc import ABC, abstractmethod
 from datetime import date
 from typing import Optional, Dict, Any, Tuple
-from src.dto.documento_request_dto import DocumentoRequestDTO
-from src.dto.documento_response_dto import DocumentoResponseDTO, DocumentosNoConfirmadosResponseDTO
-from src.dto.documento_update_request_dto import DocumentoUpdateRequestDTO
-from src.dto.remitente_request_dto import RemitenteRequestDTO
-from src.model.entity.documento import Documento
+from src.dto import (
+    RemitenteRequestDTO,
+    DocumentoRequestDTO,
+    DocumentoResponseDTO,
+    DocumentoUpdateRequestDTO,
+    DocumentosNoConfirmadosResponseDTO
+)
+from src.model.entity import Documento
 
 class DocumentoService(ABC):
 
