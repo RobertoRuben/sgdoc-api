@@ -10,7 +10,7 @@ class Caserio(SQLModel, table=True):
     nombre_caserio: str = Field(sa_column=Column(Text, unique=True))
     centro_poblado_id: int | None = Field(default= None, foreign_key="centros_poblados.id", index=True)
 
-    centro_poblado: Optional[CentroPoblado] = Relationship(back_populates="caserios")
+    centro_poblado: Optional["CentroPoblado"] = Relationship(back_populates="caserios")
 
     documentos: List["Documento"] = Relationship(back_populates="caserio")
 

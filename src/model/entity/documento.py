@@ -19,15 +19,15 @@ class Documento(SQLModel, table=True):
     caserio_id: int | None = Field(default=None, foreign_key="caserios.id")
     centro_poblado_id: int | None = Field(default=None, foreign_key="centros_poblados.id")
 
-    remitente: Optional[Remitente] = Relationship(back_populates="documentos")
+    remitente: Optional["Remitente"] = Relationship(back_populates="documentos")
 
-    categoria: Optional[Categoria] = Relationship(back_populates="documentos")
+    categoria: Optional["Categoria"] = Relationship(back_populates="documentos")
 
-    ambito: Optional[Ambito] = Relationship(back_populates="documentos")
+    ambito: Optional["Ambito"] = Relationship(back_populates="documentos")
 
-    caserio: Optional[Caserio] = Relationship(back_populates="documentos")
+    caserio: Optional["Caserio"] = Relationship(back_populates="documentos")
 
-    centro_poblado: Optional[CentroPoblado] = Relationship(back_populates="documentos")
+    centro_poblado: Optional["CentroPoblado"] = Relationship(back_populates="documentos")
 
     derivaciones: List["Derivacion"] = Relationship(back_populates="documento", cascade_delete=True)
 
