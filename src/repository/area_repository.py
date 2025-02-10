@@ -7,6 +7,7 @@ from src.exception import DatabaseException
 from src.db.database import get_async_session
 from src.model.entity.area import Area
 
+
 class AreaRepository:
     def __init__(self, session: AsyncSession = Depends(get_async_session)):
         self.session = session

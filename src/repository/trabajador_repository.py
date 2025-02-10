@@ -81,9 +81,8 @@ class TrabajadorRepository:
     async def get_all_id_and_name(self) -> List[Dict[str, Any]]:
         try:
             query = text("SELECT fn_trabajadores_listar()")
-            async with self.session.connection() as connection:
-                result = await connection.execute(query)
-                res = result.scalar()
+            result = await self.session.execute(query)
+            res = result.scalar()
             return res if res else []
         except SQLAlchemyError as e:
             raise DatabaseException(

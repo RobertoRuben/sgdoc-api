@@ -15,9 +15,8 @@ class ComunicacionAreaRepository:
             query = text("""
                 SELECT fn_comunicacion_areas_listar_paginado(:page, :page_size)
             """)
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {"page": page, "page_size": page_size})
-                paginated_result = result.scalar()
+            result = await self.session.execute(query, {"page": page, "page_size": page_size})
+            paginated_result = result.scalar()
             if paginated_result:
                 return paginated_result
             else:
@@ -47,9 +46,8 @@ class ComunicacionAreaRepository:
             query = text("""
                 SELECT fn_comunicaciones_areas_obtener_area_destino_por_area_origen_id(:area_origen_id)
             """)
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {"area_origen_id": area_origen_id})
-                areas = result.scalar()
+            result = await self.session.execute(query, {"area_origen_id": area_origen_id})
+            areas = result.scalar()
             return areas if areas else []
         except SQLAlchemyError as e:
             raise DatabaseException(

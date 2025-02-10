@@ -146,9 +146,8 @@ class DocumentoRepository:
     async def get_documents_by_current_date(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         try:
             query = text("SELECT fn_documentos_listar_por_fecha_actual_paginado(:page, :page_size)")
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {"page": page, "page_size": page_size})
-                res = result.scalar()
+            result = await self.session.execute(query, {"page": page, "page_size": page_size})
+            res = result.scalar()
             if res:
                 return res
             else:
@@ -176,9 +175,8 @@ class DocumentoRepository:
     async def get_all_documents_paginated(self, p_page: int, p_page_size: int) -> Dict[str, Any]:
         try:
             query = text("SELECT fn_documentos_listar_paginado(:p_page, :p_page_size)")
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {"p_page": p_page, "p_page_size": p_page_size})
-                res = result.scalar()
+            result = await self.session.execute(query, {"p_page": p_page, "p_page_size": p_page_size})
+            res = result.scalar()
             if res:
                 return res
             else:
@@ -229,19 +227,18 @@ class DocumentoRepository:
                     :p_page_size
                 )
             """)
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {
-                    "p_area_origen_id": p_area_origen_id,
-                    "p_search_document": p_search_document,
-                    "p_id_caserio": p_id_caserio,
-                    "p_id_centro_poblado": p_id_centro_poblado,
-                    "p_id_ambito": p_id_ambito,
-                    "p_nombre_categoria": p_nombre_categoria,
-                    "p_fecha_ingreso": p_fecha_ingreso,
-                    "p_page": p_page,
-                    "p_page_size": p_page_size
-                })
-                res = result.scalar()
+            result = await self.session.execute(query, {
+                "p_area_origen_id": p_area_origen_id,
+                "p_search_document": p_search_document,
+                "p_id_caserio": p_id_caserio,
+                "p_id_centro_poblado": p_id_centro_poblado,
+                "p_id_ambito": p_id_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso,
+                "p_page": p_page,
+                "p_page_size": p_page_size
+            })
+            res = result.scalar()
             if res:
                 return res
             else:
@@ -294,20 +291,19 @@ class DocumentoRepository:
                     :p_recepcionada
                 )
             """)
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {
-                    "p_area_destino_id": p_area_destino_id,
-                    "p_search_document": p_search_document,
-                    "p_id_caserio": p_id_caserio,
-                    "p_id_centro_poblado": p_id_centro_poblado,
-                    "p_id_ambito": p_id_ambito,
-                    "p_nombre_categoria": p_nombre_categoria,
-                    "p_fecha_ingreso": p_fecha_ingreso,
-                    "p_page": p_page,
-                    "p_page_size": p_page_size,
-                    "p_recepcionada": p_recepcionada
-                })
-                res = result.scalar()
+            result = await self.session.execute(query, {
+                "p_area_destino_id": p_area_destino_id,
+                "p_search_document": p_search_document,
+                "p_id_caserio": p_id_caserio,
+                "p_id_centro_poblado": p_id_centro_poblado,
+                "p_id_ambito": p_id_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso,
+                "p_page": p_page,
+                "p_page_size": p_page_size,
+                "p_recepcionada": p_recepcionada
+            })
+            res = result.scalar()
             if res:
                 return res
             else:
@@ -419,18 +415,17 @@ class DocumentoRepository:
                     :p_page_size
                     )"""
             )
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {
-                    "p_page": p_page,
-                    "p_page_size": p_page_size,
-                    "p_dni": p_dni,
-                    "p_nombre_caserio": p_nombre_caserio,
-                    "p_nombre_centro_poblado": p_nombre_centro_poblado,
-                    "p_nombre_ambito": p_nombre_ambito,
-                    "p_nombre_categoria": p_nombre_categoria,
-                    "p_fecha_ingreso": p_fecha_ingreso
-                })
-                res = result.scalar()
+            result = self.session.execute(query, {
+                "p_page": p_page,
+                "p_page_size": p_page_size,
+                "p_dni": p_dni,
+                "p_nombre_caserio": p_nombre_caserio,
+                "p_nombre_centro_poblado": p_nombre_centro_poblado,
+                "p_nombre_ambito": p_nombre_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso
+            })
+            res = result.scalar()
             if res:
                 return res
             else:
@@ -458,9 +453,8 @@ class DocumentoRepository:
     async def get_total_unconfirmed_received_documents_today(self, p_area_destino_id: int) -> int:
         try:
             query = text("SELECT fn_documentos_total_recibidos_no_confirmados_hoy(:p_area_destino_id)")
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {"p_area_destino_id": p_area_destino_id})
-                res = result.scalar()
+            result = await self.session.execute(query, {"p_area_destino_id": p_area_destino_id})
+            res = result.scalar()
             return res if res is not None else 0
         except SQLAlchemyError as e:
             raise DatabaseException(
