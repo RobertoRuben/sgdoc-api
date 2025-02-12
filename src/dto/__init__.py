@@ -32,6 +32,7 @@ from .dashboard_response_dto import (
     PromedioIngresosResponseDTO,
     TopIngresosResponseDTO
 )
+from .dashboard_request_dto import DashboardFilterRequestDTO
 from .remitente_request_dto import RemitenteRequestDTO
 from .remitente_response_dto import RemitenteResponseDTO
 from .usuario_request_dto import UsuarioRequestDTO
@@ -64,5 +65,4 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "TrabajadorResponseDTO", "RolRequestDTO", "RolReponseDTO", "NotificacionRequestDTO", "NotificacionResponseDTO",
            "EstadoDocumentoRequestDTO", "EstadoDocumentoResponseDTO", "IngresosPorAmbitoResponseDTO",
            "IngresosPorCaserioResponseDTO", "IngresosPorCentroPobladoResponseDTO", "TotalIngresosResponseDTO",
-           "PromedioIngresosResponseDTO", "TopIngresosResponseDTO"
-           ]
+           "PromedioIngresosResponseDTO", "TopIngresosResponseDTO", "DashboardFilterRequestDTO"]
