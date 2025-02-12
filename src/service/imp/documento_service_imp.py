@@ -304,7 +304,7 @@ class DocumentoServiceImp(DocumentoService):
     async def get_unconfirmed_documents(self, p_area_destino_id: int) -> DocumentosNoConfirmadosResponseDTO:
         try:
             total = await self.documento_repository.get_total_unconfirmed_received_documents_today(p_area_destino_id)
-            return DocumentosNoConfirmadosResponseDTO(total=total)
+            return DocumentosNoConfirmadosResponseDTO(total_documentos_no_confirmados=total)
         except Exception as e:
             raise InternalServerException(
                 detail="Error interno al obtener documentos no confirmados",

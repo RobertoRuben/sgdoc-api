@@ -21,7 +21,7 @@ class DocumentosIngresadosResponseDTO(BaseModel):
     total_documentos: int
 
 
-class TotalDocumentosDerivaodsResponseDTO(BaseModel):
+class TotalDocumentosDerivadosResponseDTO(BaseModel):
     total_documentos_derivados: int
 
 

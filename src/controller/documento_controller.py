@@ -7,9 +7,14 @@ from starlette.responses import StreamingResponse
 from src.exception import InternalServerException
 from src.schemas import *
 from src.exception import  BadRequestException
-from src.dto import (DocumentoRequestDTO, DocumentoResponseDTO, DocumentosNoConfirmadosResponseDTO,
-                     DocumentoUpdateRequestDTO, PaginatedResponseDTO, RemitenteRequestDTO
-                     )
+from src.dto import (
+    DocumentoRequestDTO,
+    DocumentoResponseDTO,
+    DocumentosNoConfirmadosResponseDTO,
+    DocumentoUpdateRequestDTO,
+    PaginatedResponseDTO,
+    RemitenteRequestDTO
+)
 from src.model.enum import GeneroEnum
 from src.service.documento_service import DocumentoService
 from src.service.imp import DocumentoServiceImp
@@ -122,7 +127,7 @@ async def find_documentos(
     p_fecha_ingreso: Optional[date] = Query(None, description="Fecha de ingreso (YYYY-MM-DD)"),
     documento_service: DocumentoService = Depends(get_document_service_imp)
 ):
-    return documento_service.find(
+    return await documento_service.find(
             p_page=p_page,
             p_page_size=p_page_size,
             p_dni=p_dni,

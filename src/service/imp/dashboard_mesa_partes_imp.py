@@ -2,7 +2,7 @@ from typing import List
 from fastapi import Depends
 from src.dto import (
     DocumentosIngresadosResponseDTO,
-    TotalDocumentosDerivaodsResponseDTO,
+    TotalDocumentosDerivadosResponseDTO,
     TotalDocumentosNoDerivadosResponseDTO,
     TotalDocumentosPorCaserioResponseDTO,
 )
@@ -28,10 +28,10 @@ class DashboardMesaPartesServiceImp(DashboardMesaPartesService):
             ) from e
 
 
-    async def get_todays_total_derived_documents(self) -> TotalDocumentosDerivaodsResponseDTO:
+    async def get_todays_total_derived_documents(self) -> TotalDocumentosDerivadosResponseDTO:
         try:
             total_derived_documents_today = await self.documentos_by_current_date_repository.get_number_documentos_derivados_current_date()
-            return TotalDocumentosDerivaodsResponseDTO(
+            return TotalDocumentosDerivadosResponseDTO(
                 total_documentos_derivados=total_derived_documents_today
             )
         except Exception as e:

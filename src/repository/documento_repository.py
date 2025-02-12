@@ -354,19 +354,19 @@ class DocumentoRepository:
                     :p_page_size
                 )
             """)
-            async with self.session.connection() as connection:
-                result = await connection.execute(query, {
-                    "p_area_destino_id": p_area_destino_id,
-                    "p_search_document": p_search_document,
-                    "p_id_caserio": p_id_caserio,
-                    "p_id_centro_poblado": p_id_centro_poblado,
-                    "p_id_ambito": p_id_ambito,
-                    "p_nombre_categoria": p_nombre_categoria,
-                    "p_fecha_ingreso": p_fecha_ingreso,
-                    "p_page": p_page,
-                    "p_page_size": p_page_size
-                })
-                res = result.scalar()
+            result = await self.session.execute(query, {
+                "p_area_destino_id": p_area_destino_id,
+                "p_search_document": p_search_document,
+                "p_id_caserio": p_id_caserio,
+                "p_id_centro_poblado": p_id_centro_poblado,
+                "p_id_ambito": p_id_ambito,
+                "p_nombre_categoria": p_nombre_categoria,
+                "p_fecha_ingreso": p_fecha_ingreso,
+                "p_page": p_page,
+                "p_page_size": p_page_size
+            })
+            res = result.scalar()
+
             if res:
                 return res
             else:
@@ -415,7 +415,7 @@ class DocumentoRepository:
                     :p_page_size
                     )"""
             )
-            result = self.session.execute(query, {
+            result = await self.session.execute(query, {
                 "p_page": p_page,
                 "p_page_size": p_page_size,
                 "p_dni": p_dni,

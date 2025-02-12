@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 from src.dto import (
     DocumentosIngresadosResponseDTO,
-    TotalDocumentosDerivaodsResponseDTO,
+    TotalDocumentosDerivadosResponseDTO,
     TotalDocumentosNoDerivadosResponseDTO,
     TotalDocumentosPorCaserioResponseDTO,
 )
@@ -13,7 +13,7 @@ class DashboardMesaPartesService(ABC):
         pass
 
     @abstractmethod
-    async def get_todays_total_derived_documents(self) -> TotalDocumentosDerivaodsResponseDTO:
+    async def get_todays_total_derived_documents(self) -> TotalDocumentosDerivadosResponseDTO:
         pass
 
     @abstractmethod

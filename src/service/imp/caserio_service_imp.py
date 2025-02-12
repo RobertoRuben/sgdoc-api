@@ -132,7 +132,7 @@ class CaserioServiceImp(CaserioService):
                 CaserioResponseDTO(
                     id=caserio['id'],
                     nombre_caserio=caserio['nombre_caserio'],
-                    centro_poblado_nombre=caserio['nombre_centro_poblado']
+                    nombre_centro_poblado=caserio['nombre_centro_poblado']
                 ) for caserio in caserios
             ]
         except NotFoundException as e:

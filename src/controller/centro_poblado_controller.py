@@ -53,7 +53,7 @@ async def add_centro_poblado(
     description="Obtiene todos los centros poblados"
 )
 async def get_all_centros_poblados(service: CentroPobladoService = Depends(get_centro_poblado_imp)):
-    return service.get_all()
+    return await service.get_all()
 
 
 @router.get(
@@ -89,7 +89,7 @@ async def get_paginated_centros_poblados(
     page_size: int = Query(10, description="Número de registros por página"),
     service: CentroPobladoService = Depends(get_centro_poblado_imp)
 ):
-    return service.get_paginated(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 

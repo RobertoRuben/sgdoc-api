@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends
 from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema
 from src.dto import (
     DocumentosIngresadosResponseDTO,
-    TotalDocumentosDerivaodsResponseDTO,
+    TotalDocumentosDerivadosResponseDTO,
     TotalDocumentosNoDerivadosResponseDTO,
     TotalDocumentosPorCaserioResponseDTO
 )
@@ -44,7 +44,7 @@ async def get_todays_received_documents(
 
 @router.get(
     "/documents/derived-today",
-    response_model=TotalDocumentosDerivaodsResponseDTO,
+    response_model=TotalDocumentosDerivadosResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
