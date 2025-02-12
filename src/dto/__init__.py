@@ -16,8 +16,22 @@ from .detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
 from .detalle_derivacion_response_dto import DetalleDerivacionResponseDTO
 from .documento_request_dto import DocumentoRequestDTO
 from .documento_update_request_dto import DocumentoUpdateRequestDTO
-from .documento_response_dto import (DocumentoResponseDTO, DocumentosIngresadosResponseDTO, TotalDocumentosNoDerivadosResponseDTO,
-                                     TotalDocumentosPorCaserioResponseDTO, TotalDocumentosDerivadosResponseDTO, DocumentosNoConfirmadosResponseDTO)
+from .documento_response_dto import (
+    DocumentoResponseDTO,
+    DocumentosIngresadosResponseDTO,
+    TotalDocumentosNoDerivadosResponseDTO,
+    TotalDocumentosPorCaserioResponseDTO,
+    TotalDocumentosDerivadosResponseDTO,
+    DocumentosNoConfirmadosResponseDTO
+)
+from .dashboard_response_dto import (
+    IngresosPorAmbitoResponseDTO,
+    IngresosPorCaserioResponseDTO,
+    IngresosPorCentroPobladoResponseDTO,
+    TotalIngresosResponseDTO,
+    PromedioIngresosResponseDTO,
+    TopIngresosResponseDTO
+)
 from .remitente_request_dto import RemitenteRequestDTO
 from .remitente_response_dto import RemitenteResponseDTO
 from .usuario_request_dto import UsuarioRequestDTO
@@ -48,4 +62,7 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "TotalDocumentosDerivadosResponseDTO", "DocumentosNoConfirmadosResponseDTO", "DocumentoUpdateRequestDTO",
            "RemitenteRequestDTO", "RemitenteResponseDTO", "UsuarioRequestDTO", "UsuarioResponseDTO", "TrabajadorRequestDTO",
            "TrabajadorResponseDTO", "RolRequestDTO", "RolReponseDTO", "NotificacionRequestDTO", "NotificacionResponseDTO",
-           "EstadoDocumentoRequestDTO", "EstadoDocumentoResponseDTO"]
+           "EstadoDocumentoRequestDTO", "EstadoDocumentoResponseDTO", "IngresosPorAmbitoResponseDTO",
+           "IngresosPorCaserioResponseDTO", "IngresosPorCentroPobladoResponseDTO", "TotalIngresosResponseDTO",
+           "PromedioIngresosResponseDTO", "TopIngresosResponseDTO"
+           ]
