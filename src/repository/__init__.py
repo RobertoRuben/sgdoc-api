@@ -13,9 +13,11 @@ from .trabajador_repository import TrabajadorRepository
 from .rol_repository import RolRepository
 from .dashboard_mesa_partes_repository import DashboardMesaPartesRepository
 from .notificacion_repository import NotificacionRepository
+from .dashboard_repository import DashboardRepository
 from .estado_documento_repository import EstadoDocumentoRepository
 
 __all__ = ["AmbitoRepository", "AreaRepository", "CaserioRepository", "CategoriaDocumentoRepository",
            "UsuarioRepository", "CentroPobladoRepository", "ComunicacionAreaRepository", "DerivacionRepository",
            "DetalleDerivacionRepository", "DocumentoRepository", "RemitenteRepository", "TrabajadorRepository",
-           "RolRepository", "NotificacionRepository", "DashboardMesaPartesRepository", "EstadoDocumentoRepository"]
+           "RolRepository", "NotificacionRepository", "DashboardMesaPartesRepository", "EstadoDocumentoRepository",
+           "DashboardRepository"]
