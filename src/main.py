@@ -4,6 +4,7 @@ from src.exception.handlers import register_exception_handlers
 from src.db.database import init_db
 from src.controller.auth_controller import get_current_user
 from src.controller.auth_controller import router as auth_router
+from src.controller.dashboard_controller import router as dashboard_router, dashboard_tag_metadata
 from src.controller.remitente_controller import router as remitente_router, remitentes_tag_metadata
 from src.controller.categoria_documento_controller import router as categoria_router, categorias_tag_metadata
 from src.controller.ambito_controller import router as ambito_router, ambitos_tag_metadata
@@ -28,6 +29,7 @@ logging.basicConfig(level=logging.INFO)
 API_VERSION = "/api/v1"
 
 tags_metadata = [
+    dashboard_tag_metadata,
     remitentes_tag_metadata,
     categorias_tag_metadata,
     ambitos_tag_metadata,
@@ -83,6 +85,7 @@ configure_cors(app)
 register_exception_handlers(app)
 
 app.include_router(auth_router, prefix=API_VERSION)
+app.include_router(dashboard_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
 app.include_router(remitente_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
 app.include_router(categoria_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
 app.include_router(ambito_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])

@@ -32,8 +32,8 @@ class DashboardServiceImp(DashboardService):
 
             return [
                 IngresosPorAmbitoResponseDTO(
-                    ambito=result[0],
-                    total=result[1],
+                    ambito=result["ambito"],
+                    total=result["total"],
                 )
                 for result in results
             ]
@@ -58,8 +58,8 @@ class DashboardServiceImp(DashboardService):
 
             return [
                 IngresosPorCaserioResponseDTO(
-                    caserio=result[0],
-                    total_documentos=result[1],
+                    caserio=result["caserio"],
+                    total_documentos=result["total_documentos"],
                 )
                 for result in results
             ]
@@ -75,7 +75,6 @@ class DashboardServiceImp(DashboardService):
             dashboard_request: DashboardFilterRequestDTO
     ) -> List[IngresosPorCentroPobladoResponseDTO]:
         try:
-            # Llamamos al método del repositorio
             results = await self.dashboard_repository.get_total_documents_by_centro_poblado(
                 p_start_year=dashboard_request.start_year,
                 p_end_year=dashboard_request.end_year,
@@ -83,23 +82,13 @@ class DashboardServiceImp(DashboardService):
                 p_start_month=dashboard_request.start_month,
             )
 
-            grouped_data = {}
-            for mes, centro_poblado, total_documentos in results:
-                if mes not in grouped_data:
-                    grouped_data[mes] = []
-                grouped_data[mes].append({
-                    "centro_poblado": centro_poblado,
-                    "total_documentos": total_documentos
-                })
-
-            response = []
-            for mes, centros in grouped_data.items():
-                response.append(
-                    IngresosPorCentroPobladoResponseDTO(
-                        mes=mes,
-                        centros=centros
-                    )
+            response = [
+                IngresosPorCentroPobladoResponseDTO(
+                    mes=item["mes"],
+                    centros=item.get("centros", [])
                 )
+                for item in results
+            ]
 
             return response
 
@@ -168,11 +157,12 @@ class DashboardServiceImp(DashboardService):
 
             return [
                 TopIngresosResponseDTO(
-                    caserio=result[0],
-                    total_documentos=result[1],
+                    caserio=result["caserio"],
+                    total_documentos=result["total_documentos"],
                 )
                 for result in results
             ]
+
         except Exception as e:
             raise InternalServerException(
                 detail="Ocurrió un error al obtener el total de documentos por ámbito",
@@ -194,11 +184,12 @@ class DashboardServiceImp(DashboardService):
 
             return [
                 TopIngresosResponseDTO(
-                    caserio=result[0],
-                    total_documentos=result[1],
+                    caserio=result["caserio"],
+                    total_documentos=result["total_documentos"],
                 )
                 for result in results
             ]
+
         except Exception as e:
             raise InternalServerException(
                 detail="Ocurrió un error al obtener el total de documentos por ámbito",

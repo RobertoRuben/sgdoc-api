@@ -61,7 +61,7 @@ class DashboardRepository:
         try:
             query = text(
                 """
-                SELECT fn_documentos_ingresos_por_caserio(
+                SELECT fn_documentos_ingresos_por_caserios(
                     :p_start_year,
                     :p_end_year,
                     :p_start_month,
@@ -158,7 +158,11 @@ class DashboardRepository:
 
             average_total_documents = result.scalar()
 
-            return average_total_documents if average_total_documents else {}
+            if isinstance(average_total_documents, dict):
+                average_total_documents = next(iter(average_total_documents.values()))
+
+            return average_total_documents if average_total_documents is not None else 0.0
+
         except SQLAlchemyError as e:
             raise DatabaseException(
                 detail="Error al obtener el promedio de documentos ingresados",
@@ -177,8 +181,7 @@ class DashboardRepository:
             p_end_year: int | None = None,
             p_start_month: int | None = None,
             p_end_month: int | None = None
-
-    ) -> Dict[str, Any]:
+    ) -> List[Dict[str, Any]]:
         try:
             query = text(
                 """
@@ -197,17 +200,27 @@ class DashboardRepository:
                 "p_end_month": p_end_month
             })
 
-            top_village_by_documents = result.scalar()
+            top_villages = result.scalar()
 
-            return top_village_by_documents if top_village_by_documents else {}
+            # Si no se obtuvo resultado, retornamos una lista vacía
+            if top_villages is None:
+                return []
+
+            # Si el resultado ya es una lista, lo retornamos directamente.
+            if isinstance(top_villages, list):
+                return top_villages
+
+            # En caso de recibir un solo diccionario o valor, lo envolvemos en una lista.
+            return [top_villages]
+
         except SQLAlchemyError as e:
             raise DatabaseException(
-                detail="Error al obtener el promedio de documentos ingresados",
+                detail="Error al obtener los caseríos con más documentos",
                 error_details=str(e)
             ) from e
         except Exception as e:
             raise DatabaseException(
-                detail="Error desconocido al obtener el promedio de documentos ingresados",
+                detail="Error desconocido al obtener los caseríos con más documentos",
                 error_details=str(e)
             ) from e
 
@@ -259,7 +272,7 @@ class DashboardRepository:
             p_end_year: int | None = None,
             p_start_month: int | None = None,
             p_end_month: int | None = None
-    ) -> Dict[str, Any]:
+    ) -> int:
         try:
             query = text(
                 """
@@ -280,7 +293,11 @@ class DashboardRepository:
 
             total_documents = result.scalar()
 
-            return total_documents if total_documents else {}
+            if isinstance(total_documents, dict):
+                total_documents = next(iter(total_documents.values()))
+
+            return total_documents if total_documents is not None else 0
+
         except SQLAlchemyError as e:
             raise DatabaseException(
                 detail="Error al obtener el total de documentos ingresados",
@@ -291,4 +308,5 @@ class DashboardRepository:
                 detail="Error desconocido al obtener el total de documentos ingresados",
                 error_details=str(e)
             ) from e
+
 

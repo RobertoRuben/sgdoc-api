@@ -1,4 +1,4 @@
-from typing import List, Dict
+from typing import List, Dict, Any
 from pydantic import BaseModel
 
 class IngresosPorAmbitoResponseDTO(BaseModel):
@@ -13,7 +13,7 @@ class IngresosPorCaserioResponseDTO(BaseModel):
 
 class IngresosPorCentroPobladoResponseDTO(BaseModel):
     mes: str
-    centros: List[Dict[str, any]] | None = None
+    centros: List[Dict[str, Any]] | None = None
 
 
 class TotalIngresosResponseDTO(BaseModel):
@@ -21,7 +21,7 @@ class TotalIngresosResponseDTO(BaseModel):
 
 
 class PromedioIngresosResponseDTO(BaseModel):
-    promedio_ingresos: int | None = None
+    promedio_ingresos: float | None = None
 
 
 class TopIngresosResponseDTO(BaseModel):

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import List
 from src.dto import (
     IngresosPorAmbitoResponseDTO,
     IngresosPorCaserioResponseDTO,
@@ -31,7 +31,7 @@ class DashboardService(ABC):
     async def get_total_documents_by_centro_poblado(
         self,
         dashboard_request: DashboardFilterRequestDTO
-    ) -> List[Dict[IngresosPorCentroPobladoResponseDTO]]:
+    ) -> List[IngresosPorCentroPobladoResponseDTO]:
         pass
 
     @abstractmethod

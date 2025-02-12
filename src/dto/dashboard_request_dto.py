@@ -3,8 +3,8 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 class DashboardFilterRequestDTO(BaseModel):
     start_year: int | None = Field(None, description="Año de inicio. Si es nulo se utiliza el año actual.")
     end_year: int | None = Field(None, description="Año de fin. Si es nulo se utiliza el año actual.")
-    start_year_month: int | None = Field(None, description="Mes de inicio. Si es nulo se toma el valor 1")
-    end_year_month: int | None = Field(None, description="Mes de fin. Si es nulo se toma el valor 12")
+    start_month: int | None = Field(None, description="Mes de inicio. Si es nulo se toma el valor 1")
+    end_month: int | None = Field(None, description="Mes de fin. Si es nulo se toma el valor 12")
 
 
     @field_validator("start_year")
@@ -22,7 +22,7 @@ class DashboardFilterRequestDTO(BaseModel):
         return model
 
 
-    @field_validator("start_year_month")
+    @field_validator("start_month")
     def validate_start_year_month(cls, v):
         if v is not None and (v < 1 or v > 12):
             raise ValueError("El mes de inicio debe estar entre 1 y 12")
@@ -31,7 +31,7 @@ class DashboardFilterRequestDTO(BaseModel):
 
     @model_validator(mode="after")
     def validate_months(cls, model: "DashboardFilterRequestDTO"):
-        if model.start_year_month is not None and model.end_year_month is not None:
-            if model.end_year_month < model.start_year_month:
+        if model.start_month is not None and model.end_month is not None:
+            if model.end_month < model.start_month:
                 raise ValueError("El mes de fin no debe ser menor que el mes de inicio")
         return model
