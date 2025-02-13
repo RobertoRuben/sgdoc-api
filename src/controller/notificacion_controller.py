@@ -7,7 +7,7 @@ from src.service import NotificationService
 from src.service.imp import NotificacionServiceImp
 
 router = APIRouter(
-    prefix="/notificaciones",
+    prefix="/notifications",
     tags=["Notificaciones"]
 )
 
@@ -72,7 +72,7 @@ async def get_notificaciones_by_area_id(
 
 
 @router.put(
-    "/{notificacion_id}/leida",
+    "/{notification_id}/read",
     response_model=NotificacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -84,7 +84,7 @@ async def get_notificaciones_by_area_id(
     description="Marca una notificación como leída"
 )
 async def mark_notification_as_read(
-    notificacion_id: int,
+    notification_id: int,
     service: NotificationService = Depends(get_notificaction_service_imp)
 ):
-    return await service.mark_notification_as_read(notificacion_id)
+    return await service.mark_notification_as_read(notification_id)

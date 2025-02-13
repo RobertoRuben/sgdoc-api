@@ -33,7 +33,9 @@ class NotificacionRepository:
 
     async def get_notificaciones_by_area_destino_id(self, area_destino_id: int) -> List[Notificacion]:
         try:
-            statement = select(Notificacion).where(Notificacion.area_destino_id == area_destino_id)
+            statement = select(Notificacion).where(
+                (Notificacion.area_destino_id == area_destino_id) & (Notificacion.leido == False)
+            )
             result = await self.session.exec(statement)
             notificaciones = result.all()
             return notificaciones
