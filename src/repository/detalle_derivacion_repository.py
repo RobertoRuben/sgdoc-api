@@ -1,96 +1,126 @@
 from typing import List, Tuple, Optional
-from sqlmodel import  Session, select, func, or_
+from sqlmodel import select, func, or_
 from sqlalchemy.exc import SQLAlchemyError
+from sqlmodel.ext.asyncio.session import AsyncSession
+from fastapi import Depends
 from src.exception import DatabaseException
-from src.db.database import engine
-from src.model.entity.detalle_derivacion import DetalleDerivacion
-from src.model.entity.usuario import Usuario
+from src.db.database import get_async_session
+from src.model.entity import DetalleDerivacion, Usuario
 
 class DetalleDerivacionRepository:
+    def __init__(self, session: AsyncSession = Depends(get_async_session)):
+        self.session = session
 
-    @staticmethod
-    def add_detalle_derivacion(detalle_derivacion: DetalleDerivacion) -> DetalleDerivacion:
-        with Session(engine) as session:
-            try:
-                session.add(detalle_derivacion)
-                session.commit()
-                session.refresh(detalle_derivacion)
-                return detalle_derivacion
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al guardar el detalle de derivación en la base de datos") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al guardar el detalle de derivación en la base de datos") from e
-
-
-    @staticmethod
-    def get_all_by_derivacion_id(derivacion_id: int) -> List[Tuple[DetalleDerivacion, str]]:
-        with Session(engine) as session:
-            try:
-                query = (
-                    select(DetalleDerivacion, Usuario.nombre_usuario)
-                    .join(Usuario, DetalleDerivacion.usuario_id == Usuario.id, isouter=True)
-                    .where(DetalleDerivacion.derivacion_id == derivacion_id)
-                    .order_by(DetalleDerivacion.id.desc())
-                )
-                resultados = session.exec(query).all()
-                return list(resultados)
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al obtener los detalles de derivación de la base de datos") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al obtener los detalles de derivación de la base de datos") from e
+    async def add_detalle_derivacion(self, detalle_derivacion: DetalleDerivacion) -> DetalleDerivacion:
+        try:
+            self.session.add(detalle_derivacion)
+            await self.session.commit()
+            await self.session.refresh(detalle_derivacion)
+            return detalle_derivacion
+        except SQLAlchemyError as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                detail="Ocurrio un error al guardar el detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al guardar el detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def update_detalle_derivacion(detalle_derivacion: DetalleDerivacion) -> DetalleDerivacion:
-        with Session(engine) as session:
-            try:
-                session.add(detalle_derivacion)
-                session.commit()
-                session.refresh(detalle_derivacion)
-                return detalle_derivacion
-            except SQLAlchemyError as e:
-                session.rollback()
-                raise DatabaseException("Error al actualizar el detalle de derivación en la base de datos") from e
-            except Exception as e:
-                session.rollback()
-                raise DatabaseException("Error desconocido al actualizar el detalle de derivación en la base de datos") from e
+    async def get_all_by_derivacion_id(self, derivacion_id: int) -> List[Tuple[DetalleDerivacion, str]]:
+        try:
+            query = (
+                select(DetalleDerivacion, Usuario.nombre_usuario)
+                .join(Usuario, DetalleDerivacion.usuario_id == Usuario.id, isouter=True)
+                .where(DetalleDerivacion.derivacion_id == derivacion_id)
+                .order_by(DetalleDerivacion.id.desc())
+            )
+            result = await self.session.exec(query)
+            resultados = result.all()
+            return list(resultados)
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                detail="Ocurrio un error al obtener los detalles de derivación de la base de datos",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al obtener los detalles de derivación de la base de datos",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def delete_by_id(detalle_derivacion_id: int) -> None:
-        with Session(engine) as session:
-            try:
-                detalle_derivacion = session.get(DetalleDerivacion, detalle_derivacion_id)
-                if detalle_derivacion:
-                    session.delete(detalle_derivacion)
-                    session.commit()
-            except SQLAlchemyError as e:
-                session.rollback()
-                raise DatabaseException("Error al eliminar el detalle de derivación en la base de datos") from e
-            except Exception as e:
-                session.rollback()
-                raise DatabaseException("Error desconocido al eliminar el detalle de derivación en la base de datos") from e
+    async def update_detalle_derivacion(self, detalle_derivacion: DetalleDerivacion) -> DetalleDerivacion:
+        try:
+            self.session.add(detalle_derivacion)
+            await self.session.commit()
+            await self.session.refresh(detalle_derivacion)
+            return detalle_derivacion
+        except SQLAlchemyError as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                detail="Error al actualizar el detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                detail="Error desconocido al actualizar el detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def exists_detalle_derivacion_by_id(detalle_derivacion_id: int) -> bool:
-        with Session(engine) as session:
-            try:
-                exists = session.get(DetalleDerivacion, detalle_derivacion_id) is not None
-                return exists
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al verificar la existencia del detalle de derivación en la base de datos") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al verificar la existencia del detalle de derivación en la base de datos") from e
+    async def delete_by_id(self, detalle_derivacion_id: int) -> None:
+        try:
+            detalle_derivacion = await self.session.get(DetalleDerivacion, detalle_derivacion_id)
+            if detalle_derivacion:
+                await self.session.delete(detalle_derivacion)
+                await self.session.commit()
+        except SQLAlchemyError as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                detail="Ocurrio un error al eliminar el detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            await self.session.rollback()
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al eliminar el detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
 
 
-    @staticmethod
-    def get_by_id(detalle_derivacion_id: int) -> Optional[DetalleDerivacion]:
-        with Session(engine) as session:
-            try:
-                detalle_derivacion = session.get(DetalleDerivacion, detalle_derivacion_id)
-                return detalle_derivacion
-            except SQLAlchemyError as e:
-                raise DatabaseException("Error al obtener el detalle de derivación de la base de datos") from e
-            except Exception as e:
-                raise DatabaseException("Error desconocido al obtener el detalle de derivación de la base de datos") from e
+    async def exists_detalle_derivacion_by_id(self, detalle_derivacion_id: int) -> bool:
+        try:
+            detalle = await self.session.get(DetalleDerivacion, detalle_derivacion_id)
+            return detalle is not None
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                detail="Ocurrio un error al verificar la existencia del detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al verificar la existencia del detalle de derivación en la base de datos",
+                error_details=str(e)
+            ) from e
+
+
+    async def get_by_id(self, detalle_derivacion_id: int) -> Optional[DetalleDerivacion]:
+        try:
+            detalle_derivacion = await self.session.get(DetalleDerivacion, detalle_derivacion_id)
+            return detalle_derivacion
+        except SQLAlchemyError as e:
+            raise DatabaseException(
+                detail="Ocurrio un error al obtener el detalle de derivación de la base de datos",
+                error_details=str(e)
+            ) from e
+        except Exception as e:
+            raise DatabaseException(
+                detail="Ocurrio un error desconocido al obtener el detalle de derivación de la base de datos",
+                error_details=str(e)
+            ) from e

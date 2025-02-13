@@ -1,11 +1,17 @@
 from typing import List
 from fastapi import APIRouter, Depends
 from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema
-from src.dto.comunicacion_destino_response import ComunicacionDestinoResponse
-from src.dto.pagination_response import PaginatedResponse
-from src.service.comunicacion_area_service import ComunicacionAreaService
+from src.dto import PaginatedResponseDTO, ComunicacionDestinoResponseDTO
+from src.service import ComunicacionAreaService
+from src.service.imp import ComunicacionAreaServiceImp
 
-router = APIRouter(tags=["Comunicaciones entre Áreas"])
+def get_comunicacion_areas_imp(service: ComunicacionAreaServiceImp = Depends()) -> ComunicacionAreaService:
+    return service
+
+router = APIRouter(
+    prefix="/comunicaciones-area",
+    tags=["Comunicaciones entre Áreas"]
+)
 
 comunicaciones_area_tag_metadata={
     "name": "Comunicaciones entre Áreas",
@@ -14,8 +20,8 @@ comunicaciones_area_tag_metadata={
 }
 
 @router.get(
-    "/comunicaciones-area",
-    response_model=PaginatedResponse,
+    "",
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -23,13 +29,17 @@ comunicaciones_area_tag_metadata={
     },
     description="Obtiene todas las comunicaciones entre áreas"
 )
-async def get_all_comunicaciones_area(page: int = 1, page_size: int = 10, service: ComunicacionAreaService = Depends()):
-    return service.get_all(page, page_size)
+async def get_paginated_comunicaciones_area(
+    page: int = 1,
+    page_size: int = 10,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
+):
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
-    "/comunicaciones-area/{area_origen_id}/destinos",
-    response_model=List[ComunicacionDestinoResponse],
+    "/{area_origen_id}/destinos",
+    response_model=List[ComunicacionDestinoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -37,6 +47,8 @@ async def get_all_comunicaciones_area(page: int = 1, page_size: int = 10, servic
     },
     description="Obtiene las áreas destino por ID de área de origen"
 )
-async def get_areas_destino_by_area_origen_id(area_origen_id: int, service: ComunicacionAreaService = Depends()
+async def get_paginated_areas_destino_by_area_origen_id(
+    area_origen_id: int,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
 ):
-    return service.get_areas_destino_by_area_origen_id(area_origen_id)
+    return await service.get_paginated_destinos_by_area_origen_id(area_origen_id)

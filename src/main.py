@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Request, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request, Depends
 from contextlib import asynccontextmanager
 from src.exception.handlers import register_exception_handlers
-from src.db.database import create_db_and_tables
+from src.db.database import init_db
 from src.controller.auth_controller import get_current_user
 from src.controller.auth_controller import router as auth_router
+from src.controller.dashboard_controller import router as dashboard_router, dashboard_tag_metadata
 from src.controller.remitente_controller import router as remitente_router, remitentes_tag_metadata
-from src.controller.categoria_controller import router as categoria_router, categorias_tag_metadata
+from src.controller.categoria_documento_controller import router as categoria_router, categorias_tag_metadata
 from src.controller.ambito_controller import router as ambito_router, ambitos_tag_metadata
 from src.controller.centro_poblado_controller import router as centro_poblado_router, centros_poblados_tag_metadata
 from src.controller.caserio_controller import router as caserio_router, caserios_tag_metadata
@@ -21,21 +21,15 @@ from src.controller.detalle_derivacion_controller import router as detalle_deriv
 from src.controller.estado_documento_controller import router as estado_documento_router, estado_documento_tag_metadata
 from src.controller.dashboard_mesa_partes_controller import router as documents_by_current_date_router, documentos_by_current_date_tag_metadata
 from src.controller.notificacion_controller import router as notificacion_router, notificaciones_tag_metadata
+from src.middleware import configure_cors, ip_restriction_middleware
 from src.websocket.notificaciones_ws import router as notificaciones_ws_router
 import logging
 logging.basicConfig(level=logging.INFO)
 
-allowed_subnets = [
-    "127.0.0.1",
-    "192.168.1.",
-    "192.168.2.",
-    "172.23.32.",
-    "localhost",
-    "172.25.208.",
-    "172.27.32."
-]
+API_VERSION = "/api/v1"
 
 tags_metadata = [
+    dashboard_tag_metadata,
     remitentes_tag_metadata,
     categorias_tag_metadata,
     ambitos_tag_metadata,
@@ -56,7 +50,7 @@ tags_metadata = [
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    create_db_and_tables()
+    await init_db()
     yield
 
 app = FastAPI(
@@ -65,44 +59,47 @@ app = FastAPI(
     version="0.1.0",
     openapi_tags=tags_metadata,
     debug=True,
-    lifespan=lifespan
+    lifespan=lifespan,
+    contact={
+        "name": "Equipo de Desarrollo SGDOC",
+        "email": "soporte@sgdoc.com",
+        "url": "https://sgdoc.com/contacto",
+    },
+    license_info={
+        "name": "Licencia Comercial Propietaria",
+        "url": "https://sgdoc.com/terminos-de-licencia",
+    },
+    servers=[
+        {"url": "http://192.168.1.35:8000", "description": "Producción"},
+        {"url": "http://localhost:8000", "description": "Desarrollo"},
+    ],
+    terms_of_service="https://sgdoc.com/terminos-de-servicio",
 )
+
+@app.middleware("http")
+async def add_ip_restriction(request: Request, call_next):
+    return await ip_restriction_middleware(request, call_next)
+
+configure_cors(app)
 
 register_exception_handlers(app)
 
-@app.middleware("http")
-async def ip_restriction_middleware(request: Request, call_next):
-    client_ip = request.client.host
-    logging.info(f"Client IP: {client_ip}")
-    if not any(client_ip.startswith(subnet) for subnet in allowed_subnets):
-        logging.warning(f"Access denied for IP: {client_ip}")
-        raise HTTPException(status_code=403, detail="Access forbidden: your IP address is not allowed")
-    response = await call_next(request)
-    return response
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
-
-app.include_router(auth_router, prefix="/api/v1")
-app.include_router(remitente_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(categoria_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(ambito_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(centro_poblado_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(caserio_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(rol_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(area_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(comunicacion_area_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(trabajador_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(usuario_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(detalle_derivacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(estado_documento_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(documents_by_current_date_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(notificacion_router, prefix="/api/v1", dependencies=[Depends(get_current_user)])
-app.include_router(notificaciones_ws_router, prefix="/api/v1", tags=["WebSocket Notificaciones"])
+app.include_router(auth_router, prefix=API_VERSION)
+app.include_router(dashboard_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(remitente_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(categoria_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(ambito_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(centro_poblado_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(caserio_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(rol_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(area_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(comunicacion_area_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(trabajador_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(usuario_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(documento_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(derivacion_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(detalle_derivacion_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(estado_documento_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(documents_by_current_date_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(notificacion_router, prefix=API_VERSION, dependencies=[Depends(get_current_user)])
+app.include_router(notificaciones_ws_router, prefix=API_VERSION, tags=["WebSocket Notificaciones"])

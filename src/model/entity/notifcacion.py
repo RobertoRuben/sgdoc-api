@@ -1,5 +1,5 @@
-from sqlmodel import SQLModel, Field, Column, TIMESTAMP, Text
 from datetime import datetime
+from sqlmodel import SQLModel, Field, Column, TIMESTAMP, Text
 
 class Notificacion(SQLModel, table=True):
     __tablename__ = "notificaciones"

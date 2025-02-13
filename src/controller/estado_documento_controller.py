@@ -1,13 +1,15 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema, ValidationErrorResponseSchema
-from src.dto.pagination_response import PaginatedResponse
-from src.dto.estado_documento_request import EstadoDocumentoRequest
-from src.dto.estado_documento_response import EstadoDocumentoResponse
-from src.service.estado_documento_service import EstadoDocumentoService
+from src.schemas import *
+from src.dto import EstadoDocumentoRequestDTO, EstadoDocumentoResponseDTO, PaginatedResponseDTO
+from src.service import EstadoDocumentoService
+from src.service.imp import EstadoDocumentoServiceImp
 
-router = APIRouter(tags=["Estados de Documento"])
+router = APIRouter(
+    prefix="/estados-documento",
+    tags=["Estados de Documento"]
+)
 
 estado_documento_tag_metadata={
     "name": "Estados de Documento",
@@ -15,9 +17,13 @@ estado_documento_tag_metadata={
                    " creación, recuperación, actualización, eliminación y búsqueda de registros de estados de documentos.",
 }
 
+
+def get_estado_documento_service_imp(service: EstadoDocumentoServiceImp = Depends()) -> EstadoDocumentoService:
+    return service
+
 @router.post(
-    "/estados-documento",
-    response_model=EstadoDocumentoResponse,
+    "",
+    response_model=EstadoDocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -27,13 +33,16 @@ estado_documento_tag_metadata={
     },
     description="Crea un nuevo estado de documento"
 )
-async def add_estado_documento(estado_documento_request: EstadoDocumentoRequest, service: EstadoDocumentoService = Depends()):
-    return service.add_estado_documento(estado_documento_request)
+async def add_estado_documento(
+    estado_documento_request: EstadoDocumentoRequestDTO,
+    service: EstadoDocumentoService = Depends(get_estado_documento_service_imp)
+):
+    return await service.add(estado_documento_request)
 
 
 @router.get(
-    "/estados-documento",
-    response_model=PaginatedResponse,
+    "",
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -44,14 +53,15 @@ async def add_estado_documento(estado_documento_request: EstadoDocumentoRequest,
 async def get_all_estado_documento(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: EstadoDocumentoService = Depends()
+    service: EstadoDocumentoService = Depends(get_estado_documento_service_imp)
 ):
-    return service.get_all_estado_documento(page, page_size)
+    return await service.get_all(page, page_size)
+
 
 
 @router.put(
-    "/estados-documento/{estado_documento_id}",
-    response_model=EstadoDocumentoResponse,
+    "/{estado_documento_id}",
+    response_model=EstadoDocumentoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -62,12 +72,16 @@ async def get_all_estado_documento(
     },
     description="Actualiza un estado de documento"
 )
-async def update_estado_documento(estado_documento_id: int, estado_documento_request: EstadoDocumentoRequest, service: EstadoDocumentoService = Depends()):
-    return service.update_estado_documento(estado_documento_id, estado_documento_request)
+async def update_estado_documento(
+    estado_documento_id: int,
+    estado_documento_request: EstadoDocumentoRequestDTO,
+    service: EstadoDocumentoService = Depends(get_estado_documento_service_imp)
+):
+    return await service.update(estado_documento_id, estado_documento_request)
 
 
 @router.delete(
-    "/estados-documento/{estado_documento_id}",
+    "/{estado_documento_id}",
     response_model=DeleteSuccessfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -77,9 +91,15 @@ async def update_estado_documento(estado_documento_id: int, estado_documento_req
     },
     description="Elimina un estado de documento"
 )
-async def delete_estado_documento(estado_documento_id: int, service: EstadoDocumentoService = Depends()):
-    service.delete_documento(estado_documento_id)
-    return JSONResponse(content={"message": "Se eliminó el estado de documento correctamente"}, status_code=200)
+async def delete_estado_documento(
+    estado_documento_id: int,
+    service: EstadoDocumentoService = Depends(get_estado_documento_service_imp)
+):
+    await service.delete_by_id(estado_documento_id)
+    return JSONResponse(
+        content={"message": "Se eliminó el estado de documento correctamente"},
+        status_code=200
+    )
 
 
 @router.get(
@@ -89,8 +109,8 @@ async def delete_estado_documento(estado_documento_id: int, service: EstadoDocum
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
-    response_model=List[EstadoDocumentoResponse],
+    response_model=List[EstadoDocumentoResponseDTO],
     description="Obtiene todos los estados de documento por ID de documento"
 )
-async def get_all_by_documento_id(documento_id: int, service: EstadoDocumentoService = Depends()):
-    return service.get_all_by_id(documento_id)
+async def get_all_by_documento_id(documento_id: int, service: EstadoDocumentoServiceImp = Depends()):
+    return service.get_all_by_documento_id(documento_id)

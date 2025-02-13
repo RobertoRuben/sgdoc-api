@@ -1,92 +1,33 @@
+from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from fastapi import Depends
-from src.exception import ConflictException, NotFoundException
-from src.model.entity.ambito import Ambito
-from src.dto.ambito_request import AmbitoRequest
-from src.dto.ambito_response import AmbitoResponse
-from src.repository.ambito_repository import AmbitoRepository
+from src.dto import AmbitoRequestDTO, AmbitoResponseDTO
 
-class AmbitoService:
+class AmbitoService(ABC):
 
-    def __init__(self, ambito_repository: AmbitoRepository = Depends()):
-        self.ambito_repository = ambito_repository
+    @abstractmethod
+    async def add(self, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
+        pass
 
+    @abstractmethod
+    async def get_all(self) -> List[AmbitoResponseDTO]:
+        pass
 
-    def add_ambito(self, ambito_request: AmbitoRequest) -> AmbitoResponse:
-        if self.ambito_repository.exists(ambito_request.nombre_ambito):
-            raise ConflictException("El ambito ya existe en la base de datos")
+    @abstractmethod
+    async def update(self, ambito_id: int, ambito_request: AmbitoRequestDTO) -> AmbitoResponseDTO:
+        pass
 
-        new_ambito = Ambito(
-            nombre_ambito=ambito_request.nombre_ambito
-        )
-        created_ambito = self.ambito_repository.add_ambito(new_ambito)
+    @abstractmethod
+    async def delete_by_id(self, ambito_id: int) -> None:
+        pass
 
-        return AmbitoResponse(
-            id=created_ambito.id,
-            nombre_ambito=created_ambito.nombre_ambito
-        )
+    @abstractmethod
+    async def find(self, search_string: str) -> List[AmbitoResponseDTO]:
+        pass
 
+    @abstractmethod
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+        pass
 
-    def get_all_ambitos(self) -> List[AmbitoResponse]:
-        ambitos = self.ambito_repository.get_all_ambient()
-        return [
-            AmbitoResponse(
-                id=ambito.id,
-                nombre_ambito=ambito.nombre_ambito
-            ) for ambito in ambitos
-        ]
-
-
-    def update_ambito(self, ambito_id: int, ambito_request: AmbitoRequest) -> AmbitoResponse:
-        ambito = self.ambito_repository.get_ambito_by_id(ambito_id)
-        if not ambito:
-            raise NotFoundException("Ambito no encontrado")
-
-        if ambito.nombre_ambito == ambito_request.nombre_ambito:
-            return AmbitoResponse(
-                id=ambito.id,
-                nombre_ambito=ambito.nombre_ambito
-            )
-
-        if self.ambito_repository.exists(ambito_request.nombre_ambito):
-            raise ConflictException("El ambito ya existe en la base de datos")
-
-        ambito.nombre_ambito = ambito_request.nombre_ambito
-        updated_ambito = self.ambito_repository.update_ambito(ambito)
-
-        return AmbitoResponse(
-            id=updated_ambito.id,
-            nombre_ambito=updated_ambito.nombre_ambito
-        )
-
-
-    def delete_ambito(self, ambito_id: int) -> None:
-        ambito = self.ambito_repository.get_ambito_by_id(ambito_id)
-        if not ambito:
-            raise NotFoundException("Ambito no encontrado")
-
-        self.ambito_repository.delete_ambito_by_id(ambito_id)
-
-
-    def find_ambito_by_string(self, search_string: str) -> List[AmbitoResponse]:
-        ambitos = self.ambito_repository.find_by_string(search_string)
-        return [
-            AmbitoResponse(
-                id=ambito.id,
-                nombre_ambito=ambito.nombre_ambito
-            ) for ambito in ambitos
-        ]
-
-
-    def get_ambitos_by_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
-        return self.ambito_repository.get_all_pagination(page, page_size)
-
-
-    def get_ambitos_by_id(self, ambito_id: int) -> AmbitoResponse:
-        ambito = self.ambito_repository.get_ambito_by_id(ambito_id)
-        if not ambito:
-            raise NotFoundException("Ambito no encontrado")
-        return AmbitoResponse(
-            id=ambito.id,
-            nombre_ambito=ambito.nombre_ambito
-        )
+    @abstractmethod
+    async def get_by_id(self, ambito_id: int) -> AmbitoResponseDTO:
+        pass

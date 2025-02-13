@@ -1,13 +1,18 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.dto.caserio_request import CaserioRequest
-from src.dto.caserio_response import CaserioResponse, CaserioResponseWithCentroPobladoId, CaserioSimpleResponse
-from src.dto.pagination_response import PaginatedResponse
-from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.service.caserio_service import CaserioService
+from src.dto import CaserioRequestDTO, CaserioResponseDTO, PaginatedResponseDTO
+from src.schemas import *
+from src.service import CaserioService
+from src.service.imp import CaserioServiceImp
 
-router = APIRouter(tags=["Caserios"])
+def get_ambito_service_imp(service: CaserioServiceImp = Depends()) -> CaserioService:
+    return service
+
+router = APIRouter(
+    prefix="/caserios",
+    tags=["Caserios"]
+)
 
 caserios_tag_metadata = {
     "name": "Caserios",
@@ -19,8 +24,8 @@ caserios_tag_metadata = {
 }
 
 @router.post(
-    "/caserios",
-    response_model=CaserioResponseWithCentroPobladoId,
+    "",
+    response_model=CaserioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -30,13 +35,13 @@ caserios_tag_metadata = {
     },
     description="Crea un nuevo caserio"
 )
-async def add_caserio(caserio_request: CaserioRequest, service: CaserioService = Depends()):
-    return service.add_caserio(caserio_request)
+async def add_caserio(caserio_request: CaserioRequestDTO, service: CaserioService = Depends(get_ambito_service_imp)):
+    return await service.add(caserio_request)
 
 
 @router.get(
-    "/caserios",
-    response_model=List[CaserioResponseWithCentroPobladoId],
+    "",
+    response_model=List[CaserioResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -46,14 +51,14 @@ async def add_caserio(caserio_request: CaserioRequest, service: CaserioService =
 )
 async def get_caserios_by_centro_poblado_id(
     centro_poblado_id: int | None = Query(None, description="ID del centro poblado para filtrar caserios"),
-    service: CaserioService = Depends()
+    service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return service.get_all_caserios_by_centro_poblado_id(centro_poblado_id)
+    return await service.get_all_by_centro_poblado_id(centro_poblado_id)
 
 
 @router.get(
-    "/caserios/names",
-    response_model=List[CaserioSimpleResponse],
+    "/names",
+    response_model=List[CaserioResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -61,13 +66,13 @@ async def get_caserios_by_centro_poblado_id(
     },
     description="Obtiene los nombres de todos los caserios"
 )
-async def get_caserios_names(service: CaserioService = Depends()):
-    return service.get_caserios_names()
+async def get_caserios_names(service: CaserioService = Depends(get_ambito_service_imp)):
+    return await service.get_names()
 
 
 @router.get(
-    "/caserios/search",
-    response_model=List[CaserioResponse],
+    "/search",
+    response_model=List[CaserioResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -76,16 +81,16 @@ async def get_caserios_names(service: CaserioService = Depends()):
     },
     description="Busca caserios por nombre"
 )
-async def search_caserios_by_name(
+async def search_caserios(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar caserios"),
-    service: CaserioService = Depends()
+    service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return service.find_by_string(search_string)
+    return await service.find(search_string)
 
 
 @router.get(
-    "/caserios/paginated",
-    response_model=PaginatedResponse,
+    "/paginated",
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -96,14 +101,14 @@ async def search_caserios_by_name(
 async def get_paginated_caserios(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: CaserioService = Depends()
+    service: CaserioService = Depends(get_ambito_service_imp)
 ):
-    return service.get_all_caserios_by_pagination(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
-    "/caserios/{caserio_id}",
-    response_model=CaserioResponseWithCentroPobladoId,
+    "/{caserio_id}",
+    response_model=CaserioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -112,13 +117,13 @@ async def get_paginated_caserios(
     },
     description="Obtiene un caserio por su ID"
 )
-async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends()):
-    return service.get_caserio_by_id(caserio_id)
+async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends(get_ambito_service_imp)):
+    return await service.get_by_id(caserio_id)
 
 
 @router.put(
-    "/caserios/{caserio_id}",
-    response_model=CaserioResponseWithCentroPobladoId,
+    "/{caserio_id}",
+    response_model=CaserioResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -129,12 +134,16 @@ async def get_caserio_by_id(caserio_id: int, service: CaserioService = Depends()
     },
     description="Actualiza un caserio"
 )
-async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, service: CaserioService = Depends()):
-    return service.update_caserio(caserio_id, caserio_request)
+async def update_caserio(
+    caserio_id: int,
+    caserio_request: CaserioRequestDTO,
+    service: CaserioService = Depends(get_ambito_service_imp)
+):
+    return await service.update(caserio_id, caserio_request)
 
 
 @router.delete(
-    "/caserios/{caserio_id}",
+    "/{caserio_id}",
     response_model=DeleteSuccessfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -144,6 +153,9 @@ async def update_caserio(caserio_id: int, caserio_request: CaserioRequest, servi
     },
     description="Elimina un caserio"
 )
-async def delete_caserio_by_id(caserio_id: int, service: CaserioService = Depends()):
-    service.delete_caserio_by_id(caserio_id)
-    return JSONResponse(content={"message": "Se eliminó el caserio correctamente"}, status_code=200)
+async def delete_caserio_by_id(caserio_id: int, service: CaserioService = Depends(get_ambito_service_imp)):
+    await service.delete_by_id(caserio_id)
+    return JSONResponse(
+        content={"message": "Se eliminó el caserio correctamente"},
+        status_code=200
+    )

@@ -1,134 +1,33 @@
+from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from fastapi import Depends
-from src.exception import ConflictException, NotFoundException
-from src.model.entity.remitente import Remitente
-from src.dto.remitente_request import RemitenteRequest
-from src.dto.remitente_response import RemitenteResponse
-from src.repository.remitente_repository import RemitenteRepository
+from src.dto import RemitenteRequestDTO, RemitenteResponseDTO
 
+class RemitenteService(ABC):
 
-class RemitenteService:
+    @abstractmethod
+    async def add(self, remitente_request: RemitenteRequestDTO) -> RemitenteResponseDTO:
+        pass
 
-    def __init__(self, remitente_repository: RemitenteRepository = Depends()):
-        self.remitente_repository = remitente_repository
+    @abstractmethod
+    async def get_all(self) -> List[RemitenteResponseDTO]:
+        pass
 
-    def add_remitente(self, remitente_request: RemitenteRequest) -> RemitenteResponse:
-        if self.remitente_repository.exists(remitente_request.dni):
-            raise ConflictException("El DNI ya existe en la base de datos")
+    @abstractmethod
+    async def update(self, remitente_id: int, remitente_request: RemitenteRequestDTO) -> RemitenteResponseDTO:
+        pass
 
-        new_remitente = Remitente(
-            dni = remitente_request.dni,
-            nombres= remitente_request.nombres,
-            apellido_paterno=remitente_request.apellido_paterno,
-            apellido_materno= remitente_request.apellido_materno,
-            genero= remitente_request.genero
-        )
+    @abstractmethod
+    async def delete_by_id(self, remitente_id: int) -> None:
+        pass
 
-        created_remitente = self.remitente_repository.add_remitentes(new_remitente)
+    @abstractmethod
+    async def find(self, search_string: str) -> List[RemitenteResponseDTO]:
+        pass
 
-        return RemitenteResponse(
-            id=created_remitente.id,
-            dni=created_remitente.dni,
-            nombres=created_remitente.nombres,
-            apellido_paterno=created_remitente.apellido_paterno,
-            apellido_materno=created_remitente.apellido_materno,
-            genero=created_remitente.genero
-        )
+    @abstractmethod
+    async def get_by_id(self, remitente_id: int) -> RemitenteResponseDTO:
+        pass
 
-
-    def get_remitentes(self) -> List[RemitenteResponse]:
-        remitentes = self.remitente_repository.get_all()
-
-        return [
-            RemitenteResponse(
-                id=remitente.id,
-                dni=remitente.dni,
-                nombres=remitente.nombres,
-                apellido_paterno=remitente.apellido_paterno,
-                apellido_materno=remitente.apellido_materno,
-                genero=remitente.genero
-            ) for remitente in remitentes
-        ]
-
-
-    def update_remitente(self, remitente_id: int, remitente_request: RemitenteRequest) -> RemitenteResponse:
-        remitente = self.remitente_repository.get_by_id(remitente_id)
-
-        if not remitente:
-            raise NotFoundException("Remitente no encontrado")
-
-        if remitente.dni == remitente_request.dni:
-            return RemitenteResponse(
-                id=remitente.id,
-                dni=remitente.dni,
-                nombres=remitente.nombres,
-                apellido_paterno=remitente.apellido_paterno,
-                apellido_materno=remitente.apellido_materno,
-                genero=remitente.genero
-            )
-
-        if self.remitente_repository.exists(remitente_request.dni):
-            raise NotFoundException("El DNI ya existe en la base de datos")
-
-        remitente.dni = remitente_request.dni
-        remitente.nombres = remitente_request.nombres
-        remitente.apellido_paterno = remitente_request.apellido_paterno
-        remitente.apellido_materno = remitente_request.apellido_materno
-        remitente.genero = remitente_request.genero
-
-        updated_remitente = self.remitente_repository.update_remitente(remitente)
-
-        return RemitenteResponse(
-            id=updated_remitente.id,
-            dni=updated_remitente.dni,
-            nombres=updated_remitente.nombres,
-            apellido_paterno=updated_remitente.apellido_paterno,
-            apellido_materno=updated_remitente.apellido_materno,
-            genero=updated_remitente.genero
-        )
-
-
-    def delete_remitente(self, remitente_id: int) -> None:
-        remitente = self.remitente_repository.get_by_id(remitente_id)
-        if not remitente:
-            raise NotFoundException("Remitente no encontrado")
-
-        self.remitente_repository.delete_by_id(remitente_id)
-
-
-    def find_remitentes_by_string(self, search_string: str) -> List[RemitenteResponse]:
-        remitentes = self.remitente_repository.find_by_string(search_string)
-
-        if not remitentes:
-            raise NotFoundException("No se encontraron remitentes con la cadena de búsqueda")
-
-        return [
-            RemitenteResponse(
-                id=remitente.id,
-                dni=remitente.dni,
-                nombres=remitente.nombres,
-                apellido_paterno=remitente.apellido_paterno,
-                apellido_materno=remitente.apellido_materno,
-                genero=remitente.genero
-            ) for remitente in remitentes
-        ]
-
-
-    def get_remitente_by_id(self, remitente_id: int) -> RemitenteResponse:
-        remitente = self.remitente_repository.get_by_id(remitente_id)
-
-        if not remitente:
-            raise NotFoundException("Remitente no encontrado")
-
-        return RemitenteResponse(
-            id=remitente.id,
-            dni=remitente.dni,
-            nombres=remitente.nombres,
-            apellido_paterno=remitente.apellido_paterno,
-            apellido_materno=remitente.apellido_materno,
-            genero=remitente.genero
-        )
-
-
-    def get_remitentes_with_pagination(self, page: int, page_size: int) -> Dict[str, Any]:
-        return RemitenteRepository.get_all_pagination(page, page_size)
+    @abstractmethod
+    async def get_paginated(self, page: int, page_size: int) -> Dict[str, Any]:
+        pass

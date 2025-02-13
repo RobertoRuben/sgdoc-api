@@ -2,14 +2,14 @@ from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
 from src.schemas import *
-from src.dto.trabajador_response import TrabajadorResponse
-from src.dto.trabajador_request import TrabajadorRequest
-from src.dto.trabajador_simple_response import TrabajadorSimpleReponse
-from src.dto.trabajador_detail_response import TrabajadorDetailResponse
-from src.dto.pagination_response import PaginatedResponse
-from src.service.trabajador_service import TrabajadorService
+from src.dto import TrabajadorRequestDTO, TrabajadorResponseDTO, PaginatedResponseDTO
+from src.service import TrabajadorService
+from src.service.imp import TrabajadorServiceImp
 
-router = APIRouter(tags=["Trabajadores"])
+router = APIRouter(
+    prefix="/trabajadores",
+    tags=["Trabajadores"]
+)
 
 trabajadores_tag_metadata={
     "name": "Trabajadores",
@@ -18,9 +18,14 @@ trabajadores_tag_metadata={
                    " ofrece funcionalidades de paginación y conteo de registros.",
 }
 
+
+def get_trabajador_service_imp(service: TrabajadorServiceImp = Depends()) -> TrabajadorService:
+    return service
+
+
 @router.post(
-    "/trabajadores",
-    response_model=TrabajadorResponse,
+    "",
+    response_model=TrabajadorResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -30,13 +35,15 @@ trabajadores_tag_metadata={
     },
     description="Crea un nuevo trabajador"
 )
-async def add_trabajador(trabajador_request: TrabajadorRequest, service: TrabajadorService = Depends()):
-    return service.add_trabajador(trabajador_request)
+async def add_trabajador(
+    trabajador_request: TrabajadorRequestDTO,
+    service: TrabajadorService = Depends(get_trabajador_service_imp)):
+    return await service.add(trabajador_request)
 
 
 @router.get(
-    "/trabajadores/names",
-    response_model=List[TrabajadorSimpleReponse],
+    "/ids-and-names",
+    response_model=List[TrabajadorResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -44,13 +51,13 @@ async def add_trabajador(trabajador_request: TrabajadorRequest, service: Trabaja
     },
     description="Obtiene el id y nombres concatenados de los trabajadores"
 )
-async def get_all_trabajadores(service: TrabajadorService = Depends()):
-    return service.get_all_id_and_trabajador_name()
+async def get_ids_and_names(service: TrabajadorService = Depends(get_trabajador_service_imp)):
+    return await service.get_all_ids_and_names()
 
 
 @router.get(
-    "/trabajadores/search",
-    response_model=List[TrabajadorDetailResponse],
+    "/search",
+    response_model=List[TrabajadorResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -58,16 +65,16 @@ async def get_all_trabajadores(service: TrabajadorService = Depends()):
     },
     description="Busca trabajadores por nombre"
 )
-async def find_by_string(
+async def search_trabajador(
     search_string: str = Query(..., description="Nombre del trabajador a buscar"),
-    service: TrabajadorService = Depends()
+    service: TrabajadorService = Depends(get_trabajador_service_imp)
 ):
-    return service.find_by_string(search_string)
+    return await service.find(search_string)
 
 
 @router.get(
-    "/trabajadores/paginated",
-    response_model=PaginatedResponse,
+    "/paginated",
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -78,14 +85,14 @@ async def find_by_string(
 async def get_paginated_trabajadores(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: TrabajadorService = Depends()
+    service: TrabajadorService = Depends(get_trabajador_service_imp)
 ):
-    return service.get_all_trabajadores_by_pagination(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
-    "/trabajadores/{trabajador_id}",
-    response_model=TrabajadorResponse,
+    "/{trabajador_id}",
+    response_model=TrabajadorResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -93,13 +100,16 @@ async def get_paginated_trabajadores(
     },
     description="Obtiene un trabajador por id"
 )
-async def get_trabajador_by_id(trabajador_id: int, service: TrabajadorService = Depends()):
-    return service.get_trabajador_by_id(trabajador_id)
+async def get_trabajador_by_id(
+    trabajador_id: int,
+    service: TrabajadorService = Depends(get_trabajador_service_imp)
+):
+    return await service.get_by_id(trabajador_id)
 
 
 @router.put(
-    "/trabajadores/{trabajador_id}",
-    response_model=TrabajadorResponse,
+    "/{trabajador_id}",
+    response_model=TrabajadorResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -110,8 +120,12 @@ async def get_trabajador_by_id(trabajador_id: int, service: TrabajadorService = 
     },
     description="Actualiza un trabajador"
 )
-async def update_trabajador(trabajador_id: int, trabajador_request: TrabajadorRequest, service: TrabajadorService = Depends()):
-    return service.update_trabajador(trabajador_id, trabajador_request)
+async def update_trabajador(
+    trabajador_id: int,
+    trabajador_request: TrabajadorRequestDTO,
+    service: TrabajadorService = Depends(get_trabajador_service_imp)
+):
+    return await service.update(trabajador_id, trabajador_request)
 
 
 @router.delete(
@@ -125,9 +139,15 @@ async def update_trabajador(trabajador_id: int, trabajador_request: TrabajadorRe
     },
     description="Elimina un trabajador"
 )
-async def delete_trabajador(trabajador_id: int, service: TrabajadorService = Depends()):
-    service.delete_trabajador(trabajador_id)
-    return JSONResponse(status_code=200, content={"message": "Trabajador eliminado correctamente"})
+async def delete_trabajador(
+    trabajador_id: int,
+    service: TrabajadorService = Depends(get_trabajador_service_imp)
+):
+    await service.delete_by_id(trabajador_id)
+    return JSONResponse(
+        status_code=200,
+        content={"message": "Trabajador eliminado correctamente"}
+    )
 
 
 

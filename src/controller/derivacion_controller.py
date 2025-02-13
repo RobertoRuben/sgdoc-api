@@ -1,13 +1,19 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.dto.pagination_response import PaginatedResponse
-from src.dto.derivacion_request import DerivacionRequest
-from src.dto.derivacion_response import DerivacionResponse
-from src.service.derivacion_service import DerivacionService
+from src.schemas import *
+from src.dto import PaginatedResponseDTO, DerivacionRequestDTO, DerivacionResponseDTO
+from src.service import DerivacionService
+from src.service.imp import DerivacionServiceImp
 
-router = APIRouter(tags=["Derivaciones"])
+
+def get_derivacion_service_imp(service: DerivacionServiceImp = Depends()) -> DerivacionService:
+    return service
+
+router = APIRouter(
+    prefix="/derivaciones",
+    tags=["Derivaciones"]
+)
 
 derivaciones_tag_metadata={
     "name": "Derivaciones",
@@ -16,9 +22,10 @@ derivaciones_tag_metadata={
                    " ofrece funcionalidades de paginación y conteo de registros.",
 }
 
+
 @router.get(
-    "/derivaciones",
-    response_model=PaginatedResponse,
+    "",
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -26,15 +33,15 @@ derivaciones_tag_metadata={
     },
     description="Obtiene todas las derivaciones con filtros opcionales y paginación"
 )
-async def get_derivaciones(
+async def get_paginated_derivaciones(
     page: int = Query(1, ge=1, description="Número de página"),
     page_size: int = Query(10, ge=1, le=100, description="Tamaño de página"),
     fecha: Optional[str] = Query(None, description="Filtro por fecha (formato: YYYY-MM-DD)"),
     estado: Optional[str] = Query(None, description="Filtro por estado de la derivación"),
     documento_id: Optional[int] = Query(None, description="Filtro por ID del documento"),
-    service: DerivacionService = Depends()
+    service: DerivacionService = Depends(get_derivacion_service_imp)
 ):
-    return service.get_all_derivaciones(
+    return await service.get_paginated(
         page=page,
         page_size=page_size,
         fecha_filtro=fecha,
@@ -44,8 +51,8 @@ async def get_derivaciones(
 
 
 @router.post(
-    "/derivaciones",
-    response_model=DerivacionResponse,
+    "",
+    response_model=DerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -55,13 +62,16 @@ async def get_derivaciones(
     },
     description="Crea una nueva derivación"
 )
-async def add_derivacion(derivacion_request: DerivacionRequest, service: DerivacionService = Depends()):
-    return service.add_derivacion(derivacion_request)
+async def add_derivacion(
+    derivacion_request: DerivacionRequestDTO,
+    service: DerivacionService = Depends(get_derivacion_service_imp)
+):
+    return await service.add(derivacion_request)
 
 
 @router.put(
-    "/derivaciones/{derivacion_id}",
-    response_model=DerivacionResponse,
+    "/{derivacion_id}",
+    response_model=DerivacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -70,13 +80,18 @@ async def add_derivacion(derivacion_request: DerivacionRequest, service: Derivac
         422: {"description": "Error de validación", "model": ValidationErrorResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
-    description="Actualiza una derivación")
-async def update_derivacion(derivacion_id: int, derivacion_request: DerivacionRequest, service: DerivacionService = Depends()):
-    return service.update_derivacion(derivacion_id, derivacion_request)
+    description="Actualiza una derivación"
+)
+async def update_derivacion(
+    derivacion_id: int,
+    derivacion_request: DerivacionRequestDTO,
+    service: DerivacionService = Depends(get_derivacion_service_imp)
+):
+    return await service.update(derivacion_id, derivacion_request)
 
 
 @router.delete(
-    "/derivaciones/{derivacion_id}",
+    "/{derivacion_id}",
     response_model=DeleteSuccessfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -84,7 +99,14 @@ async def update_derivacion(derivacion_id: int, derivacion_request: DerivacionRe
         404: {"description": "Recurso no encontrado", "model": ErrorResponseSchema},
         500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
     },
-    description="Elimina una derivación")
-async def delete_derivacion(derivacion_id: int, service: DerivacionService = Depends()):
-    service.delete_derivacion(derivacion_id)
-    return JSONResponse(content={"message": "Se eliminó la derivación correctamente"}, status_code=200)
+    description="Elimina una derivación"
+)
+async def delete_derivacion_by_id(
+    derivacion_id: int,
+    service: DerivacionService = Depends(get_derivacion_service_imp)
+):
+    await service.delete_by_id(derivacion_id)
+    return JSONResponse(
+        content={"message": "Se eliminó la derivación correctamente"},
+        status_code=200
+    )

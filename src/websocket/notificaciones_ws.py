@@ -3,7 +3,7 @@ from src.websocket.manager import manager
 
 router = APIRouter()
 
-@router.websocket("/ws/notificaciones/{area_id}")
+@router.websocket("/ws/notifications/{area_id}")
 async def websocket_notificaciones(websocket: WebSocket, area_id: int):
     await manager.connect(websocket, area_id)
     try:

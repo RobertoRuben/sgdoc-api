@@ -1,26 +1,31 @@
 from typing import List
 from fastapi import APIRouter, Depends, Query
 from fastapi.responses import JSONResponse
-from src.dto.ambito_request import AmbitoRequest
-from src.dto.ambito_response import AmbitoResponse
-from src.dto.pagination_response import PaginatedResponse
-from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema, DeleteSuccessfulResponseSchema
-from src.service.ambito_service import AmbitoService
+from src.dto import AmbitoRequestDTO, AmbitoResponseDTO, PaginatedResponseDTO
+from src.schemas import *
+from src.service.imp import AmbitoServiceImp
+from src.service import AmbitoService
 
-router = APIRouter(tags=["Ambitos"])
+def get_ambito_service_imp(service: AmbitoServiceImp = Depends()) -> AmbitoService:
+    return service
+
+
+router = APIRouter(
+    prefix="/ambitos",
+    tags=["Ambitos"]
+)
 
 ambitos_tag_metadata = {
     "name": "Ambitos",
     "description": (
-        "Esta sección proporciona los endpoints para gestionar la entidad de Ambito, "
-        "incluyendo la creación, recuperación, actualización, eliminación y búsqueda de registros "
-        "de ambitos documentales."
+        "Esta sección proporciona los endpoints para gestionar la entidad de Ambito Documental, incluyendo la "
+        "creación, recuperación, actualización, eliminación y búsqueda de registros de ambitos documentales."
     ),
 }
 
 @router.post(
-    "/ambitos",
-    response_model=AmbitoResponse,
+    "",
+    response_model=AmbitoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -30,13 +35,13 @@ ambitos_tag_metadata = {
     },
     description="Crea un nuevo ambito documental"
 )
-async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Depends()):
-    return service.add_ambito(ambito_request)
+async def add_ambito(ambito_request: AmbitoRequestDTO, service: AmbitoService = Depends(get_ambito_service_imp)):
+    return await service.add(ambito_request)
 
 
 @router.get(
-    "/ambitos",
-    response_model=List[AmbitoResponse],
+    "",
+    response_model=List[AmbitoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -44,13 +49,13 @@ async def add_ambito(ambito_request: AmbitoRequest, service: AmbitoService = Dep
     },
     description="Obtiene todos los ambitos documentales"
 )
-async def get_ambitos(service: AmbitoService = Depends()):
-    return service.get_all_ambitos()
+async def get_ambitos(service: AmbitoService = Depends(get_ambito_service_imp)):
+    return await service.get_all()
 
 
 @router.get(
-    "/ambitos/paginated",
-    response_model=PaginatedResponse,
+    "/paginated",
+    response_model=PaginatedResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -61,14 +66,14 @@ async def get_ambitos(service: AmbitoService = Depends()):
 async def get_paginated_ambitos(
     page: int = Query(1, description="Número de página a recuperar"),
     page_size: int = Query(10, description="Número de registros por página"),
-    service: AmbitoService = Depends()
+    service: AmbitoService = Depends(get_ambito_service_imp)
 ):
-    return service.get_ambitos_by_pagination(page, page_size)
+    return await service.get_paginated(page, page_size)
 
 
 @router.get(
-    "/ambitos/search",
-    response_model=List[AmbitoResponse],
+    "/search",
+    response_model=List[AmbitoResponseDTO],
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -78,14 +83,14 @@ async def get_paginated_ambitos(
 )
 async def search_ambitos(
     search_string: str = Query(..., min_length=1, description="Cadena de búsqueda para encontrar ambitos documentales"),
-    service: AmbitoService = Depends()
+    service: AmbitoService = Depends(get_ambito_service_imp)
 ):
-    return service.find_ambito_by_string(search_string)
+    return await service.find(search_string)
 
 
 @router.put(
-    "/ambitos/{ambito_id}",
-    response_model=AmbitoResponse,
+    "/{ambito_id}",
+    response_model=AmbitoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -96,12 +101,13 @@ async def search_ambitos(
     },
     description="Actualiza un ambito documental"
 )
-async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: AmbitoService = Depends()):
-    return service.update_ambito(ambito_id, ambito_request)
+async def update_ambito(ambito_id: int, ambito_request: AmbitoRequestDTO, service: AmbitoService = Depends(get_ambito_service_imp)):
+    return await service.update(ambito_id, ambito_request)
 
 
 @router.delete(
-    "/ambitos/{ambito_id}", response_model=DeleteSuccessfulResponseSchema,
+    "/{ambito_id}",
+    response_model=DeleteSuccessfulResponseSchema,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -110,14 +116,17 @@ async def update_ambito(ambito_id: int, ambito_request: AmbitoRequest, service: 
     },
     description="Elimina un ambito documental"
 )
-async def delete_ambito(ambito_id: int, service: AmbitoService = Depends()):
-    service.delete_ambito(ambito_id)
-    return JSONResponse(content={"message": "Se eliminó el ambito documental correctamente"}, status_code=200)
+async def delete_ambito_by_id(ambito_id: int, service: AmbitoService = Depends(get_ambito_service_imp)):
+    await service.delete_by_id(ambito_id)
+    return JSONResponse(
+        content={"message": "Se eliminó el ambito documental correctamente"},
+        status_code=200
+    )
 
 
 @router.get(
-    "/ambitos/{ambito_id}",
-    response_model=AmbitoResponse,
+    "/{ambito_id}",
+    response_model=AmbitoResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
         401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
@@ -126,5 +135,5 @@ async def delete_ambito(ambito_id: int, service: AmbitoService = Depends()):
     },
     description="Obtiene un ambito documental por su ID"
 )
-async def get_ambito_by_id(ambito_id: int, service: AmbitoService = Depends()):
-    return service.get_ambitos_by_id(ambito_id)
+async def get_ambito_by_id(ambito_id: int, service: AmbitoService = Depends(get_ambito_service_imp)):
+    return await service.get_by_id(ambito_id)

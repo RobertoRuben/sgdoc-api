@@ -2,7 +2,7 @@ from typing import TYPE_CHECKING, List
 from sqlmodel import SQLModel, Field, Column, Text, Relationship
 
 if TYPE_CHECKING:
-    from src.model.entity.documento import Documento
+    from src.model.entity import Documento
 
 class Ambito(SQLModel, table = True):
     __tablename__ = "ambitos"

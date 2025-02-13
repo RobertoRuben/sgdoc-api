@@ -2,11 +2,14 @@ from typing import List
 from fastapi import Depends, APIRouter
 from src.websocket.manager import manager
 from src.schemas import ErrorResponseSchema, ValidationErrorResponseSchema, NotAuthenticatedResponseSchema
-from src.dto.notificacion_response_dto import NotificacionResponseDTO
-from src.dto.notificacion_request_dto import NotificacionRequestDTO
-from src.service.notificacion_service import NotificacionService
+from src.dto import NotificacionRequestDTO, NotificacionResponseDTO
+from src.service import NotificationService
+from src.service.imp import NotificacionServiceImp
 
-router = APIRouter(tags=["Notificaciones"])
+router = APIRouter(
+    prefix="/notifications",
+    tags=["Notificaciones"]
+)
 
 notificaciones_tag_metadata = {
     "name": "Notificaciones",
@@ -14,9 +17,11 @@ notificaciones_tag_metadata = {
                    " creación, recuperación, actualización, eliminación y búsqueda de registros de notificaciones.",
 }
 
+def get_notificaction_service_imp(service: NotificacionServiceImp = Depends()) -> NotificationService:
+    return service
 
 @router.post(
-    "/notificaciones",
+    "",
     response_model=NotificacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -27,8 +32,11 @@ notificaciones_tag_metadata = {
     },
     description="Crea una nueva notificación"
 )
-async def add_notificacion(notificacion_request: NotificacionRequestDTO, service: NotificacionService = Depends()):
-    result = service.add_notificacion(notificacion_request)
+async def add_notificacion(
+    notificacion_request: NotificacionRequestDTO,
+    service: NotificationService = Depends(get_notificaction_service_imp)
+):
+    result = await service.add_notificacion(notificacion_request)
 
     await manager.notify_area(
         result.area_destino_id,
@@ -47,7 +55,7 @@ async def add_notificacion(notificacion_request: NotificacionRequestDTO, service
 
 
 @router.get(
-    "/notificaciones/area/{area_id}",
+    "/area/{area_id}",
     response_model=List[NotificacionResponseDTO],
     responses = {
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -56,12 +64,15 @@ async def add_notificacion(notificacion_request: NotificacionRequestDTO, service
     },
     description="Obtiene todas las notificaciones de un área"
 )
-async def get_notificaciones_by_area_id(area_id: int, service: NotificacionService = Depends()):
-    return service.get_notificaciones_by_area(area_id)
+async def get_notificaciones_by_area_id(
+    area_id: int,
+    service: NotificationService = Depends(get_notificaction_service_imp)
+):
+    return await service.get_all_notificaciones_by_area_id(area_id)
 
 
 @router.put(
-    "/notificaciones/{notificacion_id}/leida",
+    "/{notification_id}/read",
     response_model=NotificacionResponseDTO,
     responses={
         400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
@@ -72,5 +83,8 @@ async def get_notificaciones_by_area_id(area_id: int, service: NotificacionServi
     },
     description="Marca una notificación como leída"
 )
-async def mark_notification_as_read(notificacion_id: int, service: NotificacionService = Depends()):
-    return service.mark_notification_as_read(notificacion_id)
+async def mark_notification_as_read(
+    notification_id: int,
+    service: NotificationService = Depends(get_notificaction_service_imp)
+):
+    return await service.mark_notification_as_read(notification_id)
