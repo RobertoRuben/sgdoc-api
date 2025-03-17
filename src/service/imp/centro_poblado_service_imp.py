@@ -58,7 +58,6 @@ class CentroPobladoServiceImp(CentroPobladoService):
             if not centro_poblado:
                 raise NotFoundException("Centro poblado no encontrado")
 
-            # Si no hay cambios en el nombre, se retorna la respuesta actual.
             if centro_poblado.nombre_centro_poblado == centro_poblado_request.nombre_centro_poblado:
                 return CentroPobladoResponseDTO(
                     id=centro_poblado.id,

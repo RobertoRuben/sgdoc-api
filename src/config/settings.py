@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     POSTGRES_HOST: str
     POSTGRES_PORT: str
     POSTGRES_DB: str
+    BACKUP_DIR: str
 
     @property
     def database_url(self) -> str:
