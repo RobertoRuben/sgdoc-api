@@ -9,7 +9,11 @@ from .categoria_documento_response_dto import CategoriaDocumentoResponseDTO
 from .centro_poblado_request_dto import CentroPobladoRequestDTO
 from .centro_poblado_response_dto import CentroPobladoResponseDTO
 from .comunicacion_area_request_dto import ComunicacionAreaRequestDTO
-from .comunicacion_area_response_dto import ComunicacionAreaResponseDTO, ComunicacionDestinoResponseDTO
+from .comunicacion_area_response_dto import (
+    ComunicacionAreaSimpleResponseDTO,
+    ComunicacionDestinoResponseDTO,
+    ComunicacionAreaFindResponseDTO
+)
 from .derivacion_request_dto import DerivacionRequestDTO
 from .derivacion_response_dto import DerivacionResponseDTO
 from .detalle_derivacion_request_dto import DetalleDerivacionRequestDTO
@@ -56,7 +60,7 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "CaserioRequestDTO", "CaserioResponseDTO", "CategoriaDocumentoResponseDTO", "CategoriaDocumentoRequestDTO",
            "AuthRequestDTO", "AuthResponseDTO", "RefreshTokenRequestDTO", "AuthenticatedUserResponseDTO",
            "CentroPobladoRequestDTO", "CentroPobladoResponseDTO", "ComunicacionAreaRequestDTO",
-           "ComunicacionAreaResponseDTO", "ComunicacionDestinoResponseDTO", "DerivacionRequestDTO",
+           "ComunicacionAreaSimpleResponseDTO", "ComunicacionDestinoResponseDTO", "DerivacionRequestDTO",
            "DerivacionResponseDTO", "DetalleDerivacionRequestDTO", "DetalleDerivacionResponseDTO",
            "DocumentoRequestDTO", "DocumentoResponseDTO", "DocumentosIngresadosResponseDTO",
            "TotalDocumentosNoDerivadosResponseDTO", "TotalDocumentosPorCaserioResponseDTO",
@@ -65,4 +69,4 @@ __all__ = ["AmbitoRequestDTO", "AmbitoResponseDTO", "AreaRequestDTO", "AreaRespo
            "TrabajadorResponseDTO", "RolRequestDTO", "RolReponseDTO", "NotificacionRequestDTO", "NotificacionResponseDTO",
            "EstadoDocumentoRequestDTO", "EstadoDocumentoResponseDTO", "IngresosPorAmbitoResponseDTO",
            "IngresosPorCaserioResponseDTO", "IngresosPorCentroPobladoResponseDTO", "TotalIngresosResponseDTO",
-           "PromedioIngresosResponseDTO", "TopIngresosResponseDTO", "DashboardFilterRequestDTO"]
+           "PromedioIngresosResponseDTO", "TopIngresosResponseDTO", "DashboardFilterRequestDTO", "ComunicacionAreaFindResponseDTO"]
