@@ -1,7 +1,15 @@
 from typing import List
 from fastapi import APIRouter, Depends
+from starlette.responses import JSONResponse
+
 from src.schemas import ErrorResponseSchema, NotAuthenticatedResponseSchema
-from src.dto import PaginatedResponseDTO, ComunicacionDestinoResponseDTO
+from src.dto import (
+    PaginatedResponseDTO,
+    ComunicacionAreaRequestDTO ,
+    ComunicacionDestinoResponseDTO,
+    ComunicacionAreaSimpleResponseDTO,
+    ComunicacionAreaFindResponseDTO
+)
 from src.service import ComunicacionAreaService
 from src.service.imp import ComunicacionAreaServiceImp
 
@@ -37,6 +45,57 @@ async def get_paginated_comunicaciones_area(
     return await service.get_paginated(page, page_size)
 
 
+@router.post(
+    "",
+    response_model=ComunicacionAreaSimpleResponseDTO,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Agrega una nueva comunicación entre áreas"
+)
+async def add_comunicacion_area(
+    comunicacion_area_request_dto: ComunicacionAreaRequestDTO,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
+):
+    return await service.add_comunicacion(comunicacion_area_request_dto)
+
+
+@router.get(
+    "/search",
+    response_model=List[ComunicacionAreaFindResponseDTO],
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Busca comunicaciones entre áreas por cadena de búsqueda"
+)
+async def find_comunicacion_area(
+    search_string: str,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
+):
+    return await service.find(search_string)
+
+
+@router.get(
+    "/{comunicacion_area_id}",
+    response_model=ComunicacionAreaSimpleResponseDTO,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Obtiene una comunicación entre áreas por ID"
+)
+async def get_comunicacion_area_by_id(
+    comunicacion_area_id: int,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
+):
+    return await service.get_by_id(comunicacion_area_id)
+
+
 @router.get(
     "/{area_origen_id}/destinos",
     response_model=List[ComunicacionDestinoResponseDTO],
@@ -52,3 +111,43 @@ async def get_paginated_areas_destino_by_area_origen_id(
     service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
 ):
     return await service.get_paginated_destinos_by_area_origen_id(area_origen_id)
+
+
+@router.put(
+    "/{comunicacion_area_id}",
+    response_model=ComunicacionAreaSimpleResponseDTO,
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Actualiza una comunicación entre áreas por ID"
+)
+async def update_comunicacion_area(
+    comunicacion_area_id: int,
+    comunicacion_area_request_dto: ComunicacionAreaRequestDTO,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
+):
+    return await service.update_comunicacion(comunicacion_area_id, comunicacion_area_request_dto)
+
+
+@router.delete(
+    "/{comunicacion_area_id}",
+    responses={
+        400: {"description": "Solicitud inválida", "model": ErrorResponseSchema},
+        401: {"description": "No autorizado", "model": NotAuthenticatedResponseSchema},
+        500: {"description": "Error interno del servidor", "model": ErrorResponseSchema},
+    },
+    description="Elimina una comunicación entre áreas por ID"
+)
+async def delete_comunicacion_area(
+    comunicacion_area_id: int,
+    service: ComunicacionAreaService = Depends(get_comunicacion_areas_imp)
+):
+    await service.delete_comunicacion(comunicacion_area_id)
+    return JSONResponse(
+        content={"message": "Se eliminó la comunicacion correctamente"},
+        status_code=200
+    )
+
+
