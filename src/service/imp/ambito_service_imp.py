@@ -18,7 +18,7 @@ class AmbitoServiceImp(AmbitoService):
                 raise ConflictException("El ámbito ya existe en la base de datos")
 
             new_ambito = Ambito(
-                nombre_ambito=ambito_request.nombre_ambito
+                nombre_ambito=ambito_request.nombre_ambito,
             )
             created_ambito = await self.ambito_repository.add_ambito(new_ambito)
 
